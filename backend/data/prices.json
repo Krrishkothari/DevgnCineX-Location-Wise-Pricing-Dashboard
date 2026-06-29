@@ -1,0 +1,60 @@
+{
+  "last_updated": "2026-06-29T08:21:01.632Z",
+  "total_entries": 6,
+  "data": [
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 0,
+      "seat_category": "N/A",
+      "scraped_at": "2026-06-29T08:20:32.024Z"
+    },
+    {
+      "cinema": "Cinepolis: Lake Shore",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 0,
+      "seat_category": "N/A",
+      "scraped_at": "2026-06-29T08:20:32.026Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 0,
+      "seat_category": "N/A",
+      "scraped_at": "2026-06-29T08:20:32.026Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 0,
+      "seat_category": "N/A",
+      "scraped_at": "2026-06-29T08:20:32.026Z"
+    },
+    {
+      "cinema": "Cinepolis: Lake Shore",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 0,
+      "seat_category": "N/A",
+      "scraped_at": "2026-06-29T08:20:32.026Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 0,
+      "seat_category": "N/A",
+      "scraped_at": "2026-06-29T08:20:32.026Z"
+    }
+  ]
+}
