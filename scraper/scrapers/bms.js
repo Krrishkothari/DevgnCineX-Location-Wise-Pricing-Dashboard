@@ -245,9 +245,9 @@ async function scrapeShowtimesPage(page, movieTitle) {
           // Match common cinema chains
           if (
             (text.startsWith('PVR') || text.startsWith('INOX') ||
-             text.startsWith('Cinepolis') || text.startsWith('MovieMax') ||
-             text.startsWith('Carnival') || text.startsWith('Miraj') ||
-             text.startsWith('Citiplex') || text.startsWith('Gold')) &&
+              text.startsWith('Cinepolis') || text.startsWith('MovieMax') ||
+              text.startsWith('Carnival') || text.startsWith('Miraj') ||
+              text.startsWith('Citiplex') || text.startsWith('Gold')) &&
             text.length < 100
           ) {
             entries.push({
