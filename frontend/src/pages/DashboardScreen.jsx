@@ -13,8 +13,8 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  hidden: { opacity: 0, scale: 0.96, y: 20 },
+  show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
 export function DashboardScreen() {
@@ -26,11 +26,9 @@ export function DashboardScreen() {
       setLoading(true);
       const res = await fetchPrices();
       
-      // Transform raw scraper data into grouped theatre cards
       const grouped = {};
 
       res.data.forEach((entry) => {
-        // Group by unique theatre + movie combo
         const key = `${entry.cinema}-${entry.location}-${entry.movie}`;
         
         if (!grouped[key]) {
@@ -38,22 +36,20 @@ export function DashboardScreen() {
             id: key,
             theatre: `${entry.cinema}: ${entry.location}`,
             subtitle: entry.movie,
-            time: '10:00 AM', // Mocking time since scraper only scrapes base format
+            time: '10:00 AM', 
             format: entry.format || '2D',
-            owned: entry.cinema.toLowerCase().includes('devgn') || entry.cinema.toLowerCase().includes('owned'), // Replace with actual logic
+            owned: entry.cinema.toLowerCase().includes('devgn') || entry.cinema.toLowerCase().includes('owned'),
             pricing: []
           };
         }
 
-        // Add pricing tiers
         grouped[key].pricing.push({
           category: entry.seat_category || 'Standard',
           price: entry.price,
-          diff: 0, // Mock difference for now unless calculating historical data
+          diff: 0,
         });
       });
 
-      // Convert grouped object to array
       setData(Object.values(grouped));
       setLoading(false);
     }
@@ -62,71 +58,95 @@ export function DashboardScreen() {
   }, []);
 
   if (loading) {
-    return <div className="flex h-full items-center justify-center"><div className="text-op-muted">Loading pricing data...</div></div>;
+    return (
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-[280px] w-full animate-pulse rounded-[16px] bg-op-card/50 border border-op-border">
+             <div className="p-6 h-full flex flex-col justify-between">
+                <div>
+                   <div className="h-6 w-3/4 rounded-md bg-op-border mb-2" />
+                   <div className="h-4 w-1/2 rounded-md bg-op-border" />
+                </div>
+                <div className="space-y-3">
+                   <div className="h-8 w-full rounded-md bg-op-border" />
+                   <div className="h-8 w-full rounded-md bg-op-border" />
+                </div>
+             </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (data.length === 0) {
-    return <div className="flex h-full items-center justify-center"><div className="text-op-muted">No pricing data found. Please run the scrapers via the Operations screen.</div></div>;
+    return (
+      <div className="flex h-[600px] w-full items-center justify-center rounded-[24px] border border-dashed border-op-border bg-op-card/30 backdrop-blur-md">
+        <div className="text-center text-op-muted">
+           <h3 className="text-xl font-semibold text-op-textMain mb-2">No pricing data available</h3>
+           <p>Run the scrapers via the Operations screen to populate the dashboard.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Horizontally scrolling theatre cards */}
-      <div className="w-full overflow-x-auto pb-6">
-        <motion.div 
-          className="flex w-max gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          {data.map((theatreData) => (
-            <motion.div key={theatreData.id} variants={itemVariants}>
-              <Card className={`w-[340px] shrink-0 ${theatreData.owned ? 'border-op-accent shadow-[0_0_15px_rgba(109,93,246,0.15)]' : ''}`}>
-                <CardHeader className="relative pb-4">
-                  {theatreData.owned && (
-                    <Badge variant="owned" className="absolute right-6 top-6">
-                      OWNED
-                    </Badge>
-                  )}
-                  <CardTitle className="text-xl pr-16">{theatreData.theatre}</CardTitle>
-                  <p className="text-sm text-op-muted">{theatreData.subtitle}</p>
-                </CardHeader>
+      {/* Responsive Grid Layout for Theatre Cards */}
+      <motion.div 
+        className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {data.map((theatreData) => (
+          <motion.div key={theatreData.id} variants={itemVariants} className="h-full">
+            <Card className={`h-full flex flex-col ${theatreData.owned ? 'border-op-accent shadow-[0_0_20px_rgba(109,93,246,0.15)] ring-1 ring-op-accent' : 'hover:border-op-textSecondary/30'}`}>
+              <CardHeader className="relative pb-4 flex-none">
+                {theatreData.owned && (
+                  <Badge variant="owned" className="absolute right-6 top-6 bg-op-accent text-white shadow-sm">
+                    OWNED
+                  </Badge>
+                )}
+                <CardTitle className="text-lg pr-16 line-clamp-1">{theatreData.theatre}</CardTitle>
+                <p className="text-sm text-op-muted line-clamp-1 mt-1">{theatreData.subtitle}</p>
+              </CardHeader>
+              
+              <CardContent className="flex flex-col gap-4 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="default" className="bg-op-bg/50 border-op-border">{theatreData.time}</Badge>
+                  <Badge variant="default" className="bg-op-bg/50 border-op-border">Exact</Badge>
+                  <Badge variant="default" className="bg-op-bg/50 border-op-border">{theatreData.format}</Badge>
+                </div>
                 
-                <CardContent className="flex flex-col gap-4">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="default">{theatreData.time}</Badge>
-                    <Badge variant="default">Exact</Badge>
-                    <Badge variant="default">{theatreData.format}</Badge>
-                  </div>
+                <div className="h-px w-full bg-op-border/50 my-2" />
+                
+                <div className="flex flex-col gap-3 flex-1 justify-end">
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest text-op-muted mb-1">Ticket Categories</h4>
                   
-                  <div className="h-px w-full bg-op-border my-2" />
-                  
-                  <div className="flex flex-col gap-3">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-op-muted mb-1">Ticket Categories</h4>
-                    
-                    {theatreData.pricing.map((tier, idx) => (
-                      <div key={`${tier.category}-${idx}`} className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-op-textSecondary">{tier.category}</span>
-                        <div className="flex items-center gap-3">
-                          {!theatreData.owned && tier.diff !== 0 && (
-                            <span className={`text-xs font-semibold ${tier.diff > 0 ? 'text-op-danger' : 'text-op-success'}`}>
-                              {tier.diff > 0 ? `↑${tier.diff}` : `↓${Math.abs(tier.diff)}`}
-                            </span>
-                          )}
-                          {!theatreData.owned && tier.diff === 0 && (
-                            <span className="text-xs font-semibold text-op-muted">-</span>
-                          )}
-                          <span className="text-sm font-mono text-op-textMain w-12 text-right">₹{tier.price}</span>
-                        </div>
+                  {theatreData.pricing.map((tier, idx) => (
+                    <div key={`${tier.category}-${idx}`} className="flex items-center justify-between group">
+                      <span className="text-sm font-medium text-op-textSecondary transition-colors group-hover:text-op-textMain line-clamp-1 mr-4">
+                        {tier.category}
+                      </span>
+                      <div className="flex items-center gap-3 shrink-0">
+                        {!theatreData.owned && tier.diff !== 0 && (
+                          <span className={`text-xs font-semibold ${tier.diff > 0 ? 'text-op-danger' : 'text-op-success'}`}>
+                            {tier.diff > 0 ? `↑${tier.diff}` : `↓${Math.abs(tier.diff)}`}
+                          </span>
+                        )}
+                        {!theatreData.owned && tier.diff === 0 && (
+                          <span className="text-xs font-semibold text-op-muted">-</span>
+                        )}
+                        <span className="text-sm font-mono font-medium text-op-textMain w-12 text-right">₹{tier.price}</span>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
     </div>
   );
 }

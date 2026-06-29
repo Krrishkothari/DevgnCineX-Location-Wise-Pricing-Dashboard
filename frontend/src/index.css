@@ -11,6 +11,10 @@
   body {
     @apply bg-op-bg text-op-textMain font-sans antialiased;
     margin: 0;
+    /* Premium subtle radial gradient background */
+    background-image: radial-gradient(circle at top center, rgba(109, 93, 246, 0.05) 0%, transparent 60%),
+                      radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+    background-attachment: fixed;
   }
   
   /* Custom Scrollbar for a premium feel */
