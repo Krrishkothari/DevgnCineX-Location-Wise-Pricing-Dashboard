@@ -1,65 +1,106 @@
-const fs = require('fs');
-const path = require('path');
+const { Queue, Worker } = require('bullmq');
+const Redis = require('ioredis');
 
+// Scraper functions
 const { scrapeBMS } = require('./scrapers/bms');
 const { scrapePVR } = require('./scrapers/pvr');
 const { scrapeINOX } = require('./scrapers/inox');
 const { scrapeCinepolis } = require('./scrapers/cinepolis');
 const { scrapeMovieMax } = require('./scrapers/moviemax');
 
-const DATA_DIR = path.join(__dirname, '../backend/data');
-const DATA_FILE = path.join(DATA_DIR, 'prices.json');
+// DB and Alert functions
+const { savePrices } = require('./db');
+const { checkAlerts } = require('./alertChecker');
 
-async function runAllScrapers() {
-  console.log('[Queue] Starting full scraper run...');
-  const allResults = [];
+// 6. Use Redis connection: { host: 'localhost', port: 6379 } (read from process.env.REDIS_URL if available)
+const connection = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null })
+  : new Redis({ host: 'localhost', port: 6379, maxRetriesPerRequest: null });
 
-  // Ensure data directory exists
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+// 1. Create a BullMQ Queue named 'scraper-jobs'
+const scraperQueue = new Queue('scraper-jobs', {
+  connection,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: 'exponential', delay: 5000 }
+  }
+});
+
+// 2. Create a BullMQ Worker that processes jobs from the queue
+const worker = new Worker('scraper-jobs', async (job) => {
+  console.log(`[Worker] Starting job ${job.id} of type ${job.name}...`);
+  let results = [];
+
+  // 3. The worker should handle these job names
+  switch (job.name) {
+    case 'scrape-bms':
+      results = await scrapeBMS();
+      break;
+    case 'scrape-pvr':
+      results = await scrapePVR();
+      break;
+    case 'scrape-inox':
+      results = await scrapeINOX();
+      break;
+    case 'scrape-cinepolis':
+      results = await scrapeCinepolis();
+      break;
+    case 'scrape-moviemax':
+      results = await scrapeMovieMax();
+      break;
+    default:
+      throw new Error(`Unknown job name: ${job.name}`);
   }
 
-  // Run sequentially to prevent high RAM usage / detection from headless browsers
-  const scrapers = [
-    { name: 'BMS', fn: scrapeBMS },
-    { name: 'PVR', fn: scrapePVR },
-    { name: 'INOX', fn: scrapeINOX },
-    { name: 'Cinepolis', fn: scrapeCinepolis },
-    { name: 'MovieMax', fn: scrapeMovieMax }
-  ];
+  // 4a. Log how many results were returned
+  console.log(`[Worker] Job ${job.name} completed. Returned ${results.length} results.`);
 
-  for (const scraper of scrapers) {
-    try {
-      console.log(`\n[Queue] Running ${scraper.name} scraper...`);
-      const results = await scraper.fn();
-      console.log(`[Queue] ${scraper.name} completed. Found ${results.length} valid entries.`);
-      allResults.push(...results);
-    } catch (err) {
-      console.error(`[Queue] Error running ${scraper.name}:`, err.message);
-    }
+  if (results && results.length > 0) {
+    // 4b. Call savePrices(results)
+    await savePrices(results);
+
+    // 4c. Call checkAlerts(results)
+    await checkAlerts(results);
   }
 
-  console.log(`\n[Queue] Full run completed. Total entries aggregated: ${allResults.length}`);
-  
-  // Write output
-  const outputData = {
-    last_updated: new Date().toISOString(),
-    total_entries: allResults.length,
-    data: allResults
-  };
+  return { success: true, count: results.length };
+}, { connection });
 
-  fs.writeFileSync(DATA_FILE, JSON.stringify(outputData, null, 2), 'utf-8');
-  console.log(`[Queue] Saved aggregated data to ${DATA_FILE}`);
-  
-  return allResults;
+worker.on('completed', (job, returnvalue) => {
+  console.log(`[Worker] Successfully finished job ${job.id} with ${returnvalue.count} results.`);
+});
+
+worker.on('failed', (job, err) => {
+  console.error(`[Worker] Job ${job.id} failed:`, err.message);
+});
+
+// 8. Export a function addAllJobs() that adds all 5 cinema jobs to the queue
+async function addAllJobs() {
+  console.log('[Queue] Adding all scraper jobs to the queue...');
+
+  // Base job options (attempts and backoff are inherited from defaultJobOptions)
+  await scraperQueue.add('scrape-bms', {});
+  await scraperQueue.add('scrape-pvr', {});
+  await scraperQueue.add('scrape-inox', {});
+  await scraperQueue.add('scrape-cinepolis', {});
+  await scraperQueue.add('scrape-moviemax', {});
+
+  console.log('[Queue] All 5 jobs successfully enqueued.');
 }
 
-module.exports = { runAllScrapers };
+// 7. Export the Queue instance as scraperQueue
+module.exports = {
+  scraperQueue,
+  addAllJobs,
+  worker // exporting for testing/graceful shutdown if needed
+};
 
-// Run if called directly
+// If run directly, just test adding jobs
 if (require.main === module) {
-  runAllScrapers().then(() => {
-    console.log('[Queue] Queue test execution finished.');
-    process.exit(0);
+  addAllJobs().then(() => {
+    console.log('[Queue Test] Jobs added. Worker is listening...');
+  }).catch(err => {
+    console.error('[Queue Test] Error:', err);
+    process.exit(1);
   });
 }

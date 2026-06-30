@@ -44,7 +44,7 @@ export function DashboardScreen() {
         }
 
         grouped[key].pricing.push({
-          category: entry.seat_category || 'Standard',
+          category: entry.seat_category && entry.seat_category !== 'N/A' ? entry.seat_category : 'Standard',
           price: entry.price,
           diff: 0,
         });

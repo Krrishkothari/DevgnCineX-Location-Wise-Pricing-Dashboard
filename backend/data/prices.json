@@ -1,60 +1,4857 @@
 {
-  "last_updated": "2026-06-29T08:21:01.632Z",
-  "total_entries": 6,
+  "last_updated": "2026-06-30T06:15:50.437Z",
+  "total_entries": 539,
   "data": [
     {
       "cinema": "Cinepolis: Nexus Seawoods",
       "location": "Navi Mumbai",
       "movie": "Welcome To The Jungle",
       "format": "2D",
-      "price": 0,
-      "seat_category": "N/A",
-      "scraped_at": "2026-06-29T08:20:32.024Z"
+      "price": 149,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.984Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.985Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.985Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 349,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:30.985Z"
     },
     {
       "cinema": "Cinepolis: Lake Shore",
-      "location": "Thane",
+      "location": "Thane (EX Viviana Mall)",
       "movie": "Welcome To The Jungle",
       "format": "2D",
-      "price": 0,
-      "seat_category": "N/A",
-      "scraped_at": "2026-06-29T08:20:32.026Z"
+      "price": 150,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Cinepolis: Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Cinepolis: Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINER PRIME",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX: R-City",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "EXECUTIVE ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX: R-City",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "ROYAL ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "MOVIE TIME: HUB",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX: Megaplex",
+      "location": "Malad",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX: Megaplex",
+      "location": "Malad",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "INOX: Megaplex",
+      "location": "Malad",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 349,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 169,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "LOUNGER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 300,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PREMIUM PLUS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
     },
     {
       "cinema": "PVR ICON: Phoenix Palladium",
-      "location": "Lower Parel",
+      "location": "Lower Parel Mumbai",
       "movie": "Welcome To The Jungle",
       "format": "2D",
-      "price": 0,
-      "seat_category": "N/A",
-      "scraped_at": "2026-06-29T08:20:32.026Z"
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "LOUNGER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: Orion Mall",
+      "location": "Panvel",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: Orion Mall",
+      "location": "Panvel",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: Orion Mall",
+      "location": "Panvel",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 166,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Platinum",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: The Capital Mall",
+      "location": "Nalasopara (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: The Capital Mall",
+      "location": "Nalasopara (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: The Capital Mall",
+      "location": "Nalasopara (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: Market City",
+      "location": "Kurla (Premiere)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "ROYAL ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR: Market City",
+      "location": "Kurla (Premiere)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "EXECUTIVE ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Bhayander",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Metro INOX Cinemas: Marine Lines",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "ROYAL ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "Metro INOX Cinemas: Marine Lines",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "EXECUTIVE ROWS",
+      "scraped_at": "2026-06-30T06:15:30.986Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLIINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Metro Mall Junction",
+      "location": "Kalyan (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Metro Mall Junction",
+      "location": "Kalyan (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Metro Mall Junction",
+      "location": "Kalyan (E)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM XL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM PLUS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 297,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Movietime Cubic Mall: Chembur",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Movietime Cubic Mall: Chembur",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "SILVER 1",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: SM5 Kalyan",
+      "location": "Newly Renovated",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: SM5 Kalyan",
+      "location": "Newly Renovated",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: SM5 Kalyan",
+      "location": "Newly Renovated",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Lodha Xperia",
+      "location": "Palava",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Lodha Xperia",
+      "location": "Palava",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Lodha Xperia",
+      "location": "Palava",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: R Mall",
+      "location": "Mulund",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: R Mall",
+      "location": "Mulund",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: R Mall",
+      "location": "Mulund",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "PLATINUM RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: High Street Mall",
+      "location": "Thane (EX Cinemastar)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "XTRA LEGROOM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PRIME PLUS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Funcity Big Cinema:UNR (OPEN 4 NEW RECLINER SCRNS)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Funcity Big Cinema:UNR (OPEN 4 NEW RECLINER SCRNS)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "SOFA",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Devgn CineX: The Walk",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 600,
+      "seat_category": "AMOR PREMIUM LUXURY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Devgn CineX: The Walk",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 500,
+      "seat_category": "AMOR LUXURY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Raghuleela Mall",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Raghuleela Mall",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Raghuleela Mall",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Borivali (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Borivali (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium Plus",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Borivali (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Sterling Cineplex: Fort",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Sterling Cineplex: Fort",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Sterling Cineplex: Fort",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 135,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "BRONZE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dombivali (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dombivali (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maison INOX: Jio World Plaza",
+      "location": "BKC",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 499,
+      "seat_category": "RECLINERS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Maison INOX: Jio World Plaza",
+      "location": "BKC",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 499,
+      "seat_category": "RECLINERS PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 300,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "G7 Multiplex: Bandra (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "BALCONY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "G7 Multiplex: Bandra (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 140,
+      "seat_category": "UPPER STALL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "G7 Multiplex: Bandra (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "DRESS CIRCLE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Gold Cinema: Santacruz (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "CLUB",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Eternity Mall",
+      "location": "Thane (Seats Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Eternity Mall",
+      "location": "Thane (Seats Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Eternity Mall",
+      "location": "Thane (Seats Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Wonder Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Wonder Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Wonder Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME  PLUS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: Triveni Grande",
+      "location": "Kalyan (West)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: Triveni Grande",
+      "location": "Kalyan (West)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: Triveni Grande",
+      "location": "Kalyan (West)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SOFA",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Chitra Cinema: Dadar (Newly Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Chitra Cinema: Dadar (Newly Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "BALCONY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Chitra Cinema: Dadar (Newly Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Chitra Cinema: Dadar (Newly Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "STALL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 166,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX Laserplex: CR2",
+      "location": "Nariman Point",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "EXECUTIVE RECLI ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX Laserplex: CR2",
+      "location": "Nariman Point",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "ROYAL RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Fun Cinemas: K Star Mall",
+      "location": "Chembur",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Fun Cinemas: K Star Mall",
+      "location": "Chembur",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Fun Cinemas: K Star Mall",
+      "location": "Chembur",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Tilak Cineplex (Pooja Newly Renovated): Dombivali",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 90,
+      "seat_category": "Balcony",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Tilak Cineplex (Pooja Newly Renovated): Dombivali",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 90,
+      "seat_category": "Stall",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 120,
+      "seat_category": "PRIME  PLUS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas Suncity: Vile Parle",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas Suncity: Vile Parle",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Sion",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Sion",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MovieMax: Sion",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "PRIME  PLUS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Plaza Cinema: Dadar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 450,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Plaza Cinema: Dadar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 400,
+      "seat_category": "BOX SOFA",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Plaza Cinema: Dadar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 350,
+      "seat_category": "SOFA",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Plaza Cinema: Dadar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 300,
+      "seat_category": "PLATINUM RECLINER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Plaza Cinema: Dadar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Plaza Cinema: Dadar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: Jai Hind",
+      "location": "Lalbaugh",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: Jai Hind",
+      "location": "Lalbaugh",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Lido",
+      "location": "Juhu Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Lido",
+      "location": "Juhu Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Anand Cinema: Thane",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Anand Cinema: Thane",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Anupam Mall Goregaon (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Anupam Mall Goregaon (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Gopi Cinema: Dombivali",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 90,
+      "seat_category": "Diamond",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Gopi Cinema: Dombivali",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 90,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Topiwala Mukta A2 Cinemas",
+      "location": "Goregaon",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Topiwala Mukta A2 Cinemas",
+      "location": "Goregaon",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Topiwala Mukta A2 Cinemas",
+      "location": "Goregaon",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Cineraj",
+      "location": "Panvel",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "FAMILY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Cineraj",
+      "location": "Panvel",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "BOX",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Ashok Anil Multiplex",
+      "location": "Ulhasnagar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 140,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Ashok Anil Multiplex",
+      "location": "Ulhasnagar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Ashok Anil Multiplex",
+      "location": "Ulhasnagar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Ashok Anil Multiplex",
+      "location": "Ulhasnagar",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 300,
+      "seat_category": "LUXURY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Rajhans Cinemas: Helix 3",
+      "location": "Ghatkopar (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PREMIUM SOFA",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Rajhans Cinemas: Helix 3",
+      "location": "Ghatkopar (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE SOFA",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Star",
+      "location": "Ambernath (Newly Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MOVIETIME: MALAD (WEST)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "COUPLE BOX",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "MOVIETIME: MALAD (WEST)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 129,
+      "seat_category": "DRESS CIRCLE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: VIP Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 500,
+      "seat_category": "VIP EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Cinepolis: VIP Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 550,
+      "seat_category": "VIP PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Ajanta Cinema Cinex: Borivali (W) Newly Renovated",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Ajanta Cinema Cinex: Borivali (W) Newly Renovated",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Citylight Cinema: Mahim",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Prime",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "1 Cinema Powered by Mukta A2: Bharatmata",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "BALCONY",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "1 Cinema Powered by Mukta A2: Bharatmata",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "1 Cinema Powered by Mukta A2: Bharatmata",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SL",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Nakshatra Mall",
+      "location": "Dadar (W) (Newly Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Nakshatra Mall",
+      "location": "Dadar (W) (Newly Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Nakshatra Mall",
+      "location": "Dadar (W) (Newly Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Nakshatra Mall",
+      "location": "Dadar (W) (Newly Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME PLUS SOFA ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "INOX: Nakshatra Mall",
+      "location": "Dadar (W) (Newly Renovated)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Roxy Mukta A2 Cinemas: Charni Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Roxy Mukta A2 Cinemas: Charni Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Roxy Mukta A2 Cinemas: Charni Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Movietime Star City: Matunga (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:30.987Z"
+    },
+    {
+      "cinema": "Gold  Cinema: Shivaji Road",
+      "location": "Thane (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "Box",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold  Cinema: Shivaji Road",
+      "location": "Thane (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold  Cinema: Shivaji Road",
+      "location": "Thane (W)",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Sona Borivali (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 300,
+      "seat_category": "Box",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Sona Borivali (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "INOX: Insignia at Atria Mall",
+      "location": "Worli",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 430,
+      "seat_category": "EXECUTIVE ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "INOX: Insignia at Atria Mall",
+      "location": "Worli",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 430,
+      "seat_category": "ROYAL ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Malad Malvani",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "Box",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Malad Malvani",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Malad Malvani",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Devgn Cinex: Mulund",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Devgn Cinex: Mulund",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 190,
+      "seat_category": "PREMIER",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Devgn Cinex: Mulund",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: New Excelsior",
+      "location": "Fort",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "ELITE",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas: New Excelsior",
+      "location": "Fort",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "INOX: Insignia at R Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINERS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "INOX: Insignia at R Mall",
+      "location": "Thane",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINERS PRIME",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Saki Naka",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Saki Naka",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Premium",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "PICTURE PERFECT",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "K.K. Cinema: Kamothe",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 220,
+      "seat_category": "Executive",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Movietime: Dahisar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "DRESS CIRCLE",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas Orion: Santacruz",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas Orion: Santacruz",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Dadar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Balcony",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Dadar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Gold Cinema: Dadar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Executive",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Kasturba Cinema (Newly Renovated): Malad",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "ELITE SOFA CLASS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Kasturba Cinema (Newly Renovated): Malad",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PLATINUM CLASS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Kasturba Cinema (Newly Renovated): Malad",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "PVR: Le Reve-Globus Mall",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "PVR: Le Reve-Globus Mall",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "PVR: Le Reve-Globus Mall",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "ICONIX CINEMAS: (OLD AARADHANA TALKIES) THANE",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "Platinum",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "ICONIX CINEMAS: (OLD AARADHANA TALKIES) THANE",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai (Screens)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "ROYAL",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai (Screens)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai (Screens)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai (Screens)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Rassaz Multiplex: Mira Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "Platinum",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Rassaz Multiplex: Mira Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Rassaz Multiplex: Mira Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 349,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 349,
+      "seat_category": "Recliner",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "Executive",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium Plus",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Kandivali (E) Newly Opened",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Lounger",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Movietime Suburbia: Bandra (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "DRESS CIRCLE",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Movietime Suburbia: Bandra (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 1000,
+      "seat_category": "RECLINER  COUPE",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Regal Cinema: Colaba",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "DRESS CIRCLE",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Regal Cinema: Colaba",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "BALCONY",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Regal Cinema: Colaba",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "REAR STALL",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Regal Cinema: Colaba",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "MIDDLE STALL",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Regal Cinema: Colaba",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "STALL",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Bahar Cinema: Vile Parle (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Platinum",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Bahar Cinema: Vile Parle (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "MovieMax: Andheri (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "MovieMax: Andheri (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Movie Max V Cinema: Virar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 230,
+      "seat_category": "Platinum",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Movie Max V Cinema: Virar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Movie Max V Cinema: Virar (E)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Fun Square Cinema: Sanpada",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Bharat Cineplex: Kurla (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Bharat Cineplex: Kurla (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Premium",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maratha Mandir: Mumbai Central (Metro At DoorStep)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "BALCONY",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maratha Mandir: Mumbai Central (Metro At DoorStep)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "DRESS CIRCLE",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai(Screen 1)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai(Screen 1)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "KT Vision Cinema: Vasai(Screen 1)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Woodland Cinemas: Virar (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 120,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "K Movie Star Multiplex: Vasai (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 380,
+      "seat_category": "RECLINERS",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "K Movie Star Multiplex: Vasai (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 190,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "K Movie Star Multiplex: Vasai (W)",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 170,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Vaishali Cinema: Badlapur",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 80,
+      "seat_category": "Dress Circle",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Vaishali Cinema: Badlapur",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "Balcony",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Venus Cinema: Ulhasnagar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 80,
+      "seat_category": "Stall",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Venus Cinema: Ulhasnagar",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "Balcony",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive-IN",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 1000,
+      "seat_category": "SUV",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive-IN",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 1000,
+      "seat_category": "SEDAN",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Nishat Cinema: Grant Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "Balcony",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Nishat Cinema: Grant Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 120,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
+    },
+    {
+      "cinema": "Nishat Cinema: Grant Road",
+      "location": "Mumbai",
+      "movie": "Welcome To The Jungle",
+      "format": "2D",
+      "price": 100,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:30.988Z"
     },
     {
       "cinema": "Cinepolis: Nexus Seawoods",
       "location": "Navi Mumbai",
       "movie": "Main Vaapas Aaunga",
       "format": "2D",
-      "price": 0,
-      "seat_category": "N/A",
-      "scraped_at": "2026-06-29T08:20:32.026Z"
+      "price": 149,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Nexus Seawoods",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 349,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
     },
     {
       "cinema": "Cinepolis: Lake Shore",
-      "location": "Thane",
+      "location": "Thane (EX Viviana Mall)",
       "movie": "Main Vaapas Aaunga",
       "format": "2D",
-      "price": 0,
-      "seat_category": "N/A",
-      "scraped_at": "2026-06-29T08:20:32.026Z"
+      "price": 130,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 166,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "BMX Cinemas(BalajiMovieplex): Littleworld Kharghar",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PRIME PLUS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX Megaplex: Sky City Mall",
+      "location": "Borivali",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: R-City",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: R-City",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: R-City",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: R-City",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "MOVIE TIME: HUB",
+      "location": "Goregaon (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 130,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: Megaplex",
+      "location": "Malad",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: Megaplex",
+      "location": "Malad",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "INOX: Megaplex",
+      "location": "Malad",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 169,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "HDFC Millennia PVR ICON: Oberoi Mall",
+      "location": "Goregaon (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "Cinepolis: Magnet Mall",
+      "location": "Bhandup (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
     },
     {
       "cinema": "PVR ICON: Phoenix Palladium",
-      "location": "Lower Parel",
+      "location": "Lower Parel Mumbai",
       "movie": "Main Vaapas Aaunga",
       "format": "2D",
-      "price": 0,
-      "seat_category": "N/A",
-      "scraped_at": "2026-06-29T08:20:32.026Z"
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "LOUNGER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR ICON: Phoenix Palladium",
+      "location": "Lower Parel Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR: Orion Mall",
+      "location": "Panvel",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR: Orion Mall",
+      "location": "Panvel",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "PVR: Orion Mall",
+      "location": "Panvel",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.746Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Platinum",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Gold",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "BMX Cinemas (Balaji Movieplex): Koparkhairane",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "Silver",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: The Capital Mall",
+      "location": "Nalasopara (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: The Capital Mall",
+      "location": "Nalasopara (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: The Capital Mall",
+      "location": "Nalasopara (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Market City",
+      "location": "Kurla (Premiere)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 169,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Market City",
+      "location": "Kurla (Premiere)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Market City",
+      "location": "Kurla (Premiere)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Market City",
+      "location": "Kurla (Premiere)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Bhayander",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Bhayander",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium Plus",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Bhayander",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Bhayander",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Lounger",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Metro INOX Cinemas: Marine Lines",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Metro INOX Cinemas: Marine Lines",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Metro INOX Cinemas: Marine Lines",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLIINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR:C&B Square Chakala Andheri E(Formerly Sangam)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Funfiesta",
+      "location": "Nalasopara (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Metro Mall Junction",
+      "location": "Kalyan (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Metro Mall Junction",
+      "location": "Kalyan (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Metro Mall Junction",
+      "location": "Kalyan (E)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM PLUS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Aurum",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 297,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Movietime Cubic Mall: Chembur",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Movietime Cubic Mall: Chembur",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 180,
+      "seat_category": "SILVER 1",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Korum Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "LOUNGER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: IMAX",
+      "location": "Wadala",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: SM5 Kalyan",
+      "location": "Newly Renovated",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: SM5 Kalyan",
+      "location": "Newly Renovated",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Lodha Xperia",
+      "location": "Palava",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Lodha Xperia",
+      "location": "Palava",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Lodha Xperia",
+      "location": "Palava",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR ICON: Infiniti Andheri (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Huma",
+      "location": "Kanjurmarg (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: R Mall",
+      "location": "Mulund",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: R Mall",
+      "location": "Mulund",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: R Mall",
+      "location": "Mulund",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PLATINUM RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Dynamix",
+      "location": "Juhu",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: High Street Mall",
+      "location": "Thane (EX Cinemastar)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PRIME PLUS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maison PVR: Jio World Drive",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 299,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Citi Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Funcity Big Cinema:UNR (OPEN 4 NEW RECLINER SCRNS)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 80,
+      "seat_category": "SPECIAL",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Devgn CineX: The Walk",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 600,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Devgn CineX: The Walk",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 270,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Devgn CineX: The Walk",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Raghuleela Mall",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Raghuleela Mall",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Raghuleela Mall",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Borivali (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 249,
+      "seat_category": "Sofa",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Borivali (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium Plus",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maxus Cinemas: Borivali (W)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "Premium",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 169,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Infiniti",
+      "location": "Malad Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Odeon Mall",
+      "location": "Ghatkopar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Sterling Cineplex: Fort",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Sterling Cineplex: Fort",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Sterling Cineplex: Fort",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 250,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 135,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Thakur Mall",
+      "location": "Dahisar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 200,
+      "seat_category": "RECLINER ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Palm Beach Galleria Mall",
+      "location": "Navi Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "BRONZE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dattani Mall",
+      "location": "Vasai (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 192,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dombivali (E)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Dombivali (E)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maison INOX: Jio World Plaza",
+      "location": "BKC",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 499,
+      "seat_category": "RECLINERS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Maison INOX: Jio World Plaza",
+      "location": "BKC",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 499,
+      "seat_category": "RECLINERS PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: Fun Republic Mall",
+      "location": "Andheri (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 270,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Eternity Mall",
+      "location": "Thane (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Eternity Mall",
+      "location": "Thane (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Eternity Mall",
+      "location": "Thane (Seats Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Wonder Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Wonder Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Wonder Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME  PLUS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Fun Cinemas: K Star Mall",
+      "location": "Chembur",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "NORMAL",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Fun Cinemas: K Star Mall",
+      "location": "Chembur",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Fun Cinemas: K Star Mall",
+      "location": "Chembur",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 166,
+      "seat_category": "VIP",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "BMX Cinemas: Ambernath (New)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX Laserplex: CR2",
+      "location": "Nariman Point",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX Laserplex: CR2",
+      "location": "Nariman Point",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX Laserplex: CR2",
+      "location": "Nariman Point",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 105,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 120,
+      "seat_category": "PRIME  PLUS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Mira Road (Seats Renovated)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 300,
+      "seat_category": "RECLINER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas Suncity: Vile Parle",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Mukta A2 Cinemas Suncity: Vile Parle",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Sion",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Sion",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "MovieMax: Sion",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 150,
+      "seat_category": "PRIME  PLUS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Anupam Mall Goregaon (E)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Anupam Mall Goregaon (E)",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Haseen",
+      "location": "Bhiwandi",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Lido",
+      "location": "Juhu Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Lido",
+      "location": "Juhu Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Cineraj",
+      "location": "Panvel",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "FAMILY",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Ashok Anil Multiplex",
+      "location": "Ulhasnagar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "SILVER",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Ashok Anil Multiplex",
+      "location": "Ulhasnagar",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "GOLD",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "PVR: Milap",
+      "location": "Kandivali (W)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 99,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Miraj Cinemas: Star",
+      "location": "Ambernath (Newly Renovated)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "PLATINUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: VIP Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 500,
+      "seat_category": "VIP EXECUTIVE",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "Cinepolis: VIP Lake Shore",
+      "location": "Thane (EX Viviana Mall)",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 550,
+      "seat_category": "VIP PREMIUM",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Insignia at Atria Mall",
+      "location": "Worli",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 430,
+      "seat_category": "EXECUTIVE ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Insignia at Atria Mall",
+      "location": "Worli",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 430,
+      "seat_category": "ROYAL ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Insignia at R Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINERS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "INOX: Insignia at R Mall",
+      "location": "Thane",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 399,
+      "seat_category": "RECLINERS PRIME",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 199,
+      "seat_category": "EXTRA LEGROOM ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "PICTURE PERFECT",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 179,
+      "seat_category": "PRIME PLUS ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 149,
+      "seat_category": "PRIME ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
+    },
+    {
+      "cinema": "EROS INOX IMAX Cinema: Churchgate",
+      "location": "Mumbai",
+      "movie": "Main Vaapas Aaunga",
+      "format": "2D",
+      "price": 92,
+      "seat_category": "CLASSIC ROWS",
+      "scraped_at": "2026-06-30T06:15:47.747Z"
     }
   ]
 }
