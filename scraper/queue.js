@@ -78,12 +78,14 @@ worker.on('failed', (job, err) => {
 async function addAllJobs() {
   console.log('[Queue] Adding all scraper jobs to the queue...');
 
-  // Base job options (attempts and backoff are inherited from defaultJobOptions)
-  await scraperQueue.add('scrape-bms', {});
-  await scraperQueue.add('scrape-pvr', {});
-  await scraperQueue.add('scrape-inox', {});
-  await scraperQueue.add('scrape-cinepolis', {});
-  await scraperQueue.add('scrape-moviemax', {});
+  // Set up recurring jobs to run every 5 minutes
+  const repeatOpts = { repeat: { every: 300000 } };
+  
+  await scraperQueue.add('scrape-bms', {}, repeatOpts);
+  await scraperQueue.add('scrape-pvr', {}, repeatOpts);
+  await scraperQueue.add('scrape-inox', {}, repeatOpts);
+  await scraperQueue.add('scrape-cinepolis', {}, repeatOpts);
+  await scraperQueue.add('scrape-moviemax', {}, repeatOpts);
 
   console.log('[Queue] All 5 jobs successfully enqueued.');
 }
