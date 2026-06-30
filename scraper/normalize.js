@@ -10,8 +10,10 @@ function normalizePrice(raw, source) {
     location: raw.location,
     movie: raw.movie || 'N/A',
     format: raw.format || '2D',
+    language: raw.language || '',
     price: Math.round(Number(raw.price)),
     seat_category: raw.seat_category || 'N/A',
+    showtime: raw.showtime || '',
     scraped_at: new Date().toISOString(),
   };
 }

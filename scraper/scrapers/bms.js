@@ -136,6 +136,15 @@ async function scrapeBMS() {
         continue;
       }
 
+      // Extract the real format (2D, 3D, IMAX, 4DX etc.) and language from the static API
+      let eventFormat = '2D';
+      let eventLanguage = '';
+      if (staticData?.data?.eventData?.childEvents?.length > 0) {
+        eventFormat = staticData.data.eventData.childEvents[0].eventDimension || '2D';
+        eventLanguage = staticData.data.eventData.childEvents[0].eventLanguage || '';
+      }
+      console.log(`[BMS] Movie format for ${movie.title}: ${eventFormat}, Language: ${eventLanguage}`);
+
       const groupList = dynamicData.data.showtimeWidgets.find(w => w.type === 'groupList');
       if (!groupList?.data?.[0]?.data) {
         console.log(`[BMS] No venue groups found for ${movie.title}.`);
@@ -169,7 +178,8 @@ async function scrapeBMS() {
                 cinema: cinemaName,
                 location: location,
                 movie: movie.title,
-                format: '2D',
+                format: eventFormat,
+                language: eventLanguage,
                 price: price,
                 seat_category: seatCategory,
                 showtime: showTime,

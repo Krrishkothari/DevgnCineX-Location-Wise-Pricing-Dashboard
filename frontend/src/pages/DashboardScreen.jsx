@@ -36,11 +36,17 @@ export function DashboardScreen() {
             id: key,
             theatre: `${entry.cinema}: ${entry.location}`,
             subtitle: entry.movie,
-            time: '10:00 AM', 
+            showtimes: new Set(),
             format: entry.format || '2D',
+            language: entry.language || '',
             owned: entry.cinema.toLowerCase().includes('devgn') || entry.cinema.toLowerCase().includes('owned'),
             pricing: []
           };
+        }
+
+        // Collect all unique showtimes for this venue
+        if (entry.showtime) {
+          grouped[key].showtimes.add(entry.showtime);
         }
 
         grouped[key].pricing.push({
@@ -50,7 +56,26 @@ export function DashboardScreen() {
         });
       });
 
-      setData(Object.values(grouped));
+      // Convert showtime Sets to sorted arrays
+      const result = Object.values(grouped).map(item => ({
+        ...item,
+        showtimes: Array.from(item.showtimes).sort((a, b) => {
+          // Sort by time: convert "12:05 PM" to comparable values
+          const toMinutes = (t) => {
+            const match = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if (!match) return 0;
+            let h = parseInt(match[1]);
+            const m = parseInt(match[2]);
+            const period = match[3].toUpperCase();
+            if (period === 'PM' && h !== 12) h += 12;
+            if (period === 'AM' && h === 12) h = 0;
+            return h * 60 + m;
+          };
+          return toMinutes(a) - toMinutes(b);
+        }),
+      }));
+
+      setData(result);
       setLoading(false);
     }
 
@@ -112,10 +137,18 @@ export function DashboardScreen() {
               </CardHeader>
               
               <CardContent className="flex flex-col gap-4 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="default" className="bg-op-bg/50 border-op-border">{theatreData.time}</Badge>
-                  <Badge variant="default" className="bg-op-bg/50 border-op-border">Exact</Badge>
-                  <Badge variant="default" className="bg-op-bg/50 border-op-border">{theatreData.format}</Badge>
+                <div className="flex flex-wrap items-center gap-2 max-h-[52px] overflow-y-auto">
+                  {theatreData.showtimes.length > 0 ? (
+                    theatreData.showtimes.map((st, i) => (
+                      <Badge key={i} variant="default" className="bg-op-bg/50 border-op-border text-xs shrink-0">{st}</Badge>
+                    ))
+                  ) : (
+                    <Badge variant="default" className="bg-op-bg/50 border-op-border text-xs">N/A</Badge>
+                  )}
+                  <Badge variant="default" className="bg-op-accent/15 border-op-accent/30 text-op-accent text-xs shrink-0">{theatreData.format}</Badge>
+                  {theatreData.language && (
+                    <Badge variant="default" className="bg-emerald-500/15 border-emerald-500/30 text-emerald-400 text-xs shrink-0">{theatreData.language}</Badge>
+                  )}
                 </div>
                 
                 <div className="h-px w-full bg-op-border/50 my-2" />
