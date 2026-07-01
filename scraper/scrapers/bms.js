@@ -75,7 +75,7 @@ async function scrapeBMS() {
         } else if (url.includes('showtimes-by-event/primary-static')) {
           staticData = await response.json();
         }
-      } catch (e) {}
+      } catch (e) { }
     });
 
     // ---- Step 2: Navigate to BMS and trigger the API ----

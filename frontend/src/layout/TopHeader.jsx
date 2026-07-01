@@ -1,30 +1,83 @@
 import React from 'react';
-import { Calendar, Clock, RefreshCw } from 'lucide-react';
+import { Calendar, Clock, Film, ChevronDown, RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { useFilters } from './MainLayout';
+
+const TIME_SLOTS = [
+  { value: 'all', label: 'All Slots' },
+  { value: 'morning', label: '🌅  Morning' },
+  { value: 'afternoon', label: '☀️  Afternoon' },
+  { value: 'evening', label: '🌇  Evening' },
+  { value: 'night', label: '🌙  Night' },
+];
 
 export function TopHeader() {
+  const {
+    movies,
+    dates,
+    selectedMovie,
+    selectedDate,
+    selectedTimeSlot,
+    setSelectedMovie,
+    setSelectedDate,
+    setSelectedTimeSlot,
+  } = useFilters();
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-op-border bg-op-bg/80 px-6 backdrop-blur-md">
       
       {/* Filter Controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* Movie Selector */}
-        <select className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card px-4 pr-8 text-sm font-medium text-op-textMain outline-none transition-colors hover:border-op-muted focus:border-op-accent">
-          <option>Dune: Part Two</option>
-          <option>Oppenheimer</option>
-          <option>Deadpool & Wolverine</option>
-        </select>
-
-        {/* Date Picker (Mock) */}
-        <div className="flex h-10 items-center gap-2 rounded-[12px] border border-op-border bg-op-card px-4 text-sm font-medium text-op-textMain">
-          <Calendar size={16} className="text-op-muted" />
-          <span>2026-05-24</span>
+        <div className="relative group">
+          <Film size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <select
+            value={selectedMovie}
+            onChange={(e) => setSelectedMovie(e.target.value)}
+            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[200px]"
+          >
+            <option value="all">All Movies</option>
+            {movies.map((movie) => (
+              <option key={movie} value={movie}>
+                {movie}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
         </div>
 
-        {/* Time Selector (Mock) */}
-        <div className="flex h-10 items-center gap-2 rounded-[12px] border border-op-border bg-op-card px-4 text-sm font-medium text-op-textMain">
-          <Clock size={16} className="text-op-muted" />
-          <span>10:00 Standard</span>
+        {/* Date Selector */}
+        <div className="relative group">
+          <Calendar size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <select
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+          >
+            {dates.map((date) => (
+              <option key={date.value} value={date.value}>
+                {date.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
+        </div>
+
+        {/* Time Slot Selector */}
+        <div className="relative group">
+          <Clock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <select
+            value={selectedTimeSlot}
+            onChange={(e) => setSelectedTimeSlot(e.target.value)}
+            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[170px]"
+          >
+            {TIME_SLOTS.map((slot) => (
+              <option key={slot.value} value={slot.value}>
+                {slot.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
         </div>
       </div>
 
