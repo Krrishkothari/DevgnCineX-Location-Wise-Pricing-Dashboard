@@ -31,13 +31,13 @@ async function savePrices(newResults) {
   
   // Load existing records into Map
   existingData.data.forEach(item => {
-    const key = `${item.cinema}-${item.location}-${item.movie}-${item.format}-${item.seat_category}`;
+    const key = `${item.cinema}-${item.location}-${item.movie}-${item.format}-${item.seat_category}-${item.date || ''}`;
     mergedDataMap.set(key, item);
   });
 
   // Overwrite with new scraped records
   newResults.forEach(item => {
-    const key = `${item.cinema}-${item.location}-${item.movie}-${item.format}-${item.seat_category}`;
+    const key = `${item.cinema}-${item.location}-${item.movie}-${item.format}-${item.seat_category}-${item.date || ''}`;
     mergedDataMap.set(key, item);
   });
 

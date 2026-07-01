@@ -19,6 +19,14 @@ app.get('/api/prices', (req, res) => {
     
     const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
     const parsedData = JSON.parse(rawData);
+
+    // Optional date filtering
+    const dateFilter = req.query.date;
+    if (dateFilter) {
+      parsedData.data = parsedData.data.filter((entry) => entry.date === dateFilter);
+      parsedData.total_entries = parsedData.data.length;
+    }
+
     res.status(200).json(parsedData);
   } catch (error) {
     console.error('[API] Error reading prices data:', error);
@@ -35,7 +43,13 @@ app.get('/api/movies', (req, res) => {
 
     const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
     const parsedData = JSON.parse(rawData);
-    const movies = [...new Set(parsedData.data.map((entry) => entry.movie))].filter(Boolean).sort();
+    
+    let entries = parsedData.data;
+    if (req.query.date) {
+      entries = entries.filter(entry => entry.date === req.query.date);
+    }
+    
+    const movies = [...new Set(entries.map((entry) => entry.movie))].filter(Boolean).sort();
     res.status(200).json({ movies });
   } catch (error) {
     console.error('[API] Error reading movies:', error);
@@ -81,11 +95,7 @@ app.post('/api/scrape/trigger', async (req, res) => {
   try {
     console.log('[API] Manual scrape triggered');
     await scraperQueue.add('scrape-bms', {});
-    await scraperQueue.add('scrape-pvr', {});
-    await scraperQueue.add('scrape-inox', {});
-    await scraperQueue.add('scrape-cinepolis', {});
-    await scraperQueue.add('scrape-moviemax', {});
-    res.status(200).json({ message: 'Scrape jobs successfully added to queue.' });
+    res.status(200).json({ message: 'Scrape job successfully added to queue.' });
   } catch (error) {
     console.error('[API] Error triggering scrape:', error);
     res.status(500).json({ error: 'Failed to trigger scrape.' });

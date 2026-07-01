@@ -62,7 +62,7 @@ export function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { selectedMovie, selectedTimeSlot } = useFilters();
+  const { selectedMovie, selectedDate, selectedTimeSlot } = useFilters();
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -79,13 +79,15 @@ export function DashboardScreen() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const res = await fetchPrices();
+      const res = await fetchPrices(selectedDate);
       setRawData(res.data || []);
       setLoading(false);
     }
 
-    loadData();
-  }, []);
+    if (selectedDate) {
+      loadData();
+    }
+  }, [selectedDate]);
 
   // Apply filters and group data
   const data = useMemo(() => {
@@ -258,7 +260,7 @@ export function DashboardScreen() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        key={`${selectedMovie}-${selectedTimeSlot}`}
+        key={`${selectedMovie}-${selectedDate}-${selectedTimeSlot}`}
       >
         {data.map((theatreData) => (
           <motion.div key={theatreData.id} variants={itemVariants} className="h-full">

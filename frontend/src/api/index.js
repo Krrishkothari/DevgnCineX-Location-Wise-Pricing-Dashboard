@@ -5,9 +5,11 @@ const api = axios.create({
   timeout: 10000,
 });
 
-export const fetchPrices = async () => {
+export const fetchPrices = async (date) => {
   try {
-    const response = await api.get('/prices');
+    const params = {};
+    if (date) params.date = date;
+    const response = await api.get('/prices', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching prices from backend:', error);
@@ -25,9 +27,11 @@ export const triggerScrape = async () => {
   }
 };
 
-export const fetchMovies = async () => {
+export const fetchMovies = async (date) => {
   try {
-    const response = await api.get('/movies');
+    const params = {};
+    if (date) params.date = date;
+    const response = await api.get('/movies', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching movies:', error);

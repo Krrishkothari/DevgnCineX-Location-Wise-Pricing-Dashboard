@@ -18,18 +18,30 @@ export function MainLayout() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('all');
 
+  // Fetch dates on mount
   useEffect(() => {
-    async function loadFilterData() {
-      const [moviesRes, datesRes] = await Promise.all([fetchMovies(), fetchDates()]);
-      setMovies(moviesRes.movies || []);
+    async function loadDates() {
+      const datesRes = await fetchDates();
       setDates(datesRes.dates || []);
-      // Default to today's date
       if (datesRes.dates && datesRes.dates.length > 0) {
         setSelectedDate(datesRes.dates[0].value);
       }
     }
-    loadFilterData();
+    loadDates();
   }, []);
+
+  // Fetch movies when selectedDate changes
+  useEffect(() => {
+    async function loadMovies() {
+      if (selectedDate) {
+        const moviesRes = await fetchMovies(selectedDate);
+        setMovies(moviesRes.movies || []);
+        // Reset selected movie if it's not 'all' to avoid invalid selection for the new date
+        setSelectedMovie('all');
+      }
+    }
+    loadMovies();
+  }, [selectedDate]);
 
   const filterValues = {
     movies,

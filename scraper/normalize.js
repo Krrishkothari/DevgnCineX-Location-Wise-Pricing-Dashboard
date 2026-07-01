@@ -5,6 +5,9 @@
  * @returns {Object} The normalized data object.
  */
 function normalizePrice(raw, source) {
+  // Default to today's date in YYYY-MM-DD format (IST)
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // en-CA gives YYYY-MM-DD
+
   return {
     cinema: source || raw.cinema,
     location: raw.location,
@@ -14,6 +17,7 @@ function normalizePrice(raw, source) {
     price: Math.round(Number(raw.price)),
     seat_category: raw.seat_category || 'N/A',
     showtime: raw.showtime || '',
+    date: raw.date || today,
     scraped_at: new Date().toISOString(),
   };
 }
