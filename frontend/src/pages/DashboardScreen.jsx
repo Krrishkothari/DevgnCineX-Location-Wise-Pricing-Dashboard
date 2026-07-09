@@ -57,18 +57,74 @@ function isInTimeSlot(timeStr, slot) {
   }
 }
 
+const ALLOWED_CINEMAS = {
+  "Gurugram": ["DEVGN CINEX", "INOX WORLD MARK", "INOX AIPL", "CINEPOLIS AIRIA MALL", "WAVE URBANA PREMIUM", "PVR ELAN TOWN CENTRE"],
+  "Gandhinagar": ["DEVGN CINEX", "INOX ADALAJ"],
+  "Ahmedabad": ["DEVGN CINEX", "PVR MOTERA", "RAJHANS CBD"],
+  "Thane": ["DEVGN CINEX", "CINEPOLIS VIVIANA", "INOX R MALL"],
+  "Ghaziabad": ["DEVGN CINEX", "PVR VVIP"],
+  "Kanpur": ["DEVGN CINEX", "INOX Z SQUARE", "PVR DEEP", "PVR SOUTH X", "RAVE 3"],
+  "Bahadurgarh": ["DEVGN CINEX", "MOVIETIME CINEMAS", "KRB CINEPLEX"],
+  "Anand": ["DEVGN CINEX", "PVR MARUTI SOLARIS", "INOX CITY PULSE MALL"],
+  "Bhuj": ["DEVGN CINEX"],
+  "Guwahati": ["DEVGN CINEX", "PVR CITI CENTRE", "CINEPOLIS CENTRAL MALL"],
+  "Surendranagar": ["DEVGN CINEX"],
+  "Mulund": ["DEVGN CINEX", "MIRAJ CINEMAS"],
+  "Meerut": ["DEVGN CINEX", "INOX PVS MALL", "WAVE"],
+  "Ratlam": ["DEVGN CINEX", "GAYATRI CINEMA"],
+  "Hapur": ["DEVGN CINEX"],
+  "Ghazipur": ["DEVGN CINEX"],
+  "Raebareli": ["DEVGN CINEX"]
+};
+
+// Map Excel names to BookMyShow's actual weirdly formatted names if direct match fails
+const CINEMA_ALIASES = {
+  "CINEPOLIS VIVIANA": "Lake Shore",
+  "INOX R MALL": "Insignia at R Mall",
+  "PVR CITI CENTRE": "City Centre"
+};
+
+function isAllowedCinema(scrapedCinemaName, location) {
+  const allowedList = ALLOWED_CINEMAS[location];
+  if (!allowedList) return true; // If location is unknown/not mapped, allow it to be safe
+
+  const normalize = (str) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  const scrapedNormalized = normalize(scrapedCinemaName);
+
+  for (const allowed of allowedList) {
+    if (scrapedNormalized.includes(normalize(allowed))) {
+      return true;
+    }
+    if (CINEMA_ALIASES[allowed] && scrapedNormalized.includes(normalize(CINEMA_ALIASES[allowed]))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function DashboardScreen() {
   const [rawData, setRawData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { selectedMovie, selectedDate, selectedTimeSlot } = useFilters();
+  const { selectedMovie, selectedLocation, selectedDate, selectedTimeSlot } = useFilters();
+
+  const loadData = async () => {
+    setLoading(true);
+    const res = await fetchPrices(selectedDate);
+    setRawData(res.data || []);
+    setLoading(false);
+  };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
+      // First, fetch whatever we currently have
+      await loadData();
+      
+      // Then trigger a new scrape in the background
       await triggerScrape();
-      alert('Scrape triggered successfully! The data will update in the background. Please wait a minute and refresh the page manually.');
+      alert('Scrape triggered successfully! The data is updating in the background and will refresh automatically.');
     } catch (err) {
       alert('Failed to trigger scrape. Please ensure the backend is running.');
     } finally {
@@ -77,16 +133,19 @@ export function DashboardScreen() {
   };
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      const res = await fetchPrices(selectedDate);
-      setRawData(res.data || []);
-      setLoading(false);
-    }
-
     if (selectedDate) {
       loadData();
     }
+    
+    // Auto-poll every 5 seconds to show incremental scraper updates
+    const interval = setInterval(async () => {
+      if (selectedDate) {
+        const res = await fetchPrices(selectedDate);
+        setRawData(res.data || []);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [selectedDate]);
 
   // Apply filters and group data
@@ -97,7 +156,14 @@ export function DashboardScreen() {
       filtered = filtered.filter((entry) => entry.movie === selectedMovie);
     }
 
-    // Step 2: Filter by time slot (check showtime against slot ranges)
+    // Step 2: Filter by location and strictly allowed cinemas for that location
+    if (selectedLocation) {
+      filtered = filtered.filter((entry) => 
+        entry.location === selectedLocation && isAllowedCinema(entry.cinema, selectedLocation)
+      );
+    }
+
+    // Step 3: Filter by time slot (check showtime against slot ranges)
     if (selectedTimeSlot !== 'all') {
       filtered = filtered.filter((entry) => {
         if (!entry.showtime) return false;
@@ -146,8 +212,16 @@ export function DashboardScreen() {
       }),
     }));
 
+    console.log("DashboardScreen Debug:", { 
+      raw: rawData.length, 
+      selectedDate, 
+      selectedLocation, 
+      filtered: filtered.length, 
+      result: result.length 
+    });
+
     return result;
-  }, [rawData, selectedMovie, selectedTimeSlot]);
+  }, [rawData, selectedMovie, selectedLocation, selectedTimeSlot]);
 
   if (loading) {
     return (
@@ -197,9 +271,11 @@ export function DashboardScreen() {
             <div className="text-5xl mb-4">🎬</div>
             <h3 className="text-xl font-semibold text-op-textMain mb-2">No results found</h3>
             <p>
-              {selectedMovie !== 'all' || selectedTimeSlot !== 'all'
-                ? 'Try adjusting your filters to see pricing data.'
-                : 'Run the scrapers via the Operations screen to populate the dashboard.'}
+              {selectedLocation
+                ? 'No movie listings available for the selected location.'
+                : selectedMovie !== 'all' || selectedTimeSlot !== 'all'
+                  ? 'Try adjusting your filters to see pricing data.'
+                  : 'Run the scrapers via the Operations screen to populate the dashboard.'}
             </p>
           </div>
         </div>
@@ -215,6 +291,9 @@ export function DashboardScreen() {
           <h2 className="text-2xl font-bold text-op-textMain">Pricing Dashboard</h2>
           <p className="text-sm text-op-muted mt-1">
             Real-time overview of movie ticket prices
+            {selectedLocation && (
+              <span className="ml-2 text-op-accent font-medium">• Location: {selectedLocation}</span>
+            )}
             {selectedMovie !== 'all' && (
               <span className="ml-2 text-op-accent font-medium">• Showing: {selectedMovie}</span>
             )}

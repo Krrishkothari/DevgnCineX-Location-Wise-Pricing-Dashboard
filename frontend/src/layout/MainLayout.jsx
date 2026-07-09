@@ -15,6 +15,7 @@ export function MainLayout() {
   const [movies, setMovies] = useState([]);
   const [dates, setDates] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('all');
 
@@ -47,9 +48,11 @@ export function MainLayout() {
     movies,
     dates,
     selectedMovie,
+    selectedLocation,
     selectedDate,
     selectedTimeSlot,
     setSelectedMovie,
+    setSelectedLocation,
     setSelectedDate,
     setSelectedTimeSlot,
   };

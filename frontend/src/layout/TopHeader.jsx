@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Film, ChevronDown, RefreshCw } from 'lucide-react';
+import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useFilters } from './MainLayout';
 
@@ -11,14 +11,22 @@ const TIME_SLOTS = [
   { value: 'night', label: '🌙  Night' },
 ];
 
+const TARGET_LOCATIONS = [
+  'Ahmedabad', 'Anand', 'Bahadurgarh', 'Bhuj', 'Gandhinagar', 'Ghaziabad', 
+  'Ghazipur', 'Gurugram', 'Guwahati', 'Hapur', 'Kanpur', 'Meerut', 
+  'Mulund', 'Raebareli', 'Ratlam', 'Surendranagar', 'Thane'
+];
+
 export function TopHeader() {
   const {
     movies,
     dates,
     selectedMovie,
+    selectedLocation,
     selectedDate,
     selectedTimeSlot,
     setSelectedMovie,
+    setSelectedLocation,
     setSelectedDate,
     setSelectedTimeSlot,
   } = useFilters();
@@ -40,6 +48,24 @@ export function TopHeader() {
             {movies.map((movie) => (
               <option key={movie} value={movie}>
                 {movie}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
+        </div>
+
+        {/* Location Selector */}
+        <div className="relative group">
+          <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+          >
+            <option value="">Select Location</option>
+            {TARGET_LOCATIONS.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
               </option>
             ))}
           </select>

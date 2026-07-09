@@ -24,8 +24,15 @@ app.get('/api/prices', (req, res) => {
     const dateFilter = req.query.date;
     if (dateFilter) {
       parsedData.data = parsedData.data.filter((entry) => entry.date === dateFilter);
-      parsedData.total_entries = parsedData.data.length;
     }
+
+    // Optional location filtering
+    const locationFilter = req.query.location;
+    if (locationFilter) {
+      parsedData.data = parsedData.data.filter((entry) => entry.location === locationFilter);
+    }
+
+    parsedData.total_entries = parsedData.data.length;
 
     res.status(200).json(parsedData);
   } catch (error) {
@@ -47,6 +54,9 @@ app.get('/api/movies', (req, res) => {
     let entries = parsedData.data;
     if (req.query.date) {
       entries = entries.filter(entry => entry.date === req.query.date);
+    }
+    if (req.query.location) {
+      entries = entries.filter(entry => entry.location === req.query.location);
     }
     
     const movies = [...new Set(entries.map((entry) => entry.movie))].filter(Boolean).sort();
