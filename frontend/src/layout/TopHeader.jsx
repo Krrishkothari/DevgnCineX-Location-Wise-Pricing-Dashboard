@@ -2,6 +2,7 @@ import React from 'react';
 import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useFilters } from './MainLayout';
+import { triggerScrape } from '../api';
 
 const TIME_SLOTS = [
   { value: 'all', label: 'All Slots' },
@@ -18,6 +19,20 @@ const TARGET_LOCATIONS = [
 ];
 
 export function TopHeader() {
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await triggerScrape();
+      alert('Scrape triggered successfully! The data is updating in the background and will refresh automatically.');
+    } catch (err) {
+      alert('Failed to trigger scrape. Please ensure the backend is running.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const {
     movies,
     dates,
@@ -119,8 +134,14 @@ export function TopHeader() {
         </div>
 
         {/* Refresh Button */}
-        <Button variant="ghost" size="icon" className="group rounded-full bg-op-card border border-op-border hover:bg-op-border">
-          <RefreshCw size={16} className="text-op-textMain transition-transform duration-500 group-hover:rotate-180" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className={`group rounded-full border border-op-border ${isRefreshing ? 'bg-op-border text-op-muted' : 'bg-op-card hover:bg-op-border'}`}
+        >
+          <RefreshCw size={16} className={`text-op-textMain transition-transform duration-500 ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180'}`} />
         </Button>
       </div>
 

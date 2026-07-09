@@ -101,6 +101,17 @@ const connection = process.env.REDIS_URL
 
 const scraperQueue = new Queue('scraper-jobs', { connection });
 
+// Schedule the repeatable job to run every 1 hour automatically
+scraperQueue.add(
+  'scrape-bms-hourly',
+  {},
+  { repeat: { pattern: '0 * * * *' } }
+).then(() => {
+  console.log('[API] Hourly scraper job scheduled successfully.');
+}).catch(err => {
+  console.error('[API] Failed to schedule repeatable job:', err);
+});
+
 app.post('/api/scrape/trigger', async (req, res) => {
   try {
     console.log('[API] Manual scrape triggered');

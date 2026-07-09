@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node scheduler.js",
     "dev": "nodemon scheduler.js",
+    "scrape:all": "node run-all-scrapers.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,6 +18,7 @@
     "dotenv": "^17.4.2",
     "ioredis": "^5.11.1",
     "node-cron": "^4.5.0",
+    "p-limit": "^4.0.0",
     "playwright": "^1.61.1",
     "playwright-extra": "^4.3.6",
     "playwright-extra-plugin-stealth": "^0.0.1",
