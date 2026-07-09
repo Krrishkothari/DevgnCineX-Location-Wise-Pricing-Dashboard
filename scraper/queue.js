@@ -42,11 +42,12 @@ const worker = new Worker('scraper-jobs', async (job) => {
     case 'scrape-bms': {
       // Parallel scrape of all locations (same pattern as run-all-scrapers.js)
       const limit = pLimit(CONCURRENCY);
+      const regionLocks = new Map(); // Prevent Cloudflare blocks on shared regions
       const tasks = locations.map((loc) =>
         limit(async () => {
           await randomDelay(MIN_DELAY_MS, MAX_DELAY_MS);
           try {
-            return await scrapeLocation(loc);
+            return await scrapeLocation(loc, regionLocks);
           } catch (err) {
             console.error(`[Worker] Location ${loc.locationName} failed: ${err.message}`);
             return { locationName: loc.locationName, success: false, entryCount: 0, entries: [], error: err.message };

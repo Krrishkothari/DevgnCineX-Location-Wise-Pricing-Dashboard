@@ -38,13 +38,17 @@ async function main() {
 
   const limit = pLimit(CONCURRENCY);
 
+  // Shared region lock: prevents two locations from hitting the same BMS region
+  // explore page simultaneously (which triggers Cloudflare blocks).
+  const regionLocks = new Map();
+
   const tasks = locations.map((loc) =>
     limit(async () => {
       // Random delay to stagger requests within the concurrency pool
       await randomDelay(MIN_DELAY_MS, MAX_DELAY_MS);
 
       try {
-        const result = await scrapeLocation(loc);
+        const result = await scrapeLocation(loc, regionLocks);
         return result;
       } catch (err) {
         // This catch should rarely fire since scrapeLocation has its own try/catch,

@@ -174,9 +174,12 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
  * Launches its own browser for full error isolation.
  *
  * @param {Object} locationConfig — { locationName: string, cinemas: Array }
+ * @param {Map}    [regionLocks]  — Optional shared Map used to serialize access
+ *                                  to the same BMS region explore page across
+ *                                  parallel location scrapers (prevents Cloudflare blocks).
  * @returns {Object} { locationName, success, entryCount, entries, error? }
  */
-async function scrapeLocation(locationConfig) {
+async function scrapeLocation(locationConfig, regionLocks) {
   const { locationName, cinemas } = locationConfig;
   const logPrefix = `[BMS:${locationName}]`;
   let browser = null;
@@ -243,14 +246,47 @@ async function scrapeLocation(locationConfig) {
       console.log(`${logPrefix} ========================================`);
 
       const exploreUrl = `https://in.bookmyshow.com/explore/movies-${region}`;
-      console.log(`${logPrefix} Navigating to ${exploreUrl}...`);
 
-      try {
-        await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(3000);
-      } catch (err) {
-        console.log(`${logPrefix} Failed to load region ${region}: ${err.message}`);
-        continue;
+      // ---- Region lock: serialize access to the same explore page across parallel scrapers ----
+      // Without this, e.g. Gandhinagar and Ahmedabad both hitting movies-gandhinagar
+      // simultaneously causes Cloudflare to block one of them.
+      if (regionLocks) {
+        const existing = regionLocks.get(region) || Promise.resolve();
+        let releaseLock;
+        const myLock = new Promise(resolve => { releaseLock = resolve; });
+        regionLocks.set(region, existing.then(() => myLock));
+        await existing; // wait for any prior location using this region to finish navigating
+        console.log(`${logPrefix} Acquired region lock for '${region}', navigating to ${exploreUrl}...`);
+
+        try {
+          await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          try {
+            await page.waitForSelector('a[href*="/movies/"]', { timeout: 15000 });
+          } catch (e) {
+            console.log(`${logPrefix}   No movie cards appeared within 15s, page might be blocked or empty.`);
+          }
+          await page.waitForTimeout(2000);
+        } catch (err) {
+          console.log(`${logPrefix} Failed to load region ${region}: ${err.message}`);
+          releaseLock(); // release even on failure
+          continue;
+        }
+        releaseLock(); // release after page has loaded
+      } else {
+        // No lock (solo run) — navigate directly
+        console.log(`${logPrefix} Navigating to ${exploreUrl}...`);
+        try {
+          await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          try {
+            await page.waitForSelector('a[href*="/movies/"]', { timeout: 15000 });
+          } catch (e) {
+            console.log(`${logPrefix}   No movie cards appeared within 15s, page might be blocked or empty.`);
+          }
+          await page.waitForTimeout(2000);
+        } catch (err) {
+          console.log(`${logPrefix} Failed to load region ${region}: ${err.message}`);
+          continue;
+        }
       }
 
       // Discover movies in this region
@@ -282,12 +318,12 @@ async function scrapeLocation(locationConfig) {
         const movieUrl = movie.href.startsWith('http') ? movie.href : `https://in.bookmyshow.com${movie.href}`;
         console.log(`\n${logPrefix} --- ${movie.title} (${region}) ---`);
 
-        // Visit movie page and click "Book tickets"
+        // Visit movie page and wait dynamically for "Book tickets"
         try {
           await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-          await page.waitForTimeout(2000);
+          await page.waitForSelector('button:has-text("Book tickets"), a:has-text("Book tickets")', { timeout: 15000 });
         } catch (err) {
-          console.log(`${logPrefix}   Failed to load movie page: ${err.message}`);
+          console.log(`${logPrefix}   Failed to load movie page or find book button: ${err.message}`);
           continue;
         }
 
