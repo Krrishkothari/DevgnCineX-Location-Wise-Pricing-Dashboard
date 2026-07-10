@@ -145,7 +145,6 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
       for (const cat of categories) {
         const price = parseFloat(cat.curPrice) || 0;
         const seatCategory = cat.priceDesc || 'Standard';
-
         if (price > 0) {
           try {
             const raw = {

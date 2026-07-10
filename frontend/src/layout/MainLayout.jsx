@@ -64,7 +64,7 @@ export function MainLayout() {
         <div className="flex flex-1 flex-col">
           <TopHeader />
           <main className="flex-1 overflow-x-hidden overflow-y-auto">
-            <div className="mx-auto w-full max-w-[1600px] p-6 md:p-8 lg:p-10">
+            <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 md:p-8 lg:p-10">
               <Outlet />
             </div>
           </main>

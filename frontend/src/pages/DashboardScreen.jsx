@@ -173,6 +173,7 @@ export function DashboardScreen() {
   const [rawData, setRawData] = useState([]);
   const [baselineData, setBaselineData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mobileTab, setMobileTab] = useState('all');
 
   const {
     selectedMovie,
@@ -571,31 +572,31 @@ export function DashboardScreen() {
   return (
     <div className="flex flex-col gap-8">
       {/* Header section with Manual Refresh button */}
-      <div className="flex justify-between items-center bg-op-card/50 p-6 rounded-[16px] border border-op-border">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-op-card/50 p-4 sm:p-6 rounded-[16px] border border-op-border">
         <div>
           <h2 className="text-2xl font-bold text-op-textMain">Pricing Dashboard</h2>
-          <p className="text-sm text-op-muted mt-1">
+          <p className="text-sm text-op-muted mt-1 leading-relaxed">
             Real-time overview of movie ticket prices
             {selectedLocation && (
-              <span className="text-op-muted">• {data.length} Cinemas</span>
+              <span className="text-op-muted whitespace-nowrap">• {data.length} Cinemas</span>
             )}
             {selectedMovie !== 'all' && (
-              <span className="ml-2 text-op-accent font-medium">• Showing: {selectedMovie}</span>
+              <span className="ml-2 text-op-accent font-medium whitespace-nowrap">• Showing: {selectedMovie}</span>
             )}
             {searchQuery !== '' && (
-              <span className="ml-2 text-op-accent font-medium">• Search: "{searchQuery}"</span>
+              <span className="ml-2 text-op-accent font-medium whitespace-nowrap">• Search: "{searchQuery}"</span>
             )}
             {selectedTimeSlot !== 'all' && (
-              <span className="ml-2 text-op-accent font-medium">• {selectedTimeSlot.charAt(0).toUpperCase() + selectedTimeSlot.slice(1)} shows</span>
+              <span className="ml-2 text-op-accent font-medium whitespace-nowrap">• {selectedTimeSlot.charAt(0).toUpperCase() + selectedTimeSlot.slice(1)} shows</span>
             )}
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-op-muted font-medium">{data.length} results</span>
+        <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+          <span className="text-sm text-op-muted font-medium shrink-0">{data.length} results</span>
           <button 
             onClick={handleExport}
             disabled={data.length === 0}
-            className="flex items-center gap-2 bg-op-card hover:bg-op-border text-op-textMain text-sm font-medium py-2 px-4 rounded-lg border border-op-border transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 bg-op-card hover:bg-op-border text-op-textMain text-sm font-medium py-2 px-4 rounded-lg border border-op-border transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             <span>📊</span> Export to Excel
           </button>
@@ -607,15 +608,37 @@ export function DashboardScreen() {
         <LocationSummaryCard summary={summary} isWeekend={isSelectedWeekend} />
       )}
 
+      {/* Mobile Toggle Tab */}
+      <div className="flex sm:hidden w-full p-1 bg-op-card/50 rounded-lg border border-op-border mt-4 mb-2">
+        <button 
+          onClick={() => setMobileTab('all')}
+          className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === 'all' ? 'bg-op-accent text-white' : 'text-op-muted hover:text-op-textMain'}`}
+        >
+          All
+        </button>
+        <button 
+          onClick={() => setMobileTab('owned')}
+          className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === 'owned' ? 'bg-op-accent text-white' : 'text-op-muted hover:text-op-textMain'}`}
+        >
+          Devgn Cinex
+        </button>
+        <button 
+          onClick={() => setMobileTab('comp')}
+          className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${mobileTab === 'comp' ? 'bg-op-accent text-white' : 'text-op-muted hover:text-op-textMain'}`}
+        >
+          Competitors
+        </button>
+      </div>
+
       {/* Responsive Grid Layout for Theatre Cards */}
       <motion.div 
-        className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        className="grid w-full grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        key={`${searchQuery}-${selectedDate}-${selectedTimeSlot}`}
+        key={`${searchQuery}-${selectedDate}-${selectedTimeSlot}-${mobileTab}`}
       >
-        {data.map((theatreData) => (
+        {data.filter(t => mobileTab === 'all' || (mobileTab === 'owned' && t.owned) || (mobileTab === 'comp' && !t.owned)).map((theatreData) => (
           <CinemaCard key={theatreData.id} theatreData={theatreData} />
         ))}
       </motion.div>
@@ -773,7 +796,7 @@ function CinemaCard({ theatreData }) {
         </CardHeader>
         
         <CardContent className="flex flex-col gap-4 flex-1">
-          <div className="flex flex-wrap items-center gap-2 max-h-[52px] overflow-y-auto pb-1">
+          <div className="flex flex-wrap items-center gap-2 max-h-[80px] overflow-y-auto pb-1">
             {theatreData.showtimes.length > 0 ? (
               theatreData.showtimes.map((st, i) => {
                 const isSelected = st === selectedShowtime;

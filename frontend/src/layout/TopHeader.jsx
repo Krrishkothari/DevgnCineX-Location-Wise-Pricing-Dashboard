@@ -49,17 +49,17 @@ export function TopHeader() {
   } = useFilters();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-op-border bg-op-bg/80 px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex min-h-[4rem] flex-col md:flex-row items-start md:items-center justify-between border-b border-op-border bg-op-bg/80 px-4 md:px-6 py-3 md:py-0 backdrop-blur-md gap-4">
       
       {/* Filter Controls */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-3 flex-wrap w-full md:w-auto">
         {/* Movie Selector Dropdown */}
-        <div className="relative group">
+        <div className="relative group w-full sm:w-auto">
           <Film size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
           <select
             value={selectedMovie}
             onChange={(e) => setSelectedMovie(e.target.value)}
-            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
           >
             <option value="all">All Movies</option>
             {movies.map((movie) => (
@@ -72,24 +72,24 @@ export function TopHeader() {
         </div>
 
         {/* Movie Search */}
-        <div className="relative group">
+        <div className="relative group w-full sm:w-auto flex-1">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
           <input
             type="text"
             placeholder="Search movies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-4 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[200px]"
+            className="h-10 w-full appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-4 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[200px]"
           />
         </div>
 
         {/* Location Selector */}
-        <div className="relative group">
+        <div className="relative group w-full sm:w-auto">
           <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
           <select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
           >
             <option value="">All Locations</option>
             {TARGET_LOCATIONS.map((loc) => (
@@ -102,12 +102,12 @@ export function TopHeader() {
         </div>
 
         {/* Date Selector */}
-        <div className="relative group">
+        <div className="relative group w-full sm:w-auto">
           <Calendar size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
           <select
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
           >
             {dates.map((date) => (
               <option key={date.value} value={date.value}>
@@ -119,12 +119,12 @@ export function TopHeader() {
         </div>
 
         {/* Time Slot Selector */}
-        <div className="relative group">
+        <div className="relative group w-full sm:w-auto">
           <Clock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
           <select
             value={selectedTimeSlot}
             onChange={(e) => setSelectedTimeSlot(e.target.value)}
-            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[170px]"
+            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[170px]"
           >
             {TIME_SLOTS.map((slot) => (
               <option key={slot.value} value={slot.value}>
@@ -137,7 +137,7 @@ export function TopHeader() {
       </div>
 
       {/* Status & Actions */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 w-full md:w-auto justify-end">
         {/* Refresh Button */}
         <Button 
           variant="ghost" 
