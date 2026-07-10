@@ -44,12 +44,32 @@ async function savePrices(newResults) {
     // Load existing records into Map
     existingData.data.forEach(item => {
       const key = `${item.cinema}-${item.location}-${item.movie}-${item.format}-${item.seat_category}-${item.showtime || ''}-${item.date || ''}`;
+      // Initialize history if missing from older data
+      if (!item.history) item.history = [{ price: item.price, scraped_at: item.scraped_at }];
       mergedDataMap.set(key, item);
     });
 
-    // Overwrite with new scraped records
+    // Overwrite with new scraped records, but append to history
     newResults.forEach(item => {
       const key = `${item.cinema}-${item.location}-${item.movie}-${item.format}-${item.seat_category}-${item.showtime || ''}-${item.date || ''}`;
+      
+      const existing = mergedDataMap.get(key);
+      if (existing) {
+        let history = existing.history || [{ price: existing.price, scraped_at: existing.scraped_at }];
+        
+        // Append current scrape
+        history.push({ price: item.price, scraped_at: item.scraped_at });
+        
+        // Optional: Deduplicate history by scraped_at day to avoid bloating if scraped very frequently,
+        // or just rely on a sliding 30-day window. Here we prune anything older than 30 days.
+        const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+        history = history.filter(h => new Date(h.scraped_at).getTime() > thirtyDaysAgo);
+        
+        item.history = history;
+      } else {
+        item.history = [{ price: item.price, scraped_at: item.scraped_at }];
+      }
+      
       mergedDataMap.set(key, item);
     });
 

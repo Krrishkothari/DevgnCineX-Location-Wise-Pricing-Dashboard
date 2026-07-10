@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin } from 'lucide-react';
+import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin, Search } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useFilters } from './MainLayout';
 import { triggerScrape } from '../api';
@@ -37,10 +37,12 @@ export function TopHeader() {
     movies,
     dates,
     selectedMovie,
+    searchQuery,
     selectedLocation,
     selectedDate,
     selectedTimeSlot,
     setSelectedMovie,
+    setSearchQuery,
     setSelectedLocation,
     setSelectedDate,
     setSelectedTimeSlot,
@@ -50,14 +52,14 @@ export function TopHeader() {
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-op-border bg-op-bg/80 px-6 backdrop-blur-md">
       
       {/* Filter Controls */}
-      <div className="flex items-center gap-3">
-        {/* Movie Selector */}
+      <div className="flex items-center gap-3 flex-wrap">
+        {/* Movie Selector Dropdown */}
         <div className="relative group">
           <Film size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
           <select
             value={selectedMovie}
             onChange={(e) => setSelectedMovie(e.target.value)}
-            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[200px]"
+            className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
           >
             <option value="all">All Movies</option>
             {movies.map((movie) => (
@@ -69,6 +71,18 @@ export function TopHeader() {
           <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
         </div>
 
+        {/* Movie Search */}
+        <div className="relative group">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <input
+            type="text"
+            placeholder="Search movies..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-10 appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-4 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[200px]"
+          />
+        </div>
+
         {/* Location Selector */}
         <div className="relative group">
           <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
@@ -77,7 +91,7 @@ export function TopHeader() {
             onChange={(e) => setSelectedLocation(e.target.value)}
             className="h-10 cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
           >
-            <option value="">Select Location</option>
+            <option value="">All Locations</option>
             {TARGET_LOCATIONS.map((loc) => (
               <option key={loc} value={loc}>
                 {loc}

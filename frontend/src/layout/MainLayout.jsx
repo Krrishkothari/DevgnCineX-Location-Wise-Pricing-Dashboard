@@ -14,6 +14,7 @@ export function MainLayout() {
   const [movies, setMovies] = useState([]);
   const [dates, setDates] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('all');
@@ -36,7 +37,6 @@ export function MainLayout() {
       if (selectedDate) {
         const moviesRes = await fetchMovies(selectedDate, selectedLocation);
         setMovies(moviesRes.movies || []);
-        // Reset selected movie if it's not 'all' to avoid invalid selection for the new date or location
         setSelectedMovie('all');
       }
     }
@@ -47,10 +47,12 @@ export function MainLayout() {
     movies,
     dates,
     selectedMovie,
+    searchQuery,
     selectedLocation,
     selectedDate,
     selectedTimeSlot,
     setSelectedMovie,
+    setSearchQuery,
     setSelectedLocation,
     setSelectedDate,
     setSelectedTimeSlot,

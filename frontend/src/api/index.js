@@ -5,10 +5,11 @@ const api = axios.create({
   timeout: 10000,
 });
 
-export const fetchPrices = async (date) => {
+export const fetchPrices = async (date, owned = false) => {
   try {
     const params = {};
     if (date) params.date = date;
+    if (owned) params.owned = 'true';
     const response = await api.get('/prices', { params });
     return response.data;
   } catch (error) {
@@ -47,5 +48,17 @@ export const fetchDates = async () => {
   } catch (error) {
     console.error('Error fetching dates:', error);
     return { dates: [] };
+  }
+};
+
+export const fetchHistory = async (cinema, location, movie, seat_category, date, showtime) => {
+  try {
+    const response = await api.get('/history', {
+      params: { cinema, location, movie, seat_category, date, showtime }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    return { history: [] };
   }
 };

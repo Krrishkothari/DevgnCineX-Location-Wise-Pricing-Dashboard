@@ -25,6 +25,17 @@ app.get('/api/prices', (req, res) => {
     if (dateFilter) {
       parsedData.data = parsedData.data.filter((entry) => entry.date === dateFilter);
     }
+    
+    // Optional owned filtering
+    if (req.query.owned === 'true') {
+      parsedData.data = parsedData.data.filter((entry) => {
+        const cinema = entry.cinema.toLowerCase();
+        return cinema.includes('devgn') || cinema.includes('owned');
+      });
+    }
+
+    // Strip history array from main dashboard response to save bandwidth
+    parsedData.data = parsedData.data.map(({ history, ...rest }) => rest);
 
     // Optional location filtering
     const locationFilter = req.query.location;
@@ -38,6 +49,41 @@ app.get('/api/prices', (req, res) => {
   } catch (error) {
     console.error('[API] Error reading prices data:', error);
     res.status(500).json({ error: 'Failed to load pricing data.' });
+  }
+});
+
+// Returns price history for a specific movie + cinema + category + date + showtime
+app.get('/api/history', (req, res) => {
+  try {
+    const { cinema, location, movie, seat_category, date, showtime } = req.query;
+    if (!cinema || !location || !movie || !seat_category || !date || !showtime) {
+      return res.status(400).json({ error: 'Missing required query parameters.' });
+    }
+
+    if (!fs.existsSync(DATA_FILE)) {
+      return res.status(200).json({ history: [] });
+    }
+
+    const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
+    const parsedData = JSON.parse(rawData);
+
+    const match = parsedData.data.find(entry => 
+      entry.cinema === cinema &&
+      entry.location === location &&
+      entry.movie === movie &&
+      entry.seat_category === seat_category &&
+      entry.date === date &&
+      entry.showtime === showtime
+    );
+
+    if (match && match.history) {
+      res.status(200).json({ history: match.history });
+    } else {
+      res.status(200).json({ history: match ? [{ price: match.price, scraped_at: match.scraped_at }] : [] });
+    }
+  } catch (error) {
+    console.error('[API] Error reading history:', error);
+    res.status(500).json({ error: 'Failed to load history data.' });
   }
 });
 
