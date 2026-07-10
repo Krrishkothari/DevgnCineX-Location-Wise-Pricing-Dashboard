@@ -27,10 +27,11 @@ export const triggerScrape = async () => {
   }
 };
 
-export const fetchMovies = async (date) => {
+export const fetchMovies = async (date, location) => {
   try {
     const params = {};
     if (date) params.date = date;
+    if (location) params.location = location;
     const response = await api.get('/movies', { params });
     return response.data;
   } catch (error) {

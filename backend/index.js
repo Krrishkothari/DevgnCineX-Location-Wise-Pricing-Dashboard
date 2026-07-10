@@ -112,6 +112,10 @@ scraperQueue.add(
   console.error('[API] Failed to schedule repeatable job:', err);
 });
 
+// Initialize the scraper worker directly within the backend process
+require('../scraper/queue.js');
+console.log('[API] Scraper worker initialized within the backend process.');
+
 app.post('/api/scrape/trigger', async (req, res) => {
   try {
     console.log('[API] Manual scrape triggered');

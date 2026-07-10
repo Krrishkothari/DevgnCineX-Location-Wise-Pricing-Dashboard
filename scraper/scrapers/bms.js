@@ -303,8 +303,33 @@ async function scrapeLocation(locationConfig, regionLocks) {
       }
 
       // Discover movies in this region
-      const movieLinks = await page.evaluate(() => {
-        const cards = document.querySelectorAll('a[href*="/movies/"]');
+      const movieLinks = await page.evaluate(async () => {
+        const getCards = () => Array.from(document.querySelectorAll('a[href*="/movies/"]'));
+        
+        let previousCount = 0;
+        let stableAttempts = 0;
+        const maxScrolls = 20; // Hard limit to avoid infinite loops
+        
+        for (let i = 0; i < maxScrolls; i++) {
+          window.scrollBy(0, document.body.scrollHeight);
+          
+          // Wait for lazy loading
+          await new Promise(r => setTimeout(r, 1500));
+          
+          const currentCount = getCards().length;
+          
+          if (currentCount === previousCount) {
+            stableAttempts++;
+            if (stableAttempts >= 2) {
+              break; // Stabilized across 2 attempts
+            }
+          } else {
+            stableAttempts = 0; // Reset if we found new movies
+          }
+          previousCount = currentCount;
+        }
+
+        const cards = getCards();
         const results = [];
         const seen = new Set();
         for (const card of cards) {
@@ -324,8 +349,8 @@ async function scrapeLocation(locationConfig, regionLocks) {
       console.log(`${logPrefix} Found ${movieLinks.length} movies in ${region}.`);
       if (movieLinks.length === 0) continue;
 
-      // Scrape top 5 movies per region (covers most showtimes)
-      const moviesToScrape = movieLinks.slice(0, 5);
+      // Scrape all discovered movies
+      const moviesToScrape = movieLinks;
 
       for (const movie of moviesToScrape) {
         const movieUrl = movie.href.startsWith('http') ? movie.href : `https://in.bookmyshow.com${movie.href}`;
@@ -454,6 +479,22 @@ async function scrapeLocation(locationConfig, regionLocks) {
 
     console.log(`\n${logPrefix} ===== LOCATION SCRAPE COMPLETE =====`);
     console.log(`${logPrefix} Final: ${deduped.length} entries from ${locationName}`);
+
+    // Check for zero-movie cinemas
+    const finalStats = {};
+    cinemaTargets.forEach(t => finalStats[t.cinemaName] = 0);
+    deduped.forEach(entry => {
+      if (finalStats[entry.cinema] !== undefined) {
+        finalStats[entry.cinema]++;
+      }
+    });
+
+    for (const [cinemaName, count] of Object.entries(finalStats)) {
+      console.log(`${logPrefix}   -> ${cinemaName}: ${count} prices scraped`);
+      if (count === 0) {
+        console.error(`${logPrefix} [ALERT] ZERO MOVIES scraped for cinema: ${cinemaName}`);
+      }
+    }
 
     return {
       locationName,

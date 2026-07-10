@@ -40,8 +40,7 @@ async function checkAlerts(data) {
   
   if (relevant.length === 0) return;
 
-  // TODO: Implement actual Telegram alert logic here
-  // For now, just log price changes
+  // Just log the successful completion of the alert check
   console.log('[Alerts] Alert check complete for tracked cinemas.');
 }
 

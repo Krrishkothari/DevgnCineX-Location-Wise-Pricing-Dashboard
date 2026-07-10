@@ -39,7 +39,8 @@ const worker = new Worker('scraper-jobs', async (job) => {
   console.log(`[Worker] Starting job ${job.id} of type ${job.name}...`);
 
   switch (job.name) {
-    case 'scrape-bms': {
+    case 'scrape-bms':
+    case 'scrape-bms-hourly': {
       // Parallel scrape of all locations (same pattern as run-all-scrapers.js)
       const limit = pLimit(CONCURRENCY);
       const regionLocks = new Map(); // Prevent Cloudflare blocks on shared regions

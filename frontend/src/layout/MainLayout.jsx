@@ -30,18 +30,18 @@ export function MainLayout() {
     loadDates();
   }, []);
 
-  // Fetch movies when selectedDate changes
+  // Fetch movies when selectedDate or selectedLocation changes
   useEffect(() => {
     async function loadMovies() {
       if (selectedDate) {
-        const moviesRes = await fetchMovies(selectedDate);
+        const moviesRes = await fetchMovies(selectedDate, selectedLocation);
         setMovies(moviesRes.movies || []);
-        // Reset selected movie if it's not 'all' to avoid invalid selection for the new date
+        // Reset selected movie if it's not 'all' to avoid invalid selection for the new date or location
         setSelectedMovie('all');
       }
     }
     loadMovies();
-  }, [selectedDate]);
+  }, [selectedDate, selectedLocation]);
 
   const filterValues = {
     movies,

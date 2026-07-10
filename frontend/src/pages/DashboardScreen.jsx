@@ -33,6 +33,18 @@ function timeToMinutes(timeStr) {
 }
 
 /**
+ * Bucket showtimes into time-of-day groups for baseline comparisons
+ */
+function getTimeBucket(timeStr) {
+  const mins = timeToMinutes(timeStr);
+  if (mins < 0) return 'unknown';
+  if (mins < 720) return 'morning';    // before 12:00 PM
+  if (mins < 1020) return 'afternoon'; // 12:00 PM - 4:59 PM (17:00)
+  if (mins < 1260) return 'evening';   // 5:00 PM - 8:59 PM (21:00)
+  return 'night';                      // 9:00 PM and after
+}
+
+/**
  * Check if a showtime falls within a time slot
  * Morning: 6 AM – 12 PM
  * Afternoon: 12 PM – 4 PM
@@ -154,7 +166,28 @@ export function DashboardScreen() {
       });
     }
 
-    // Step 3: Group into cards
+    // Step 4: Calculate Devgn Cinex baseline averages per bucket
+    const baselines = {};
+    filtered.forEach(entry => {
+      const isOwned = entry.cinema.toLowerCase().includes('devgn') || entry.cinema.toLowerCase().includes('owned');
+      if (isOwned && entry.showtime && entry.price) {
+        if (!baselines[entry.movie]) baselines[entry.movie] = {};
+        
+        const bucket = getTimeBucket(entry.showtime);
+        if (!baselines[entry.movie][bucket]) baselines[entry.movie][bucket] = {};
+        
+        const catName = entry.seat_category && entry.seat_category !== 'N/A' ? entry.seat_category : 'Standard';
+        if (!baselines[entry.movie][bucket][catName]) {
+          baselines[entry.movie][bucket][catName] = { sum: 0, count: 0, avg: 0 };
+        }
+        
+        baselines[entry.movie][bucket][catName].sum += entry.price;
+        baselines[entry.movie][bucket][catName].count += 1;
+        baselines[entry.movie][bucket][catName].avg = baselines[entry.movie][bucket][catName].sum / baselines[entry.movie][bucket][catName].count;
+      }
+    });
+
+    // Step 5: Group into cards and calculate diffs
     const grouped = {};
 
     filtered.forEach((entry) => {
@@ -184,10 +217,21 @@ export function DashboardScreen() {
           
           const catName = entry.seat_category && entry.seat_category !== 'N/A' ? entry.seat_category : 'Standard';
           
+          let diff = 0;
+          let hasBaseline = false;
+          const bucket = getTimeBucket(entry.showtime);
+          
+          if (!grouped[key].owned && baselines[entry.movie] && baselines[entry.movie][bucket] && baselines[entry.movie][bucket][catName]) {
+            const baselineAvg = baselines[entry.movie][bucket][catName].avg;
+            diff = Math.round(entry.price - baselineAvg);
+            hasBaseline = true;
+          }
+
           grouped[key].pricingByShowtime[entry.showtime].push({
             category: catName,
             price: entry.price,
-            diff: 0,
+            diff: diff,
+            hasBaseline: hasBaseline,
           });
         }
       }
@@ -200,6 +244,14 @@ export function DashboardScreen() {
         return timeToMinutes(a) - timeToMinutes(b);
       }),
     }));
+
+    result.sort((a, b) => {
+      // 1. Owned cinemas always on the left
+      if (a.owned && !b.owned) return -1;
+      if (!a.owned && b.owned) return 1;
+      // 2. Alphabetical secondary sort
+      return a.theatre.localeCompare(b.theatre);
+    });
 
     console.log("DashboardScreen Debug:", { 
       raw: rawData.length, 
@@ -381,12 +433,12 @@ function CinemaCard({ theatreData }) {
                     {tier.category}
                   </span>
                   <div className="flex items-center gap-3 shrink-0">
-                    {!theatreData.owned && tier.diff !== 0 && (
+                    {!theatreData.owned && tier.hasBaseline && tier.diff !== 0 && (
                       <span className={`text-xs font-semibold ${tier.diff > 0 ? 'text-op-danger' : 'text-op-success'}`}>
                         {tier.diff > 0 ? `↑${tier.diff}` : `↓${Math.abs(tier.diff)}`}
                       </span>
                     )}
-                    {!theatreData.owned && tier.diff === 0 && (
+                    {!theatreData.owned && (!tier.hasBaseline || tier.diff === 0) && (
                       <span className="text-xs font-semibold text-op-muted">-</span>
                     )}
                     <span className="text-sm font-mono font-medium text-op-textMain w-12 text-right">₹{tier.price}</span>
