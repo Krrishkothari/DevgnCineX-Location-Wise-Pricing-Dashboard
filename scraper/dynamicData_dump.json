@@ -1,0 +1,1434 @@
+{
+  "data": {
+    "meta": {
+      "version": 22
+    },
+    "header": {
+      "title": {
+        "styleId": "header-title-v2",
+        "text": "Dhamaal 4"
+      },
+      "startActions": [
+        {
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/left-chevron.png",
+          "cta": {
+            "type": "closeScreen",
+            "analytics": {
+              "event_action": "back",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        }
+      ],
+      "endActions": [
+        {
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/search.png",
+          "cta": {
+            "type": "searchView",
+            "analytics": {
+              "event_action": "search",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        },
+        {
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/filter.png",
+          "cta": {
+            "type": "bottomsheet",
+            "id": "filter",
+            "analytics": {
+              "event_action": "filter_icon",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        }
+      ],
+      "backgroundColor": "#FFFFFF",
+      "searchBackgroundColor": "#FFFFFF",
+      "searchForegroundColor": "#000000"
+    },
+    "bottomSheetData": {
+      "filter": {
+        "type": "filter",
+        "widgets": [
+          {
+            "type": "vertical-text-list",
+            "data": [
+              {
+                "text": "Filters",
+                "styleId": "bottomsheet-title"
+              }
+            ]
+          },
+          {
+            "type": "chip-list",
+            "text": "Price Range",
+            "data": [
+              {
+                "type": "chip",
+                "title": "₹0 - ₹100",
+                "cta": {
+                  "type": "selectFilter",
+                  "analytics": {
+                    "category": "price",
+                    "event_action": "bottom_filter",
+                    "event_name": "showtime_actions",
+                    "event_type": "click",
+                    "label": "0-100"
+                  },
+                  "additionalData": {
+                    "filterID": "pf1",
+                    "filterLevel": "both",
+                    "categoryId": "price"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "chip-list",
+            "text": "Special Formats",
+            "secondaryText": "No special formats available in your region"
+          },
+          {
+            "type": "chip-list",
+            "text": "Other Filters",
+            "data": [
+              {
+                "type": "chip",
+                "title": "Cancellable",
+                "cta": {
+                  "type": "selectFilter",
+                  "analytics": {
+                    "category": "cancel",
+                    "event_action": "bottom_filter",
+                    "event_name": "showtime_actions",
+                    "event_type": "click",
+                    "label": "Cancellable"
+                  },
+                  "additionalData": {
+                    "filterID": "cancellation",
+                    "filterLevel": "parent",
+                    "categoryId": "cancellation"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "multi-selector",
+            "text": "Preferred Time",
+            "data": [
+              {
+                "title": {
+                  "styleId": "filter-title-disabled",
+                  "text": "Morning"
+                },
+                "subtitle": {
+                  "styleId": "filter-subtitle-disabled",
+                  "text": "12:00 AM - 11:59 AM"
+                },
+                "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/morning-disabled.png"
+              },
+              {
+                "title": {
+                  "styleId": "filter-title",
+                  "text": "Afternoon"
+                },
+                "subtitle": {
+                  "styleId": "filter-subtitle",
+                  "text": "12:00 PM - 3:59 PM"
+                },
+                "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/afternoon.png",
+                "cta": {
+                  "type": "selectFilter",
+                  "analytics": {
+                    "category": "time",
+                    "event_action": "bottom_filter",
+                    "event_name": "showtime_actions",
+                    "event_type": "click",
+                    "label": "afternoon"
+                  },
+                  "additionalData": {
+                    "filterID": "tf2",
+                    "filterLevel": "both",
+                    "categoryId": "time"
+                  }
+                }
+              },
+              {
+                "title": {
+                  "styleId": "filter-title",
+                  "text": "Evening"
+                },
+                "subtitle": {
+                  "styleId": "filter-subtitle",
+                  "text": "4:00 PM - 6:59 PM"
+                },
+                "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/evening.png",
+                "cta": {
+                  "type": "selectFilter",
+                  "analytics": {
+                    "category": "time",
+                    "event_action": "bottom_filter",
+                    "event_name": "showtime_actions",
+                    "event_type": "click",
+                    "label": "evening"
+                  },
+                  "additionalData": {
+                    "filterID": "tf3",
+                    "filterLevel": "both",
+                    "categoryId": "time"
+                  }
+                }
+              },
+              {
+                "title": {
+                  "styleId": "filter-title",
+                  "text": "Night"
+                },
+                "subtitle": {
+                  "styleId": "filter-subtitle",
+                  "text": "7:00 PM - 11:59 PM"
+                },
+                "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/night.png",
+                "cta": {
+                  "type": "selectFilter",
+                  "analytics": {
+                    "category": "time",
+                    "event_action": "bottom_filter",
+                    "event_name": "showtime_actions",
+                    "event_type": "click",
+                    "label": "night"
+                  },
+                  "additionalData": {
+                    "filterID": "tf4",
+                    "filterLevel": "both",
+                    "categoryId": "time"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "ctaData": [
+          {
+            "text": "Reset",
+            "style": "secondary",
+            "cta": {
+              "type": "clearFilter",
+              "analytics": {
+                "category": "reset",
+                "event_action": "bottom_filter",
+                "event_name": "showtime_actions",
+                "event_type": "click"
+              }
+            }
+          },
+          {
+            "text": "Apply Filters",
+            "style": "primary",
+            "cta": {
+              "type": "applyFilter"
+            }
+          }
+        ]
+      },
+      "sortBy": {
+        "backgroundColor": "#ffffff",
+        "type": "sort-by",
+        "handleColor": "#000000",
+        "widgets": [
+          {
+            "cta": null,
+            "data": [
+              {
+                "styleId": "bottomsheet-title",
+                "text": "Sort by",
+                "type": "text"
+              }
+            ],
+            "type": "vertical-text-list"
+          },
+          {
+            "data": [
+              {
+                "cta": {
+                  "id": "relevance",
+                  "type": "sort",
+                  "additionalData": {
+                    "isDefault": true
+                  }
+                },
+                "isDefault": true,
+                "subtitle": {
+                  "styleId": "sortby-subtitle-style",
+                  "text": "Best options for you first"
+                },
+                "title": {
+                  "styleId": "filter-title",
+                  "text": "Relevance"
+                }
+              },
+              {
+                "cta": {
+                  "id": "popularityRank",
+                  "type": "sort"
+                },
+                "subtitle": {
+                  "styleId": "sortby-subtitle-style",
+                  "text": "Show most popular first"
+                },
+                "title": {
+                  "styleId": "filter-title",
+                  "text": "Popularity"
+                }
+              },
+              {
+                "cta": {
+                  "id": "distance",
+                  "type": "autoDetectLocation"
+                },
+                "subtitle": {
+                  "styleId": "sortby-subtitle-style",
+                  "text": "Show nearest first"
+                },
+                "title": {
+                  "styleId": "filter-title",
+                  "text": "Distance"
+                }
+              }
+            ],
+            "type": "single-selector"
+          }
+        ]
+      }
+    },
+    "additionalData": {
+      "dateCode": "20260715",
+      "eventCode": "ET00452553",
+      "defaultSortId": "relevance",
+      "sortingEnabled": true,
+      "showPriceWithoutDecimal": true
+    },
+    "topStickyWidgets": [
+      {
+        "type": "horizontal-block-list",
+        "data": [
+          {
+            "type": "vertical-text-list",
+            "id": "20260710",
+            "styleId": "date-default",
+            "data": [
+              {
+                "text": "FRI",
+                "styleId": "weekday-title"
+              },
+              {
+                "text": "10",
+                "styleId": "date-title"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-10"
+              },
+              "additionalData": {
+                "dateCode": "20260710"
+              }
+            }
+          },
+          {
+            "type": "vertical-text-list",
+            "id": "20260711",
+            "styleId": "date-default",
+            "data": [
+              {
+                "text": "SAT",
+                "styleId": "weekday-title"
+              },
+              {
+                "text": "11",
+                "styleId": "date-title"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-11"
+              },
+              "additionalData": {
+                "dateCode": "20260711"
+              }
+            }
+          },
+          {
+            "type": "vertical-text-list",
+            "id": "20260712",
+            "styleId": "date-default",
+            "data": [
+              {
+                "text": "SUN",
+                "styleId": "weekday-title"
+              },
+              {
+                "text": "12",
+                "styleId": "date-title"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-12"
+              },
+              "additionalData": {
+                "dateCode": "20260712"
+              }
+            }
+          },
+          {
+            "type": "vertical-text-list",
+            "id": "20260713",
+            "styleId": "date-default",
+            "data": [
+              {
+                "text": "MON",
+                "styleId": "weekday-title"
+              },
+              {
+                "text": "13",
+                "styleId": "date-title"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-13"
+              },
+              "additionalData": {
+                "dateCode": "20260713"
+              }
+            }
+          },
+          {
+            "type": "vertical-text-list",
+            "id": "20260714",
+            "styleId": "date-default",
+            "data": [
+              {
+                "text": "TUE",
+                "styleId": "weekday-title"
+              },
+              {
+                "text": "14",
+                "styleId": "date-title"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-14"
+              },
+              "additionalData": {
+                "dateCode": "20260714"
+              }
+            }
+          },
+          {
+            "type": "vertical-text-list",
+            "id": "20260715",
+            "styleId": "date-selected",
+            "data": [
+              {
+                "text": "WED",
+                "styleId": "weekday-title-selected"
+              },
+              {
+                "text": "15",
+                "styleId": "date-title-selected"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle-selected"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-15"
+              },
+              "additionalData": {
+                "dateCode": "20260715"
+              }
+            }
+          },
+          {
+            "type": "vertical-text-list",
+            "id": "20260716",
+            "styleId": "date-default",
+            "data": [
+              {
+                "text": "THU",
+                "styleId": "weekday-title"
+              },
+              {
+                "text": "16",
+                "styleId": "date-title"
+              },
+              {
+                "text": "JUL",
+                "styleId": "date-subtitle"
+              }
+            ],
+            "cta": {
+              "type": "dateSelector",
+              "analytics": {
+                "event_action": "date",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "2026-07-16"
+              },
+              "additionalData": {
+                "dateCode": "20260716"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "horizontal-text-list",
+        "data": [
+          {
+            "styleId": "format-style",
+            "leftText": {
+              "data": [
+                {
+                  "components": [
+                    {
+                      "uuid": "format-left-title-1",
+                      "type": "text",
+                      "styleId": "format-left-title",
+                      "text": "Hindi  •  2D"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "type": "horizontal-pill-list",
+        "id": "filter-list",
+        "stickyWidget": {
+          "type": "vertical-text-list",
+          "styleId": "sortby-pill",
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/down-chevron.png",
+          "data": [
+            {
+              "text": "Sort by",
+              "styleId": "sticky-pill-sortby"
+            }
+          ],
+          "cta": {
+            "type": "bottomsheet",
+            "id": "sortBy",
+            "analytics": {
+              "category": "sort",
+              "event_action": "quick_filter",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          },
+          "startIcon": {
+            "url": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/sortbyStarticon.png"
+          }
+        },
+        "data": [
+          {
+            "type": "chip",
+            "title": "Cancellable",
+            "cta": {
+              "type": "filter",
+              "id": "cancellation",
+              "analytics": {
+                "category": "cancel",
+                "event_action": "quick_filter",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "Cancellable"
+              },
+              "additionalData": {
+                "filterID": "cancellation",
+                "filterLevel": "parent",
+                "categoryId": "cancellation",
+                "selectionRank": 1
+              }
+            }
+          },
+          {
+            "type": "chip",
+            "title": "₹0 - ₹100",
+            "cta": {
+              "type": "filter",
+              "analytics": {
+                "category": "price",
+                "event_action": "quick_filter",
+                "event_name": "showtime_actions",
+                "event_type": "click",
+                "label": "0-100"
+              },
+              "additionalData": {
+                "filterID": "pf1",
+                "filterLevel": "both",
+                "categoryId": "price"
+              }
+            }
+          },
+          {
+            "type": "chip",
+            "title": "Clear filters",
+            "styleId": "pill-highlighted",
+            "cta": {
+              "type": "clearFilter",
+              "analytics": {
+                "category": "reset",
+                "event_action": "quick_filter",
+                "event_name": "showtime_actions",
+                "event_type": "click"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "showtimeWidgets": [
+      {
+        "type": "adtech",
+        "data": [
+          {
+            "id": "AD_MOVIE_SHOWTIMES_CARD",
+            "customFilters": {
+              "eventCode": "ET00452553",
+              "showDate": "20260715",
+              "genre": [
+                "Adventure",
+                "Comedy"
+              ],
+              "movieType": ""
+            },
+            "aspectRatio": 5
+          }
+        ],
+        "filters": [
+          "ALL"
+        ],
+        "sortInfo": {
+          "distance": {
+            "value": 0,
+            "enabled": false
+          },
+          "popularityRank": {
+            "value": 0,
+            "enabled": false
+          }
+        }
+      },
+      {
+        "type": "groupList",
+        "id": "List_1",
+        "data": [
+          {
+            "type": "venueGroup",
+            "id": "Venue_GROUP_1",
+            "data": [
+              {
+                "type": "venue-card",
+                "additionalData": {
+                  "venueCode": "LTRM",
+                  "seatLegendIds": [
+                    "4",
+                    "1",
+                    "88",
+                    "2"
+                  ],
+                  "seatSelectorFooterText": "default",
+                  "bestSeatsDialogBox": "default",
+                  "enableBestSeatCelebration": true,
+                  "favouriteActionState": "unfavourite",
+                  "venueName": "Shri Lokendra Talkies (Laser Projector): Ratlam"
+                },
+                "filters": [
+                  "cancellation",
+                  "pf1",
+                  "tf2",
+                  "tf3",
+                  "tf4"
+                ],
+                "sortInfo": {
+                  "distance": {
+                    "value": 4900000,
+                    "enabled": true
+                  },
+                  "popularityRank": {
+                    "value": 3,
+                    "enabled": true
+                  }
+                },
+                "header": {
+                  "data": {
+                    "styleId": "header-container-style",
+                    "components": [
+                      {
+                        "type": "image",
+                        "data": {
+                          "url": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/cinema-icon/default.png",
+                          "styleId": "cinema-icon",
+                          "cta": {
+                            "type": "redirection",
+                            "id": "venueLink",
+                            "analytics": {
+                              "event_action": "venue_info",
+                              "event_name": "showtime_actions",
+                              "event_type": "click"
+                            },
+                            "additionalData": {
+                              "venueCode": "LTRM",
+                              "venueName": "Shri Lokendra Talkies (Laser Projector): Ratlam",
+                              "redirectionUrl": "https://in.bookmyshow.com/cinemas/ratlam/shri-lokendra-talkies-laser-projector-ratlam/buytickets/LTRM/20260715"
+                            }
+                          },
+                          "elementType": "a",
+                          "elementAttributes": {
+                            "alt": "Shri Lokendra Talkies (Laser Projector): Ratlam",
+                            "href": "https://in.bookmyshow.com/cinemas/ratlam/shri-lokendra-talkies-laser-projector-ratlam/buytickets/LTRM/20260715"
+                          }
+                        }
+                      },
+                      {
+                        "styleId": "header-title-container",
+                        "type": "text",
+                        "data": {
+                          "data": [
+                            {
+                              "components": [
+                                {
+                                  "text": "Shri Lokendra Talkies (Laser Projector): Ratlam",
+                                  "styleId": "header-subtitle",
+                                  "type": "text"
+                                },
+                                {
+                                  "styleId": "cinema-info-image-v2",
+                                  "imageUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/infoV2.png",
+                                  "type": "image"
+                                }
+                              ],
+                              "cta": {
+                                "type": "bottomsheet",
+                                "id": "venueInfo",
+                                "analytics": {
+                                  "event_action": "venue_info",
+                                  "event_name": "showtime_actions",
+                                  "event_type": "click"
+                                },
+                                "additionalData": {
+                                  "venueCode": "LTRM",
+                                  "venueName": "Shri Lokendra Talkies (Laser Projector): Ratlam"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "styleId": "favourite-icon",
+                        "type": "action",
+                        "data": {
+                          "id": "actionStates",
+                          "cta": {
+                            "type": "venueFavourite",
+                            "analytics": {
+                              "event_name": "favourite_venue_selected",
+                              "event_type": "click",
+                              "venue_code": "LTRM"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "infoList": [
+                  {
+                    "label": "Cancellation available",
+                    "textColor": "#666666"
+                  }
+                ],
+                "showtimes": [
+                  {
+                    "title": "12:00 PM",
+                    "styleId": "green-pill-with-border",
+                    "cta": {
+                      "type": "showTimeRedirect",
+                      "analytics": {
+                        "company_code": "LKTR",
+                        "event_name": "showtime_selected",
+                        "event_type": "click",
+                        "format": "",
+                        "show_session_id": "26892",
+                        "show_time": "12:00",
+                        "type": "default_icon"
+                      },
+                      "additionalData": {
+                        "showCutOffBottomSheet": false,
+                        "cta": {
+                          "type": "bottomsheet",
+                          "id": "cutOffBottomSheet"
+                        }
+                      }
+                    },
+                    "additionalData": {
+                      "sessionId": "26892",
+                      "availStatus": "3",
+                      "cutOffDateTime": "202607151200",
+                      "cutOffDateTimeEpoch": "1784097000",
+                      "showDateCode": "20260715",
+                      "showDateTime": "202607151200",
+                      "showTimeCode": "1200",
+                      "showTime": "12:00 PM",
+                      "categories": [
+                        {
+                          "priceCode": "1",
+                          "additionalData": "80757",
+                          "curPrice": "100.00",
+                          "areaCatCode": "878",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "VIP",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        },
+                        {
+                          "priceCode": "2",
+                          "additionalData": "80758",
+                          "curPrice": "100.00",
+                          "areaCatCode": "879",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "Balcony",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        }
+                      ],
+                      "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                    },
+                    "filters": [
+                      "pf1",
+                      "tf2"
+                    ],
+                    "customGestureCTA": {
+                      "gestureType": "doubleTap",
+                      "type": "bottomsheet",
+                      "additionalData": {
+                        "bottomSheetData": {
+                          "backgroundColor": "#ffffff",
+                          "handleColor": "#000000",
+                          "widgets": [
+                            {
+                              "type": "header-text-list",
+                              "backgroundColor": "#EBF0FF",
+                              "data": [
+                                {
+                                  "components": [
+                                    {
+                                      "type": "text",
+                                      "styleId": "title",
+                                      "text": "Hindi · 2D"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "vertical-text-list",
+                              "data": [
+                                {
+                                  "text": "Seat category and price",
+                                  "styleId": "info-header"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "info-row-list",
+                              "data": [
+                                {
+                                  "title": {
+                                    "text": "VIP",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                },
+                                {
+                                  "title": {
+                                    "text": "Balcony",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "analytics": {
+                        "event_action": "showinfo_modal_viewed",
+                        "event_name": "showtime_actions",
+                        "event_type": "click"
+                      }
+                    }
+                  },
+                  {
+                    "title": "03:00 PM",
+                    "styleId": "green-pill-with-border",
+                    "cta": {
+                      "type": "showTimeRedirect",
+                      "analytics": {
+                        "company_code": "LKTR",
+                        "event_name": "showtime_selected",
+                        "event_type": "click",
+                        "format": "",
+                        "show_session_id": "26899",
+                        "show_time": "15:00",
+                        "type": "default_icon"
+                      },
+                      "additionalData": {
+                        "showCutOffBottomSheet": false,
+                        "cta": {
+                          "type": "bottomsheet",
+                          "id": "cutOffBottomSheet"
+                        }
+                      }
+                    },
+                    "additionalData": {
+                      "sessionId": "26899",
+                      "availStatus": "3",
+                      "cutOffDateTime": "202607151500",
+                      "cutOffDateTimeEpoch": "1784107800",
+                      "showDateCode": "20260715",
+                      "showDateTime": "202607151500",
+                      "showTimeCode": "1500",
+                      "showTime": "03:00 PM",
+                      "categories": [
+                        {
+                          "priceCode": "1",
+                          "additionalData": "80778",
+                          "curPrice": "100.00",
+                          "areaCatCode": "878",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "VIP",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        },
+                        {
+                          "priceCode": "2",
+                          "additionalData": "80779",
+                          "curPrice": "100.00",
+                          "areaCatCode": "879",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "Balcony",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        }
+                      ],
+                      "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                    },
+                    "filters": [
+                      "pf1",
+                      "tf2"
+                    ],
+                    "customGestureCTA": {
+                      "gestureType": "doubleTap",
+                      "type": "bottomsheet",
+                      "additionalData": {
+                        "bottomSheetData": {
+                          "backgroundColor": "#ffffff",
+                          "handleColor": "#000000",
+                          "widgets": [
+                            {
+                              "type": "header-text-list",
+                              "backgroundColor": "#EBF0FF",
+                              "data": [
+                                {
+                                  "components": [
+                                    {
+                                      "type": "text",
+                                      "styleId": "title",
+                                      "text": "Hindi · 2D"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "vertical-text-list",
+                              "data": [
+                                {
+                                  "text": "Seat category and price",
+                                  "styleId": "info-header"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "info-row-list",
+                              "data": [
+                                {
+                                  "title": {
+                                    "text": "VIP",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                },
+                                {
+                                  "title": {
+                                    "text": "Balcony",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "analytics": {
+                        "event_action": "showinfo_modal_viewed",
+                        "event_name": "showtime_actions",
+                        "event_type": "click"
+                      }
+                    }
+                  },
+                  {
+                    "title": "06:00 PM",
+                    "styleId": "green-pill-with-border",
+                    "cta": {
+                      "type": "showTimeRedirect",
+                      "analytics": {
+                        "company_code": "LKTR",
+                        "event_name": "showtime_selected",
+                        "event_type": "click",
+                        "format": "",
+                        "show_session_id": "26906",
+                        "show_time": "18:00",
+                        "type": "default_icon"
+                      },
+                      "additionalData": {
+                        "showCutOffBottomSheet": false,
+                        "cta": {
+                          "type": "bottomsheet",
+                          "id": "cutOffBottomSheet"
+                        }
+                      }
+                    },
+                    "additionalData": {
+                      "sessionId": "26906",
+                      "availStatus": "3",
+                      "cutOffDateTime": "202607151800",
+                      "cutOffDateTimeEpoch": "1784118600",
+                      "showDateCode": "20260715",
+                      "showDateTime": "202607151800",
+                      "showTimeCode": "1800",
+                      "showTime": "06:00 PM",
+                      "categories": [
+                        {
+                          "priceCode": "1",
+                          "additionalData": "80799",
+                          "curPrice": "100.00",
+                          "areaCatCode": "878",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "VIP",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        },
+                        {
+                          "priceCode": "2",
+                          "additionalData": "80800",
+                          "curPrice": "100.00",
+                          "areaCatCode": "879",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "Balcony",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        }
+                      ],
+                      "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                    },
+                    "filters": [
+                      "pf1",
+                      "tf3"
+                    ],
+                    "customGestureCTA": {
+                      "gestureType": "doubleTap",
+                      "type": "bottomsheet",
+                      "additionalData": {
+                        "bottomSheetData": {
+                          "backgroundColor": "#ffffff",
+                          "handleColor": "#000000",
+                          "widgets": [
+                            {
+                              "type": "header-text-list",
+                              "backgroundColor": "#EBF0FF",
+                              "data": [
+                                {
+                                  "components": [
+                                    {
+                                      "type": "text",
+                                      "styleId": "title",
+                                      "text": "Hindi · 2D"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "vertical-text-list",
+                              "data": [
+                                {
+                                  "text": "Seat category and price",
+                                  "styleId": "info-header"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "info-row-list",
+                              "data": [
+                                {
+                                  "title": {
+                                    "text": "VIP",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                },
+                                {
+                                  "title": {
+                                    "text": "Balcony",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "analytics": {
+                        "event_action": "showinfo_modal_viewed",
+                        "event_name": "showtime_actions",
+                        "event_type": "click"
+                      }
+                    }
+                  },
+                  {
+                    "title": "09:00 PM",
+                    "styleId": "green-pill-with-border",
+                    "cta": {
+                      "type": "showTimeRedirect",
+                      "analytics": {
+                        "company_code": "LKTR",
+                        "event_name": "showtime_selected",
+                        "event_type": "click",
+                        "format": "",
+                        "show_session_id": "26913",
+                        "show_time": "21:00",
+                        "type": "default_icon"
+                      },
+                      "additionalData": {
+                        "showCutOffBottomSheet": false,
+                        "cta": {
+                          "type": "bottomsheet",
+                          "id": "cutOffBottomSheet"
+                        }
+                      }
+                    },
+                    "additionalData": {
+                      "sessionId": "26913",
+                      "availStatus": "3",
+                      "cutOffDateTime": "202607152100",
+                      "cutOffDateTimeEpoch": "1784129400",
+                      "showDateCode": "20260715",
+                      "showDateTime": "202607152100",
+                      "showTimeCode": "2100",
+                      "showTime": "09:00 PM",
+                      "categories": [
+                        {
+                          "priceCode": "1",
+                          "additionalData": "80820",
+                          "curPrice": "100.00",
+                          "areaCatCode": "878",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "VIP",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        },
+                        {
+                          "priceCode": "2",
+                          "additionalData": "80821",
+                          "curPrice": "100.00",
+                          "areaCatCode": "879",
+                          "availStatus": "3",
+                          "seatLayout": true,
+                          "priceDesc": "Balcony",
+                          "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                        }
+                      ],
+                      "categoryRange": "1|2|3|4|5|6|7|8|9|10"
+                    },
+                    "filters": [
+                      "pf1",
+                      "tf4"
+                    ],
+                    "customGestureCTA": {
+                      "gestureType": "doubleTap",
+                      "type": "bottomsheet",
+                      "additionalData": {
+                        "bottomSheetData": {
+                          "backgroundColor": "#ffffff",
+                          "handleColor": "#000000",
+                          "widgets": [
+                            {
+                              "type": "header-text-list",
+                              "backgroundColor": "#EBF0FF",
+                              "data": [
+                                {
+                                  "components": [
+                                    {
+                                      "type": "text",
+                                      "styleId": "title",
+                                      "text": "Hindi · 2D"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "vertical-text-list",
+                              "data": [
+                                {
+                                  "text": "Seat category and price",
+                                  "styleId": "info-header"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "info-row-list",
+                              "data": [
+                                {
+                                  "title": {
+                                    "text": "VIP",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                },
+                                {
+                                  "title": {
+                                    "text": "Balcony",
+                                    "styleId": "category-bold"
+                                  },
+                                  "subtitle": {
+                                    "text": "AVAILABLE",
+                                    "styleId": "category-gesture-green-pill"
+                                  },
+                                  "description": {
+                                    "text": "₹ 100.00",
+                                    "styleId": "price-bold"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "analytics": {
+                        "event_action": "showinfo_modal_viewed",
+                        "event_name": "showtime_actions",
+                        "event_type": "click"
+                      }
+                    }
+                  }
+                ],
+                "analytics": {
+                  "display_position": "1",
+                  "event_name": "showtime_card_viewed",
+                  "event_type": "impression",
+                  "is_favourite": "false",
+                  "venue_code": "LTRM"
+                },
+                "styleId": "venue-card-style",
+                "id": "LTRM"
+              }
+            ],
+            "styleId": "group-list-container-style"
+          }
+        ]
+      },
+      {
+        "type": "info",
+        "id": "changeLocation",
+        "filters": [
+          "ALL"
+        ],
+        "data": [
+          {
+            "styleId": "widget-title",
+            "text": "Unable to find what you are looking for?"
+          }
+        ],
+        "action": {
+          "label": "Change Location",
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#DC354B",
+          "borderColor": "#DC354B",
+          "cta": {
+            "type": "changeLocation",
+            "analytics": {
+              "event_action": "change_location",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        },
+        "sortInfo": {
+          "distance": {
+            "value": 0,
+            "enabled": false
+          },
+          "popularityRank": {
+            "value": 5000000,
+            "enabled": true
+          }
+        }
+      }
+    ],
+    "coachmarksState": {
+      "showtimeCoachmark": true,
+      "filterShowtimeCoachmark": false,
+      "carouselCoachmarks": {
+        "favCinemas": true
+      }
+    },
+    "addOnWidgets": {},
+    "availableFilters": [
+      "cancellation",
+      "pf1",
+      "tf2",
+      "tf3",
+      "tf4"
+    ]
+  },
+  "metadata": {
+    "analytics": {
+      "event_code": "ET00452553",
+      "event_group": "EG00450295",
+      "event_name": "movie_showtimes_viewed",
+      "event_type": "screen_view",
+      "format": "2D",
+      "genre": "Adventure|Comedy",
+      "language": "Hindi",
+      "metadata": {
+        "coachmark": "Y"
+      },
+      "product": "movies",
+      "screen_name": "movie_showtimes",
+      "show_date": "2026-07-15",
+      "title": "Dhamaal 4"
+    }
+  }
+}

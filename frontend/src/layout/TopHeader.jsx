@@ -124,15 +124,6 @@ export function TopHeader() {
 
       {/* Status & Actions */}
       <div className="flex items-center gap-6">
-        {/* Status Indicator */}
-        <div className="flex items-center gap-2">
-          <div className="relative flex h-2 w-2 items-center justify-center">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-op-success opacity-75"></span>
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-op-success"></span>
-          </div>
-          <span className="text-xs font-bold uppercase tracking-wider text-op-success">Live</span>
-        </div>
-
         {/* Refresh Button */}
         <Button 
           variant="ghost" 

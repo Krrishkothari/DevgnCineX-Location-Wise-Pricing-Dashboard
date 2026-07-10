@@ -1,0 +1,98 @@
+{
+  "data": {
+    "eventData": {
+      "eventCensor": "UA13+",
+      "childEvents": [
+        {
+          "eventTitle": "Dhamaal 4",
+          "eventType": "MT",
+          "eventLanguage": "Hindi",
+          "eventLang": "Hindi",
+          "eventName": "Dhamaal 4 - (Hindi)",
+          "eventGenre": "Adventure|Comedy",
+          "eventCensor": "UA13+",
+          "eventCode": "ET00452553",
+          "eventDimension": "2D",
+          "eventUrl": "dhamaal-4"
+        }
+      ],
+      "eventCode": "ET00452553",
+      "eventGenre": "Adventure|Comedy",
+      "eventGroup": "EG00450295",
+      "eventTitle": "Dhamaal 4",
+      "eventType": "MT"
+    },
+    "venues": {
+      "LTRM": {
+        "allowSales": "Y",
+        "compCode": "LKTR",
+        "couponIsAllowed": false,
+        "isFoodSales": "N",
+        "isFullLayout": "Y",
+        "message": "Cinema reserves the right to cancel or modify showtimes without prior notice due to low occupancy, technical issues, or other operational reasons.<br>1. Kindly collect your ticket 30 Min before show time.<br>\n2. Seating for Upper Class Tickets are on a first come first serve basis.",
+        "messageTitle": "Terms & Conditions",
+        "popUpDescription": "",
+        "showSeatNo": "Y",
+        "subRegCode": "RATL",
+        "subRegName": "Ratlam",
+        "venueApp": "UT",
+        "venueCode": "LTRM",
+        "venueLegends": ";CAR;FOD;",
+        "venueName": "Shri Lokendra Talkies (Laser Projector): Ratlam",
+        "mTicket": "N"
+      }
+    },
+    "header": {
+      "title": {
+        "styleId": "header-title-v2",
+        "text": "Dhamaal 4"
+      },
+      "subtitle": {
+        "styleId": "screen-subtitle",
+        "text": "Movie runtime: 2h 23m"
+      },
+      "startActions": [
+        {
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/left-chevron.png",
+          "cta": {
+            "type": "closeScreen",
+            "analytics": {
+              "event_action": "back",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        }
+      ],
+      "endActions": [
+        {
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/search.png",
+          "cta": {
+            "type": "searchView",
+            "analytics": {
+              "event_action": "search",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        },
+        {
+          "iconUrl": "https://assets-in.bmscdn.com/moviesmaster/movies-showtimes/v4/common/filter.png",
+          "cta": {
+            "type": "bottomsheet",
+            "id": "filter",
+            "analytics": {
+              "event_action": "filter_icon",
+              "event_name": "showtime_actions",
+              "event_type": "click"
+            }
+          }
+        }
+      ],
+      "backgroundColor": "#FFFFFF",
+      "searchBackgroundColor": "#FFFFFF",
+      "searchForegroundColor": "#000000"
+    }
+  },
+  "metadata": {}
+}

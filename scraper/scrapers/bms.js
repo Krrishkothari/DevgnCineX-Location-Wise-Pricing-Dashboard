@@ -99,6 +99,18 @@ function matchVenueToTarget(venueName, venueCode, lookups) {
 function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix) {
   if (!dynamicData?.data?.showtimeWidgets) return;
 
+  // Extract actual selected date from the API response to avoid false positives
+  const returnedDateCode = dynamicData.data?.additionalData?.dateCode;
+  let effectiveDateStr = dateStr;
+  if (returnedDateCode) {
+    const code = String(returnedDateCode);
+    const parsedDate = `${code.substring(0,4)}-${code.substring(4,6)}-${code.substring(6,8)}`;
+    if (parsedDate !== dateStr) {
+      console.log(`${logPrefix}   BMS returned date ${parsedDate} instead of ${dateStr}. Using actual date.`);
+      effectiveDateStr = parsedDate;
+    }
+  }
+
   let eventFormat = '2D';
   let eventLanguage = '';
   if (staticData?.data?.eventData?.childEvents?.length > 0) {
@@ -145,7 +157,7 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
               price: price,
               seat_category: seatCategory,
               showtime: showTime,
-              date: dateStr,
+              date: effectiveDateStr,
             };
 
             const entry = normalizePrice(raw, target.cinemaName);
@@ -161,8 +173,9 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
   }
 
   if (matchedCount > 0) {
-    console.log(`${logPrefix}   Matched ${matchedCount} venues for ${movieTitle} on ${dateStr}.`);
+    console.log(`${logPrefix}   Matched ${matchedCount} venues for ${movieTitle} on ${effectiveDateStr}.`);
   }
+  return effectiveDateStr;
 }
 
 // ============================================================
@@ -342,13 +355,22 @@ async function scrapeLocation(locationConfig, regionLocks) {
         await page.waitForTimeout(5000);
 
         // Parse today's data (first date)
+        const scrapedDates = new Set();
         const beforeToday = allResults.length;
-        parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], allResults, lookups, logPrefix);
+        const effectiveDate = parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], allResults, lookups, logPrefix);
+        if (effectiveDate) scrapedDates.add(effectiveDate);
         console.log(`${logPrefix}   ${datesToScrape[0]}: +${allResults.length - beforeToday} entries (total: ${allResults.length})`);
 
         // ---- Click through remaining date tabs ----
         for (let dateIdx = 1; dateIdx < datesToScrape.length; dateIdx++) {
           const targetDate = datesToScrape[dateIdx];
+
+          // Skip if this date was already scraped via a BMS redirect
+          if (scrapedDates.has(targetDate)) {
+            console.log(`${logPrefix}   ${targetDate}: already scraped via redirect, skipping.`);
+            continue;
+          }
+
           dynamicData = null;
           staticData = null;
 
@@ -392,7 +414,8 @@ async function scrapeLocation(locationConfig, regionLocks) {
           await page.waitForTimeout(4000);
 
           const beforeDate = allResults.length;
-          parseBMSData(dynamicData, staticData, movie.title, targetDate, allResults, lookups, logPrefix);
+          const effectiveDateLoop = parseBMSData(dynamicData, staticData, movie.title, targetDate, allResults, lookups, logPrefix);
+          if (effectiveDateLoop) scrapedDates.add(effectiveDateLoop);
           console.log(`${logPrefix}   ${targetDate}: +${allResults.length - beforeDate} entries (total: ${allResults.length})`);
 
           await page.waitForTimeout(500 + Math.random() * 1000);
@@ -440,7 +463,7 @@ async function scrapeLocation(locationConfig, regionLocks) {
     };
 
   } catch (err) {
-    console.error(`${logPrefix} Scraper error: ${err.message}`);
+    console.error(`${logPrefix} Scraper error:`, err);
     return {
       locationName,
       success: false,
