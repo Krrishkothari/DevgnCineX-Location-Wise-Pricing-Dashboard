@@ -7,8 +7,11 @@
 
 const pLimit = require('p-limit').default;
 const locations = require('./locations.config');
-const { scrapeLocation } = require('./scrapers/bms');
 const { checkAlerts } = require('./alertChecker');
+
+// Import the per-location wrappers dynamically or via explicit imports
+// Since the prompt says "Import all 17 location scrapers", we can just iterate over `locations` 
+// and require them using the locationName in lowercase.
 
 // ---- Configuration ----
 const CONCURRENCY = 4;        // Max simultaneous locations (recommended for BMS rate limits)
@@ -48,11 +51,13 @@ async function main() {
       await randomDelay(MIN_DELAY_MS, MAX_DELAY_MS);
 
       try {
-        const result = await scrapeLocation(loc, regionLocks);
+        // Import the specific location scraper dynamically
+        const locationScraper = require(`./scrapers/locations/${loc.locationName.toLowerCase()}.js`);
+        
+        // Run it with the shared region locks
+        const result = await locationScraper(regionLocks);
         return result;
       } catch (err) {
-        // This catch should rarely fire since scrapeLocation has its own try/catch,
-        // but it's here for complete safety.
         console.error(`[Runner] UNEXPECTED error for ${loc.locationName}: ${err.message}`);
         return {
           locationName: loc.locationName,
@@ -65,23 +70,31 @@ async function main() {
     })
   );
 
-  // Wait for ALL locations to finish (or fail). Promise.all is safe here because
-  // every task resolves (errors are caught and returned as result objects).
-  const results = await Promise.all(tasks);
+  // Wait for ALL locations to finish (or fail).
+  const results = await Promise.allSettled(tasks);
+
+  // Unpack settled promises
+  const unpackedResults = results.map(r => r.status === 'fulfilled' ? r.value : {
+    locationName: 'Unknown',
+    success: false,
+    entryCount: 0,
+    entries: [],
+    error: 'Promise rejected: ' + (r.reason?.message || r.reason)
+  });
 
   // ---- Summary ----
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-  const succeeded = results.filter(r => r.success);
-  const failed = results.filter(r => !r.success);
-  const totalEntries = results.reduce((sum, r) => sum + r.entryCount, 0);
+  const succeeded = unpackedResults.filter(r => r.success);
+  const failed = unpackedResults.filter(r => !r.success);
+  const totalEntries = unpackedResults.reduce((sum, r) => sum + r.entryCount, 0);
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
   console.log('║                    SCRAPE SUMMARY                           ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
 
   // Pad location names for alignment
-  const maxNameLen = Math.max(...results.map(r => r.locationName.length));
-  for (const r of results) {
+  const maxNameLen = Math.max(...unpackedResults.map(r => r.locationName.length));
+  for (const r of unpackedResults) {
     const icon = r.success ? '✓' : '✗';
     const name = r.locationName.padEnd(maxNameLen);
     const entries = String(r.entryCount).padStart(5);
@@ -90,7 +103,7 @@ async function main() {
   }
 
   console.log('╠══════════════════════════════════════════════════════════════╣');
-  console.log(`║  Total: ${totalEntries} entries from ${succeeded.length}/${results.length} locations in ${elapsed}s`);
+  console.log(`║  Total: ${totalEntries} entries from ${succeeded.length}/${unpackedResults.length} locations in ${elapsed}s`);
   console.log('╚══════════════════════════════════════════════════════════════╝');
 
   if (failed.length > 0) {
@@ -101,7 +114,7 @@ async function main() {
   }
 
   // ---- Aggregate alerts check ----
-  const allEntries = results.flatMap(r => r.entries || []);
+  const allEntries = unpackedResults.flatMap(r => r.entries || []);
   if (allEntries.length > 0) {
     try {
       await checkAlerts(allEntries);

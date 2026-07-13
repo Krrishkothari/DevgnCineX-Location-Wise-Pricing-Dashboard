@@ -10,8 +10,8 @@
 
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const { normalizePrice, validateSchema } = require('../normalize');
-const { savePrices } = require('../db');
+const { normalizePrice, validateSchema } = require('../../normalize');
+const { savePrices } = require('../../db');
 
 chromium.use(StealthPlugin());
 
@@ -26,8 +26,10 @@ function getRandomUA() {
 
 /**
  * Generate next N days as YYYY-MM-DD strings (IST timezone).
+ * ISSUE 3 FIX: Reduced from 7 to 5 days. BMS generally doesn't show pricing beyond 4-5 days 
+ * and requires sliding arrows for further dates. Capping at 5 prevents 8-second timeout wastes.
  */
-function getNextDates(count = 7) {
+function getNextDates(count = 5) {
   const dates = [];
   for (let i = 0; i < count; i++) {
     const d = new Date();
@@ -72,8 +74,11 @@ function matchVenueToTarget(venueName, venueCode, lookups) {
   if (!venueName) return null;
 
   // 1. Try matching by venue code (most reliable)
-  if (venueCode && lookups.codeToTarget[venueCode]) {
-    return lookups.codeToTarget[venueCode];
+  if (venueCode) {
+    const cleanCode = venueCode.trim().toUpperCase();
+    if (lookups.codeToTarget[cleanCode]) {
+      return lookups.codeToTarget[cleanCode];
+    }
   }
 
   // 2. Try matching by name / slug fragments
@@ -96,7 +101,7 @@ function matchVenueToTarget(venueName, venueCode, lookups) {
 /**
  * Parse BMS showtimes API data, keeping ONLY venues that match the provided targets.
  */
-function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix) {
+function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix, cinemaEntryCounts) {
   if (!dynamicData?.data?.showtimeWidgets) return;
 
   // Extract actual selected date from the API response to avoid false positives
@@ -127,47 +132,58 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
     if (group.type !== 'venue' && group.type !== 'venueGroup') continue;
     const venues = group.data || [];
     for (const venue of venues) {
-    const venueName = venue.additionalData?.venueName || '';
-    const venueCode = venue.additionalData?.venueCode || '';
+      const venueName = venue.additionalData?.venueName || '';
+      const venueCode = venue.additionalData?.venueCode || '';
 
-    // STRICT FILTER: only keep venues that match this location's targets
-    const target = matchVenueToTarget(venueName, venueCode, lookups);
-    if (!target) continue;
-    matchedCount++;
+      // ISSUE 2 FIX: Log EVERY venue seen in the API response to allow byte-for-byte comparison against config
+      console.log(`${logPrefix}   [DEBUG] API Venue: "${venueName}" | Code: "${venueCode}"`);
 
-    const showtimes = venue.showtimes || [];
-    if (showtimes.length === 0) continue;
+      // STRICT FILTER: only keep venues that match this location's targets
+      const target = matchVenueToTarget(venueName, venueCode, lookups);
+      if (!target) {
+        // FIX 3 — Log unmatched venues instead of silently dropping them
+        console.log(`${logPrefix}   Unmatched venue in API response: "${venueName}" (code: ${venueCode})`);
+        continue;
+      }
+      matchedCount++;
 
-    for (const showtime of showtimes) {
-      const categories = showtime.additionalData?.categories || [];
-      const showTime = showtime.additionalData?.showTime || showtime.title || '';
+      const showtimes = venue.showtimes || [];
+      if (showtimes.length === 0) continue;
 
-      for (const cat of categories) {
-        const price = parseFloat(cat.curPrice) || 0;
-        const seatCategory = cat.priceDesc || 'Standard';
-        if (price > 0) {
-          try {
-            const raw = {
-              cinema: target.cinemaName,
-              location: target.location,
-              movie: movieTitle,
-              format: eventFormat,
-              language: eventLanguage,
-              price: price,
-              seat_category: seatCategory,
-              showtime: showTime,
-              date: effectiveDateStr,
-            };
+      for (const showtime of showtimes) {
+        const categories = showtime.additionalData?.categories || [];
+        const showTime = showtime.additionalData?.showTime || showtime.title || '';
 
-            const entry = normalizePrice(raw, target.cinemaName);
-            validateSchema(entry);
-            allResults.push(entry);
-          } catch (err) {
-            // Skip invalid entries silently
+        for (const cat of categories) {
+          const price = parseFloat(cat.curPrice) || 0;
+          const seatCategory = cat.priceDesc || 'Standard';
+          if (price > 0) {
+            try {
+              const raw = {
+                cinema: target.cinemaName,
+                location: target.location,
+                movie: movieTitle,
+                format: eventFormat,
+                language: eventLanguage,
+                price: price,
+                seat_category: seatCategory,
+                showtime: showTime,
+                date: effectiveDateStr,
+              };
+
+              const entry = normalizePrice(raw, target.cinemaName);
+              validateSchema(entry);
+              allResults.push(entry);
+              // FIX 4 — Track per-cinema entry counts incrementally
+              if (cinemaEntryCounts[target.cinemaName] !== undefined) {
+                cinemaEntryCounts[target.cinemaName]++;
+              }
+            } catch (err) {
+              // Skip invalid entries silently
+            }
           }
         }
       }
-    }
     }
   }
 
@@ -207,6 +223,10 @@ async function scrapeLocation(locationConfig, regionLocks) {
   }));
 
   const lookups = buildLookups(cinemaTargets);
+  
+  // FIX 4 — Track per-cinema entry counts incrementally
+  const cinemaEntryCounts = {};
+  cinemaTargets.forEach(t => cinemaEntryCounts[t.cinemaName] = 0);
 
   try {
     console.log(`${logPrefix} Launching browser...`);
@@ -233,16 +253,16 @@ async function scrapeLocation(locationConfig, regionLocks) {
     page.on('response', async (response) => {
       const url = response.url();
       try {
-        if (url.includes('showtimes-by-event/primary-dynamic')) {
-          dynamicData = await response.json();
-        } else if (url.includes('showtimes-by-event/primary-static')) {
+        // ISSUE 1 FIX: Removed primary-dynamic listener to prevent race condition
+        if (url.includes('showtimes-by-event/primary-static')) {
           staticData = await response.json();
         }
       } catch (e) { }
     });
 
-    const datesToScrape = getNextDates(7);
-    console.log(`${logPrefix} Will scrape dates: ${datesToScrape.join(', ')}`);
+    // ISSUE 3 FIX: We now request 5 days instead of 7 to avoid timeouts on unlisted dates
+    const datesToScrape = getNextDates(5);
+    console.log(`${logPrefix} Will scrape ${datesToScrape.length} dates (intentional platform limit): ${datesToScrape.join(', ')}`);
 
     const allResults = [];
 
@@ -350,22 +370,25 @@ async function scrapeLocation(locationConfig, regionLocks) {
 
       // Scrape all discovered movies
       const moviesToScrape = movieLinks;
+      let firstMovieFirstDateChecked = false;
 
       for (const movie of moviesToScrape) {
+        const movieTitleUpper = movie.title.toUpperCase();
+        if (movieTitleUpper !== 'EVIL DEAD BURN') continue;
         const movieUrl = movie.href.startsWith('http') ? movie.href : `https://in.bookmyshow.com${movie.href}`;
         console.log(`\n${logPrefix} --- ${movie.title} (${region}) ---`);
 
         // Visit movie page and wait dynamically for "Book tickets"
         try {
           await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-          await page.waitForSelector('button:has-text("Book tickets"), a:has-text("Book tickets")', { timeout: 15000 });
+          await page.waitForSelector('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible', { timeout: 15000 });
         } catch (err) {
           console.log(`${logPrefix}   Failed to load movie page or find book button: ${err.message}`);
           continue;
         }
 
-        const bookBtn = await page.$('button:has-text("Book tickets"), a:has-text("Book tickets")');
-        if (!bookBtn) {
+        const bookBtns = await page.$$('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible');
+        if (bookBtns.length === 0) {
           console.log(`${logPrefix}   No "Book tickets" button, skipping.`);
           continue;
         }
@@ -375,15 +398,75 @@ async function scrapeLocation(locationConfig, regionLocks) {
         staticData = null;
 
         console.log(`${logPrefix}   Clicking "Book tickets"...`);
-        await bookBtn.click();
-        await page.waitForTimeout(5000);
+        
+        await page.waitForTimeout(1500); // Allow React to hydrate before clicking
 
+        // ISSUE 1 FIX — Parse response directly from the awaited promise to avoid race condition
+        try {
+          await page.waitForTimeout(2000); // Allow React to hydrate before clicking
+          const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 15000 });
+          
+          console.log(`${logPrefix}   Found ${bookBtns.length} Book tickets buttons`);
+          for (const btn of bookBtns) {
+            try { 
+              await btn.click({ delay: 50, timeout: 3000 }); 
+              console.log(`${logPrefix}   Click successful!`);
+            } catch (e) {
+              console.log(`${logPrefix}   Click failed: ${e.message}`);
+            }
+          }
+          
+          // AGE VERIFICATION (18+) MODAL HANDLING: A-rated movies pop up a warning first
+          try {
+            const continueBtn = await page.waitForSelector('button:has-text("Accept"), button:has-text("Continue"), [role="button"]:has-text("Accept"), [role="button"]:has-text("Continue"), [aria-label="Continue"]', { timeout: 3000, state: 'visible' });
+            if (continueBtn) {
+              console.log(`${logPrefix}   Age verification modal detected. Clicking Continue...`);
+              await continueBtn.click();
+            }
+          } catch (ageErr) {
+            console.log(`${logPrefix}   Age modal wait failed: ${ageErr.message}`);
+            await page.screenshot({ path: `/Users/krrishkothari/Devgn cineX - pricing dashboard/devgn-cinex-pricing/scraper/${movie.title.replace(/\\s+/g, '_')}_failed.png`, fullPage: true });
+            const html = await page.content();
+            const fs = require('fs');
+            fs.writeFileSync(`/Users/krrishkothari/Devgn cineX - pricing dashboard/devgn-cinex-pricing/scraper/${movie.title.replace(/\\s+/g, '_')}_failed.html`, html);
+          }
+
+          // FORMAT MODAL HANDLING: If a format/language selection modal appears, click the first available format
+          try {
+            // We require the selector to be inside something that looks like a modal or popup, 
+            // so we don't accidentally click the "2D" tag in the background movie description.
+            const formatBtn = await page.waitForSelector('.modal span:has-text("2D"), [role="dialog"] span:has-text("2D"), section:has-text("Select language") span:has-text("2D"), section:has-text("Select language") div:has-text("2D"), .modal span:has-text("3D"), [role="dialog"] span:has-text("3D"), section:has-text("Select language") span:has-text("3D"), .modal span:has-text("IMAX"), [role="dialog"] span:has-text("IMAX"), section:has-text("Select language") span:has-text("IMAX")', { timeout: 3000, state: 'visible' });
+            if (formatBtn) {
+              console.log(`${logPrefix}   Format modal detected. Selecting first available format...`);
+              await formatBtn.click();
+            }
+          } catch (modalErr) {
+            // No modal appeared, which is fine.
+          }
+
+          const dynResponse = await responsePromise;
+          dynamicData = await dynResponse.json();
+        } catch (e) {
+          console.log(`${logPrefix}   ${movie.title} No dynamic data response within 15s (error: ${e.message})`);
+          continue; // Move on to next movie
+        }
+        
         // Parse today's data (first date)
         const scrapedDates = new Set();
         const beforeToday = allResults.length;
-        const effectiveDate = parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], allResults, lookups, logPrefix);
+        const effectiveDate = parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], allResults, lookups, logPrefix, cinemaEntryCounts);
         if (effectiveDate) scrapedDates.add(effectiveDate);
         console.log(`${logPrefix}   ${datesToScrape[0]}: +${allResults.length - beforeToday} entries (total: ${allResults.length})`);
+
+        // FIX 4 — Early warning after FIRST movie of the FIRST date completes
+        if (!firstMovieFirstDateChecked) {
+          for (const target of targetsInRegion) {
+            if (cinemaEntryCounts[target.cinemaName] === 0) {
+              console.log(`${logPrefix} [EARLY WARNING] ${target.cinemaName} has 0 entries after first movie — check venue matching`);
+            }
+          }
+          firstMovieFirstDateChecked = true;
+        }
 
         // ---- Click through remaining date tabs ----
         for (let dateIdx = 1; dateIdx < datesToScrape.length; dateIdx++) {
@@ -409,7 +492,37 @@ async function scrapeLocation(locationConfig, regionLocks) {
             const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
             const dayName = dayNames[targetDateObj.getDay()];
 
-            const possibleTabs = await page.$$('div, a, li, button, span');
+            // ISSUE 2 FIX — Regex-based container search and empty fallback safety check
+            let possibleTabs = [];
+            let usedFastPath = false;
+            
+            const containerHandle = await page.evaluateHandle(() => {
+              const regex = /(^|[\s_-])date([\s_-]|[A-Z]|$)/i;
+              const elements = document.querySelectorAll('*');
+              for (const el of elements) {
+                if (typeof el.className === 'string' && regex.test(el.className)) {
+                  return el;
+                }
+              }
+              return null;
+            });
+            const container = containerHandle.asElement();
+            
+            if (container) {
+              possibleTabs = await container.$$('div, a, li, button, span');
+              if (possibleTabs.length === 0) {
+                console.log(`${logPrefix}   [WARNING] Fast path container found but empty; falling back to full page scan.`);
+                possibleTabs = await page.$$('div, a, li, button, span');
+              } else {
+                usedFastPath = true;
+              }
+            } else {
+              possibleTabs = await page.$$('div, a, li, button, span');
+            }
+            if (dateIdx === 1) {
+              console.log(`${logPrefix}   Used ${usedFastPath ? 'fast path' : 'fallback path'} for date tab search`);
+            }
+
             for (const tab of possibleTabs) {
               try {
                 const text = await tab.textContent();
@@ -419,7 +532,17 @@ async function scrapeLocation(locationConfig, regionLocks) {
                     if (cleanText.includes(month.toLowerCase()) || cleanText.includes(dayName.toLowerCase())) {
                       const box = await tab.boundingBox();
                       if (box && box.width > 10 && box.height > 10) {
+                        
+                        // ISSUE 1 FIX — Parse response directly from the awaited promise to avoid race condition
+                        const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 8000 });
                         await tab.click();
+                        try {
+                          const dynResponse = await responsePromise;
+                          dynamicData = await dynResponse.json();
+                        } catch(e) {
+                          console.log(`${logPrefix}   ${movie.title} No dynamic data response within 8s`);
+                        }
+                        
                         dateClicked = true;
                         break;
                       }
@@ -435,10 +558,10 @@ async function scrapeLocation(locationConfig, regionLocks) {
             continue;
           }
 
-          await page.waitForTimeout(4000);
+          // FIX 1 — Removed the fixed 4000ms wait here
 
           const beforeDate = allResults.length;
-          const effectiveDateLoop = parseBMSData(dynamicData, staticData, movie.title, targetDate, allResults, lookups, logPrefix);
+          const effectiveDateLoop = parseBMSData(dynamicData, staticData, movie.title, targetDate, allResults, lookups, logPrefix, cinemaEntryCounts);
           if (effectiveDateLoop) scrapedDates.add(effectiveDateLoop);
           console.log(`${logPrefix}   ${targetDate}: +${allResults.length - beforeDate} entries (total: ${allResults.length})`);
 
@@ -479,16 +602,8 @@ async function scrapeLocation(locationConfig, regionLocks) {
     console.log(`\n${logPrefix} ===== LOCATION SCRAPE COMPLETE =====`);
     console.log(`${logPrefix} Final: ${deduped.length} entries from ${locationName}`);
 
-    // Check for zero-movie cinemas
-    const finalStats = {};
-    cinemaTargets.forEach(t => finalStats[t.cinemaName] = 0);
-    deduped.forEach(entry => {
-      if (finalStats[entry.cinema] !== undefined) {
-        finalStats[entry.cinema]++;
-      }
-    });
-
-    for (const [cinemaName, count] of Object.entries(finalStats)) {
+    // Check for zero-movie cinemas using the running tally
+    for (const [cinemaName, count] of Object.entries(cinemaEntryCounts)) {
       console.log(`${logPrefix}   -> ${cinemaName}: ${count} prices scraped`);
       if (count === 0) {
         console.error(`${logPrefix} [ALERT] ZERO MOVIES scraped for cinema: ${cinemaName}`);

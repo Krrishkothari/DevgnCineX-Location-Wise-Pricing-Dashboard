@@ -3,7 +3,7 @@ const Redis = require('ioredis');
 const pLimit = require('p-limit').default;
 
 // Scraper functions
-const { scrapeLocation } = require('./scrapers/bms');
+// Scraper wrappers are loaded dynamically below
 const locations = require('./locations.config');
 
 // DB and Alert functions
@@ -48,7 +48,8 @@ const worker = new Worker('scraper-jobs', async (job) => {
         limit(async () => {
           await randomDelay(MIN_DELAY_MS, MAX_DELAY_MS);
           try {
-            return await scrapeLocation(loc, regionLocks);
+            const locationScraper = require(`./scrapers/locations/${loc.locationName.toLowerCase()}.js`);
+            return await locationScraper(regionLocks);
           } catch (err) {
             console.error(`[Worker] Location ${loc.locationName} failed: ${err.message}`);
             return { locationName: loc.locationName, success: false, entryCount: 0, entries: [], error: err.message };
@@ -56,18 +57,19 @@ const worker = new Worker('scraper-jobs', async (job) => {
         })
       );
 
-      const results = await Promise.all(tasks);
-      const allEntries = results.flatMap(r => r.entries || []);
-      const succeeded = results.filter(r => r.success);
+      const results = await Promise.allSettled(tasks);
+      const unpackedResults = results.map(r => r.status === 'fulfilled' ? r.value : { locationName: 'Unknown', success: false, entryCount: 0, entries: [], error: 'Promise rejected' });
+      const allEntries = unpackedResults.flatMap(r => r.entries || []);
+      const succeeded = unpackedResults.filter(r => r.success);
 
-      console.log(`[Worker] Parallel scrape done: ${succeeded.length}/${results.length} locations succeeded, ${allEntries.length} total entries.`);
+      console.log(`[Worker] Parallel scrape done: ${succeeded.length}/${unpackedResults.length} locations succeeded, ${allEntries.length} total entries.`);
 
       if (allEntries.length > 0) {
-        await savePrices(allEntries);
+        // Scrapers save incrementally, so we only run alert checks here
         await checkAlerts(allEntries);
       }
 
-      return { success: true, count: allEntries.length, locationResults: results.map(r => ({ location: r.locationName, success: r.success, entries: r.entryCount })) };
+      return { success: true, count: allEntries.length, locationResults: unpackedResults.map(r => ({ location: r.locationName, success: r.success, entries: r.entryCount })) };
     }
     default:
       throw new Error(`Unknown job name: ${job.name}`);
