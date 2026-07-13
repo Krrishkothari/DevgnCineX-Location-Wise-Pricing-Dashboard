@@ -34,7 +34,7 @@ function validateSchema(obj) {
       throw new Error(`Validation Error: Missing or null value for required field '${field}'`);
     }
   }
-  
+
   if (isNaN(obj.price)) {
     throw new Error(`Validation Error: Price must be a valid number`);
   }
@@ -59,7 +59,7 @@ if (require.main === module) {
     };
     const normalized = normalizePrice(rawData, 'PVR');
     validateSchema(normalized);
-    
+
     if (
       normalized.cinema === 'PVR' &&
       normalized.location === 'Juhu' &&
@@ -100,7 +100,7 @@ if (require.main === module) {
 
   // Test 3: Validation failure on invalid price (NaN)
   try {
-    const rawData = { location: 'Bandra', price: 'Free' }; 
+    const rawData = { location: 'Bandra', price: 'Free' };
     const normalized = normalizePrice(rawData, 'MovieMax');
     validateSchema(normalized);
     console.log("❌ Test 3 (Invalid Price): FAIL - Should have thrown an error.");
