@@ -81,8 +81,10 @@ async function savePrices(newResults) {
       data: finalArray
     };
 
-    // Write back to file synchronously to avoid race conditions between quick BullMQ jobs
-    fs.writeFileSync(DATA_FILE, JSON.stringify(outputData, null, 2), 'utf-8');
+    // Write back to file atomically to avoid race conditions and corruption
+    const tempFile = `${DATA_FILE}.tmp`;
+    fs.writeFileSync(tempFile, JSON.stringify(outputData, null, 2), 'utf-8');
+    fs.renameSync(tempFile, DATA_FILE);
     console.log(`[DB] Successfully merged and saved. Total records: ${finalArray.length}`);
   });
 }

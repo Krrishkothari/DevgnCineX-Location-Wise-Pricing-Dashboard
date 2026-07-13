@@ -135,14 +135,12 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
       const venueName = venue.additionalData?.venueName || '';
       const venueCode = venue.additionalData?.venueCode || '';
 
-      // ISSUE 2 FIX: Log EVERY venue seen in the API response to allow byte-for-byte comparison against config
-      console.log(`${logPrefix}   [DEBUG] API Venue: "${venueName}" | Code: "${venueCode}"`);
+      // Venue debug logging suppressed to reduce console noise.
 
       // STRICT FILTER: only keep venues that match this location's targets
       const target = matchVenueToTarget(venueName, venueCode, lookups);
       if (!target) {
-        // FIX 3 — Log unmatched venues instead of silently dropping them
-        console.log(`${logPrefix}   Unmatched venue in API response: "${venueName}" (code: ${venueCode})`);
+        // Venue is not in our target list, safely ignore it.
         continue;
       }
       matchedCount++;
@@ -373,8 +371,6 @@ async function scrapeLocation(locationConfig, regionLocks) {
       let firstMovieFirstDateChecked = false;
 
       for (const movie of moviesToScrape) {
-        const movieTitleUpper = movie.title.toUpperCase();
-        if (movieTitleUpper !== 'EVIL DEAD BURN') continue;
         const movieUrl = movie.href.startsWith('http') ? movie.href : `https://in.bookmyshow.com${movie.href}`;
         console.log(`\n${logPrefix} --- ${movie.title} (${region}) ---`);
 
@@ -424,11 +420,7 @@ async function scrapeLocation(locationConfig, regionLocks) {
               await continueBtn.click();
             }
           } catch (ageErr) {
-            console.log(`${logPrefix}   Age modal wait failed: ${ageErr.message}`);
-            await page.screenshot({ path: `/Users/krrishkothari/Devgn cineX - pricing dashboard/devgn-cinex-pricing/scraper/${movie.title.replace(/\\s+/g, '_')}_failed.png`, fullPage: true });
-            const html = await page.content();
-            const fs = require('fs');
-            fs.writeFileSync(`/Users/krrishkothari/Devgn cineX - pricing dashboard/devgn-cinex-pricing/scraper/${movie.title.replace(/\\s+/g, '_')}_failed.html`, html);
+            // No age verification modal appeared, which is fine (movie is not A-rated).
           }
 
           // FORMAT MODAL HANDLING: If a format/language selection modal appears, click the first available format
@@ -458,15 +450,7 @@ async function scrapeLocation(locationConfig, regionLocks) {
         if (effectiveDate) scrapedDates.add(effectiveDate);
         console.log(`${logPrefix}   ${datesToScrape[0]}: +${allResults.length - beforeToday} entries (total: ${allResults.length})`);
 
-        // FIX 4 — Early warning after FIRST movie of the FIRST date completes
-        if (!firstMovieFirstDateChecked) {
-          for (const target of targetsInRegion) {
-            if (cinemaEntryCounts[target.cinemaName] === 0) {
-              console.log(`${logPrefix} [EARLY WARNING] ${target.cinemaName} has 0 entries after first movie — check venue matching`);
-            }
-          }
-          firstMovieFirstDateChecked = true;
-        }
+        // Early warning log removed to reduce noise.
 
         // ---- Click through remaining date tabs ----
         for (let dateIdx = 1; dateIdx < datesToScrape.length; dateIdx++) {

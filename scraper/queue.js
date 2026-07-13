@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Queue, Worker } = require('bullmq');
 const Redis = require('ioredis');
 const pLimit = require('p-limit').default;
@@ -24,6 +25,10 @@ function randomDelay(min, max) {
 const connection = process.env.REDIS_URL
   ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null })
   : new Redis({ host: 'localhost', port: 6379, maxRetriesPerRequest: null });
+
+connection.on('error', (err) => {
+  console.error('[Worker Redis] Error:', err.message);
+});
 
 // Create a BullMQ Queue named 'scraper-jobs'
 const scraperQueue = new Queue('scraper-jobs', {
@@ -94,11 +99,26 @@ async function addAllJobs() {
   console.log('[Queue] BMS job successfully enqueued.');
 }
 
+async function gracefulShutdown() {
+  console.log('\n[Worker] Shutdown signal received. Closing worker...');
+  try {
+    await worker.close();
+    connection.quit();
+    console.log('[Worker] Worker and Redis connection closed.');
+  } catch (err) {
+    console.error('[Worker] Error during shutdown:', err.message);
+  }
+}
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
 module.exports = {
   scraperQueue,
   addAllJobs,
   worker
 };
+
 
 // If run directly, just test adding jobs
 if (require.main === module) {

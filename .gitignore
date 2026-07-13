@@ -2,3 +2,9 @@ node_modules/
 .env
 dist/
 .DS_Store
+
+# Data and DB
+backend/data/prices.json
+backend/data.db
+*.db
+backend/prisma/*.db

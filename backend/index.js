@@ -1,15 +1,31 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const helmet = require('helmet');
+const compression = require('compression');
+const { Queue } = require('bullmq');
+const Redis = require('ioredis');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Security and performance middleware
+app.use(helmet({
+  contentSecurityPolicy: false, // Disabled for simplicity unless strictly needed
+}));
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
 const DATA_FILE = path.join(__dirname, 'data/prices.json');
+
+// --- API ROUTES ---
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 app.get('/api/prices', (req, res) => {
   try {
@@ -137,31 +153,6 @@ app.get('/api/dates', (req, res) => {
   }
 });
 
-const { Queue } = require('bullmq');
-const Redis = require('ioredis');
-
-// Connect to Redis and BullMQ Queue
-const connection = process.env.REDIS_URL
-  ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null })
-  : new Redis({ host: 'localhost', port: 6379, maxRetriesPerRequest: null });
-
-const scraperQueue = new Queue('scraper-jobs', { connection });
-
-// Schedule the repeatable job to run every 1 hour automatically
-scraperQueue.add(
-  'scrape-bms-hourly',
-  {},
-  { repeat: { pattern: '0 * * * *' } }
-).then(() => {
-  console.log('[API] Hourly scraper job scheduled successfully.');
-}).catch(err => {
-  console.error('[API] Failed to schedule repeatable job:', err);
-});
-
-// Initialize the scraper worker directly within the backend process
-require('../scraper/queue.js');
-console.log('[API] Scraper worker initialized within the backend process.');
-
 app.post('/api/scrape/trigger', async (req, res) => {
   try {
     console.log('[API] Manual scrape triggered');
@@ -173,6 +164,74 @@ app.post('/api/scrape/trigger', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+
+// --- REDIS / BULLMQ SETUP ---
+const connection = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL, { maxRetriesPerRequest: null })
+  : new Redis({ host: 'localhost', port: 6379, maxRetriesPerRequest: null });
+
+connection.on('error', (err) => {
+  console.error('[Redis] Error:', err.message);
+});
+
+const scraperQueue = new Queue('scraper-jobs', { connection });
+
+// Schedule the repeatable job to run every 1 hour automatically
+const scraperCron = process.env.SCRAPER_CRON || '0 * * * *';
+scraperQueue.add(
+  'scrape-bms-hourly',
+  {},
+  { repeat: { pattern: scraperCron } }
+).then(() => {
+  console.log(`[API] Scraper job scheduled successfully with pattern: ${scraperCron}`);
+}).catch(err => {
+  console.error('[API] Failed to schedule repeatable job:', err);
+});
+
+// Initialize the scraper worker directly within the backend process
+require('../scraper/queue.js');
+console.log('[API] Scraper worker initialized within the backend process.');
+
+
+// --- STATIC FRONTEND SERVING (PRODUCTION) ---
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDistPath)) {
+  console.log('[Backend] Serving static frontend files');
+  app.use(express.static(frontendDistPath));
+  
+  // SPA fallback
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+} else {
+  console.log('[Backend] Frontend dist not found. Skipping static file serving.');
+}
+
+// --- SERVER & GRACEFUL SHUTDOWN ---
+const server = app.listen(PORT, () => {
   console.log(`[Backend] API Server running on http://localhost:${PORT}`);
 });
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+async function gracefulShutdown() {
+  console.log('\n[Backend] Shutdown signal received. Closing HTTP server...');
+  server.close(async () => {
+    console.log('[Backend] HTTP server closed.');
+    try {
+      await scraperQueue.close();
+      connection.quit();
+      console.log('[Backend] Redis connections closed.');
+    } catch (err) {
+      console.error('[Backend] Error during shutdown:', err.message);
+    }
+    process.exit(0);
+  });
+  
+  // Force exit if taking too long
+  setTimeout(() => {
+    console.error('[Backend] Could not close connections in time, forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+}

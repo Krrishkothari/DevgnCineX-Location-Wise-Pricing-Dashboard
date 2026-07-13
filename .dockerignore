@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.DS_Store
+.env
+.git
+.gitignore
+.dockerignore
+backend/data/*
+!backend/data/.gitkeep
+dist
+backend/data.db
+*.db
+backend/prisma/*.db
