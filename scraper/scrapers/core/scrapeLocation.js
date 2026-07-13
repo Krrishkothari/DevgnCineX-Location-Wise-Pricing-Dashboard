@@ -11,7 +11,7 @@
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const { normalizePrice, validateSchema } = require('../../normalize');
-const { savePrices } = require('../../db');
+const { savePrices, saveProgress } = require('../../db');
 
 chromium.use(StealthPlugin());
 
@@ -101,7 +101,7 @@ function matchVenueToTarget(venueName, venueCode, lookups) {
 /**
  * Parse BMS showtimes API data, keeping ONLY venues that match the provided targets.
  */
-function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix, cinemaEntryCounts) {
+function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix, cinemaEntryCounts, selectedFormat = null) {
   if (!dynamicData?.data?.showtimeWidgets) return;
 
   // Extract actual selected date from the API response to avoid false positives
@@ -116,10 +116,12 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
     }
   }
 
-  let eventFormat = '2D';
+  let eventFormat = selectedFormat || '2D';
   let eventLanguage = '';
   if (staticData?.data?.eventData?.childEvents?.length > 0) {
-    eventFormat = staticData.data.eventData.childEvents[0].eventDimension || '2D';
+    if (!selectedFormat) {
+      eventFormat = staticData.data.eventData.childEvents[0].eventDimension || '2D';
+    }
     eventLanguage = staticData.data.eventData.childEvents[0].eventLanguage || '';
   }
 
@@ -127,6 +129,7 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
   if (!groupList?.data) return;
 
   let matchedCount = 0;
+  const seenVenues = [];
 
   for (const group of groupList.data) {
     if (group.type !== 'venue' && group.type !== 'venueGroup') continue;
@@ -134,8 +137,8 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
     for (const venue of venues) {
       const venueName = venue.additionalData?.venueName || '';
       const venueCode = venue.additionalData?.venueCode || '';
-
-      // Venue debug logging suppressed to reduce console noise.
+      
+      if (venueName) seenVenues.push(venueName);
 
       // STRICT FILTER: only keep venues that match this location's targets
       const target = matchVenueToTarget(venueName, venueCode, lookups);
@@ -187,6 +190,8 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
 
   if (matchedCount > 0) {
     console.log(`${logPrefix}   Matched ${matchedCount} venues for ${movieTitle} on ${effectiveDateStr}.`);
+  } else if (seenVenues.length > 0) {
+    console.log(`${logPrefix}   [API DEBUG] ${movieTitle} returned ${seenVenues.length} venues, but none matched our targets. Sample: ${seenVenues.slice(0, 3).join(', ')}`);
   }
   return effectiveDateStr;
 }
@@ -262,7 +267,7 @@ async function scrapeLocation(locationConfig, regionLocks) {
     const datesToScrape = getNextDates(5);
     console.log(`${logPrefix} Will scrape ${datesToScrape.length} dates (intentional platform limit): ${datesToScrape.join(', ')}`);
 
-    const allResults = [];
+    let locationTotalEntries = 0;
 
     // Group this location's cinemas by unique BMS region
     const regionSet = [...new Set(cinemaTargets.map(t => t.bmsRegion))];
@@ -320,25 +325,27 @@ async function scrapeLocation(locationConfig, regionLocks) {
       }
 
       // Discover movies in this region
-      const movieLinks = await page.evaluate(async () => {
+      const discoverResult = await page.evaluate(async () => {
         const getCards = () => Array.from(document.querySelectorAll('a[href*="/movies/"]'));
         
         let previousCount = 0;
         let stableAttempts = 0;
         const maxScrolls = 20; // Hard limit to avoid infinite loops
+        let finalScrollCount = 0;
         
         for (let i = 0; i < maxScrolls; i++) {
+          finalScrollCount = i + 1;
           window.scrollBy(0, document.body.scrollHeight);
           
           // Wait for lazy loading
-          await new Promise(r => setTimeout(r, 1500));
+          await new Promise(r => setTimeout(r, 2000));
           
           const currentCount = getCards().length;
           
           if (currentCount === previousCount) {
             stableAttempts++;
-            if (stableAttempts >= 2) {
-              break; // Stabilized across 2 attempts
+            if (stableAttempts >= 3) {
+              break; // Stabilized across 3 attempts
             }
           } else {
             stableAttempts = 0; // Reset if we found new movies
@@ -360,231 +367,328 @@ async function scrapeLocation(locationConfig, regionLocks) {
             results.push({ title, href });
           }
         }
-        return results;
+        return { links: results, finalScrollCount, stableAttempts };
       });
 
-      console.log(`${logPrefix} Found ${movieLinks.length} movies in ${region}.`);
+      console.log(`${logPrefix} Region explore scroll finished: ${discoverResult.finalScrollCount} scrolls, ${discoverResult.stableAttempts} stable attempts.`);
+      let movieLinks = discoverResult.links;
+      console.log(`${logPrefix} Found ${movieLinks.length} movies on region explore page.`);
+
+      // ---- FALLBACK DISCOVERY: Check each cinema page directly ----
+      console.log(`${logPrefix} Starting fallback discovery on individual cinema pages...`);
+      for (const target of targetsInRegion) {
+        if (!target.bmsSlug || !target.bmsCode) continue;
+        const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}-${target.location.toLowerCase()}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/`;
+        console.log(`${logPrefix}   Checking ${target.cinemaName} at ${cinemaUrl}`);
+        
+        try {
+          await page.goto(cinemaUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          await page.waitForTimeout(2000);
+          
+          const cinemaMovies = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('a[href*="/movies/"]'))
+              .map(a => a.getAttribute('href'))
+              .filter(h => h && !h.includes('/explore/') && !h.includes('/genre/'));
+          });
+          
+          let added = 0;
+          for (const href of cinemaMovies) {
+            if (!movieLinks.some(m => m.href === href)) {
+              // Extract title from URL as fallback
+              const urlParts = href.split('/');
+              const slugTitle = urlParts[urlParts.length - 2] || urlParts[urlParts.length - 1];
+              const title = slugTitle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+              movieLinks.push({ title, href });
+              added++;
+            }
+          }
+          if (added > 0) console.log(`${logPrefix}   -> Added ${added} new movies from ${target.cinemaName} page.`);
+        } catch(err) {
+          console.log(`${logPrefix}   Failed to load cinema page for ${target.cinemaName}: ${err.message}`);
+        }
+      }
+      
+      console.log(`${logPrefix} Total unique movies to scrape after fallback: ${movieLinks.length}`);
       if (movieLinks.length === 0) continue;
 
       // Scrape all discovered movies
       const moviesToScrape = movieLinks;
       let firstMovieFirstDateChecked = false;
+      const scrapeStartTime = Date.now();
 
-      for (const movie of moviesToScrape) {
+      for (let movieIdx = 0; movieIdx < moviesToScrape.length; movieIdx++) {
+        const movie = moviesToScrape[movieIdx];
+        const movieResults = [];
+        if (saveProgress) {
+          saveProgress({
+            current: movieIdx + 1,
+            completed: movieIdx,
+            total: moviesToScrape.length,
+            movie: movie.title,
+            startTime: scrapeStartTime
+          });
+        }
+        
         const movieUrl = movie.href.startsWith('http') ? movie.href : `https://in.bookmyshow.com${movie.href}`;
         console.log(`\n${logPrefix} --- ${movie.title} (${region}) ---`);
 
-        // Visit movie page and wait dynamically for "Book tickets"
-        try {
-          await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-          await page.waitForSelector('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible', { timeout: 15000 });
-        } catch (err) {
-          console.log(`${logPrefix}   Failed to load movie page or find book button: ${err.message}`);
-          continue;
-        }
-
-        const bookBtns = await page.$$('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible');
-        if (bookBtns.length === 0) {
-          console.log(`${logPrefix}   No "Book tickets" button, skipping.`);
-          continue;
-        }
-
-        // Reset captured data
-        dynamicData = null;
-        staticData = null;
-
-        console.log(`${logPrefix}   Clicking "Book tickets"...`);
         
-        await page.waitForTimeout(1500); // Allow React to hydrate before clicking
+        let formatsToScrape = [null]; // Default if no modal
+        let formatDiscoveryDone = false;
 
-        // ISSUE 1 FIX — Parse response directly from the awaited promise to avoid race condition
-        try {
-          await page.waitForTimeout(2000); // Allow React to hydrate before clicking
-          const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 15000 });
+        // Visit movie page and wait dynamically for "Book tickets" with a single retry loop
+        for (let attempt = 1; attempt <= 2; attempt++) {
+          if (attempt === 2) console.log(`${logPrefix}   [RETRY] Attempt 2 for ${movie.title}. Reloading...`);
+
+          try {
+            await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.waitForSelector('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible', { timeout: 15000 });
+          } catch (err) {
+            console.log(`${logPrefix}   Failed to load movie page or find book button: ${err.message}`);
+            if (attempt === 1) continue; else break;
+          }
+
+          const bookBtns = await page.$$('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible');
+          if (bookBtns.length === 0) {
+            console.log(`${logPrefix}   No "Book tickets" button, skipping.`);
+            if (attempt === 1) continue; else break;
+          }
+
+          console.log(`${logPrefix}   Clicking "Book tickets" (Format Discovery)...`);
+          await page.waitForTimeout(1500); 
+
+          try {
+            for (const btn of bookBtns) {
+              try { await btn.click({ delay: 50, timeout: 3000 }); break; } catch (e) {}
+            }
+            
+            // Wait for potential modal
+            try {
+              await page.waitForSelector('h5:has-text("Select language and format"), h4:has-text("Select language and format"), [role="dialog"], section:has-text("Select language")', { timeout: 3000, state: 'visible' });
+              
+              // Extract all formats
+              const formatLocators = await page.$$('ul li section div[role="button"] span');
+              if (formatLocators.length > 0) {
+                const detectedFormats = [];
+                for (const loc of formatLocators) {
+                  const text = await loc.innerText();
+                  if (text && text.trim().length > 0) detectedFormats.push(text.trim());
+                }
+                const uniqueFormats = [...new Set(detectedFormats)];
+                if (uniqueFormats.length > 0) {
+                  formatsToScrape = uniqueFormats;
+                  console.log(`${logPrefix}   Found ${formatsToScrape.length} formats for ${movie.title}: [${formatsToScrape.join(', ')}]`);
+                }
+              }
+            } catch (modalErr) {
+              // No modal found
+            }
+            
+            formatDiscoveryDone = true;
+            break;
+          } catch (e) {
+            console.log(`${logPrefix}   ${movie.title} Error during format discovery: ${e.message}`);
+          }
+        }
+
+        if (!formatDiscoveryDone) {
+          console.log(`${logPrefix}   Giving up on ${movie.title} after 2 attempts.`);
+          continue; 
+        }
+
+        // Now iterate through all discovered formats
+        for (let formatIdx = 0; formatIdx < formatsToScrape.length; formatIdx++) {
+          const currentFormat = formatsToScrape[formatIdx];
           
-          console.log(`${logPrefix}   Found ${bookBtns.length} Book tickets buttons`);
-          for (const btn of bookBtns) {
-            try { 
-              await btn.click({ delay: 50, timeout: 3000 }); 
-              console.log(`${logPrefix}   Click successful!`);
+          if (formatsToScrape.length > 1) {
+            console.log(`\n${logPrefix}   --- Scraping format: ${currentFormat} ---`);
+          }
+
+          // If it's not the first format, we need to reload the movie page and re-click "Book tickets" to bring up the modal again
+          if (formatIdx > 0) {
+            try {
+              await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+              await page.waitForSelector('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible', { timeout: 15000 });
+              const bookBtns = await page.$$('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible');
+              if (bookBtns.length > 0) {
+                await page.waitForTimeout(1500);
+                for (const btn of bookBtns) {
+                  try { await btn.click({ delay: 50, timeout: 3000 }); break; } catch (e) {}
+                }
+              }
             } catch (e) {
-              console.log(`${logPrefix}   Click failed: ${e.message}`);
+              console.log(`${logPrefix}   Failed to reload for format ${currentFormat}: ${e.message}`);
+              continue;
             }
-          }
-          
-          // AGE VERIFICATION (18+) MODAL HANDLING: A-rated movies pop up a warning first
-          try {
-            const continueBtn = await page.waitForSelector('button:has-text("Accept"), button:has-text("Continue"), [role="button"]:has-text("Accept"), [role="button"]:has-text("Continue"), [aria-label="Continue"]', { timeout: 3000, state: 'visible' });
-            if (continueBtn) {
-              console.log(`${logPrefix}   Age verification modal detected. Clicking Continue...`);
-              await continueBtn.click();
-            }
-          } catch (ageErr) {
-            // No age verification modal appeared, which is fine (movie is not A-rated).
-          }
-
-          // FORMAT MODAL HANDLING: If a format/language selection modal appears, click the first available format
-          try {
-            // We require the selector to be inside something that looks like a modal or popup, 
-            // so we don't accidentally click the "2D" tag in the background movie description.
-            const formatBtn = await page.waitForSelector('.modal span:has-text("2D"), [role="dialog"] span:has-text("2D"), section:has-text("Select language") span:has-text("2D"), section:has-text("Select language") div:has-text("2D"), .modal span:has-text("3D"), [role="dialog"] span:has-text("3D"), section:has-text("Select language") span:has-text("3D"), .modal span:has-text("IMAX"), [role="dialog"] span:has-text("IMAX"), section:has-text("Select language") span:has-text("IMAX")', { timeout: 3000, state: 'visible' });
-            if (formatBtn) {
-              console.log(`${logPrefix}   Format modal detected. Selecting first available format...`);
-              await formatBtn.click();
-            }
-          } catch (modalErr) {
-            // No modal appeared, which is fine.
-          }
-
-          const dynResponse = await responsePromise;
-          dynamicData = await dynResponse.json();
-        } catch (e) {
-          console.log(`${logPrefix}   ${movie.title} No dynamic data response within 15s (error: ${e.message})`);
-          continue; // Move on to next movie
-        }
-        
-        // Parse today's data (first date)
-        const scrapedDates = new Set();
-        const beforeToday = allResults.length;
-        const effectiveDate = parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], allResults, lookups, logPrefix, cinemaEntryCounts);
-        if (effectiveDate) scrapedDates.add(effectiveDate);
-        console.log(`${logPrefix}   ${datesToScrape[0]}: +${allResults.length - beforeToday} entries (total: ${allResults.length})`);
-
-        // Early warning log removed to reduce noise.
-
-        // ---- Click through remaining date tabs ----
-        for (let dateIdx = 1; dateIdx < datesToScrape.length; dateIdx++) {
-          const targetDate = datesToScrape[dateIdx];
-
-          // Skip if this date was already scraped via a BMS redirect
-          if (scrapedDates.has(targetDate)) {
-            console.log(`${logPrefix}   ${targetDate}: already scraped via redirect, skipping.`);
-            continue;
           }
 
           dynamicData = null;
           staticData = null;
 
-          await page.waitForTimeout(1000);
-          let dateClicked = false;
           try {
-            const targetDateObj = new Date(targetDate + 'T00:00:00+05:30');
-            const dayNum = String(targetDateObj.getDate()).padStart(2, '0');
-            const dayNumNoZero = String(targetDateObj.getDate());
-            const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            const month = monthNames[targetDateObj.getMonth()];
-            const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-            const dayName = dayNames[targetDateObj.getDay()];
-
-            // ISSUE 2 FIX — Regex-based container search and empty fallback safety check
-            let possibleTabs = [];
-            let usedFastPath = false;
+            const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 15000 });
             
-            const containerHandle = await page.evaluateHandle(() => {
-              const regex = /(^|[\s_-])date([\s_-]|[A-Z]|$)/i;
-              const elements = document.querySelectorAll('*');
-              for (const el of elements) {
-                if (typeof el.className === 'string' && regex.test(el.className)) {
-                  return el;
-                }
+            // Age verification modal handling
+            try {
+              const continueBtn = await page.waitForSelector('button:has-text("Accept"), button:has-text("Continue"), [role="button"]:has-text("Accept"), [role="button"]:has-text("Continue"), [aria-label="Continue"]', { timeout: 2000, state: 'visible' });
+              if (continueBtn) {
+                console.log(`${logPrefix}   Age verification modal detected. Clicking Continue...`);
+                await continueBtn.click();
               }
-              return null;
-            });
-            const container = containerHandle.asElement();
-            
-            if (container) {
-              possibleTabs = await container.$$('div, a, li, button, span');
-              if (possibleTabs.length === 0) {
-                console.log(`${logPrefix}   [WARNING] Fast path container found but empty; falling back to full page scan.`);
-                possibleTabs = await page.$$('div, a, li, button, span');
-              } else {
-                usedFastPath = true;
+            } catch (ageErr) {}
+
+            // Click the specific format pill if one is defined
+            if (currentFormat) {
+              try {
+                // Find exact format pill
+                const formatBtn = await page.waitForSelector(`ul li section div[role="button"]:has(span:text-is("${currentFormat}")), span:text-is("${currentFormat}"), div:text-is("${currentFormat}")`, { timeout: 3000, state: 'visible' });
+                if (formatBtn) {
+                  await formatBtn.click();
+                }
+              } catch (modalErr) {
+                console.log(`${logPrefix}   Could not find/click format pill for ${currentFormat}`);
               }
             } else {
-              possibleTabs = await page.$$('div, a, li, button, span');
-            }
-            if (dateIdx === 1) {
-              console.log(`${logPrefix}   Used ${usedFastPath ? 'fast path' : 'fallback path'} for date tab search`);
+              // Fallback logic for single format (just click the first available if a modal happens to exist)
+              try {
+                const allFormats = await page.$$('span:text-is("2D"), div:text-is("2D"), span:text-is("3D"), div:text-is("3D")');
+                for (const el of allFormats) {
+                  if (await el.isVisible()) {
+                    await el.click();
+                    break;
+                  }
+                }
+              } catch (e) {}
             }
 
-            for (const tab of possibleTabs) {
-              try {
-                const text = await tab.textContent();
-                const cleanText = text.trim().replace(/\s+/g, ' ').toLowerCase();
-                if (cleanText.length > 3 && cleanText.length < 25) {
-                  if (cleanText.includes(dayNum) || cleanText.includes(dayNumNoZero)) {
-                    if (cleanText.includes(month.toLowerCase()) || cleanText.includes(dayName.toLowerCase())) {
-                      const box = await tab.boundingBox();
-                      if (box && box.width > 10 && box.height > 10) {
-                        
-                        // ISSUE 1 FIX — Parse response directly from the awaited promise to avoid race condition
-                        const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 8000 });
-                        await tab.click();
-                        try {
-                          const dynResponse = await responsePromise;
-                          dynamicData = await dynResponse.json();
-                        } catch(e) {
-                          console.log(`${logPrefix}   ${movie.title} No dynamic data response within 8s`);
+            const dynResponse = await responsePromise;
+            dynamicData = await dynResponse.json();
+          } catch (e) {
+            console.log(`${logPrefix}   ${movie.title} [${currentFormat || 'Default'}] No dynamic data response within 15s (error: ${e.message})`);
+            continue; // Move on to next format
+          }
+
+          if (!dynamicData) continue;
+
+          // Parse today's data (first date)
+          const scrapedDates = new Set();
+          const beforeToday = movieResults.length;
+          const effectiveDate = parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], movieResults, lookups, logPrefix, cinemaEntryCounts, currentFormat);
+          if (effectiveDate) scrapedDates.add(effectiveDate);
+          console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${datesToScrape[0]}: +${movieResults.length - beforeToday} entries`);
+
+          // ---- Click through remaining date tabs ----
+          for (let dateIdx = 1; dateIdx < datesToScrape.length; dateIdx++) {
+            const targetDate = datesToScrape[dateIdx];
+
+            if (scrapedDates.has(targetDate)) {
+              console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${targetDate}: already scraped via redirect, skipping.`);
+              continue;
+            }
+
+            dynamicData = null;
+            staticData = null;
+
+            await page.waitForTimeout(1000);
+            let dateClicked = false;
+            try {
+              const targetDateObj = new Date(targetDate + 'T00:00:00+05:30');
+              const dayNum = String(targetDateObj.getDate()).padStart(2, '0');
+              const dayNumNoZero = String(targetDateObj.getDate());
+              const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              const month = monthNames[targetDateObj.getMonth()];
+              const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+              const dayName = dayNames[targetDateObj.getDay()];
+
+              let possibleTabs = [];
+              
+              const containerHandle = await page.evaluateHandle(() => {
+                const regex = /(^|[\s_-])date([\s_-]|[A-Z]|$)/i;
+                const elements = document.querySelectorAll('*');
+                for (const el of elements) {
+                  if (typeof el.className === 'string' && regex.test(el.className)) {
+                    return el;
+                  }
+                }
+                return null;
+              });
+              const container = containerHandle.asElement();
+              
+              if (container) {
+                possibleTabs = await container.$$('div, a, li, button, span');
+                if (possibleTabs.length === 0) {
+                  possibleTabs = await page.$$('div, a, li, button, span');
+                }
+              } else {
+                possibleTabs = await page.$$('div, a, li, button, span');
+              }
+
+              for (const tab of possibleTabs) {
+                try {
+                  const text = await tab.textContent();
+                  const cleanText = text.trim().replace(/\s+/g, ' ').toLowerCase();
+                  if (cleanText.length > 3 && cleanText.length < 25) {
+                    if (cleanText.includes(dayNum) || cleanText.includes(dayNumNoZero)) {
+                      if (cleanText.includes(month.toLowerCase()) || cleanText.includes(dayName.toLowerCase())) {
+                        const box = await tab.boundingBox();
+                        if (box && box.width > 10 && box.height > 10) {
+                          const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 8000 });
+                          await tab.click();
+                          try {
+                            const dynResponse = await responsePromise;
+                            dynamicData = await dynResponse.json();
+                          } catch(e) {
+                            console.log(`${logPrefix}   ${movie.title} [${currentFormat || 'Default'}] No dynamic data response within 8s`);
+                          }
+                          dateClicked = true;
+                          break;
                         }
-                        
-                        dateClicked = true;
-                        break;
                       }
                     }
                   }
-                }
-              } catch (e) { }
+                } catch (e) { }
+              }
+            } catch (err) { }
+
+            if (!dateClicked) {
+              console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${targetDate}: could not find date tab, skipping.`);
+              continue;
             }
-          } catch (err) { }
 
-          if (!dateClicked) {
-            console.log(`${logPrefix}   ${targetDate}: could not find date tab, skipping.`);
-            continue;
+            const beforeDate = movieResults.length;
+            const effectiveDateLoop = parseBMSData(dynamicData, staticData, movie.title, targetDate, movieResults, lookups, logPrefix, cinemaEntryCounts, currentFormat);
+            if (effectiveDateLoop) scrapedDates.add(effectiveDateLoop);
+            console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${targetDate}: +${movieResults.length - beforeDate} entries`);
+
+            await page.waitForTimeout(500 + Math.random() * 1000);
           }
+        } // End format loop
 
-          // FIX 1 — Removed the fixed 4000ms wait here
-
-          const beforeDate = allResults.length;
-          const effectiveDateLoop = parseBMSData(dynamicData, staticData, movie.title, targetDate, allResults, lookups, logPrefix, cinemaEntryCounts);
-          if (effectiveDateLoop) scrapedDates.add(effectiveDateLoop);
-          console.log(`${logPrefix}   ${targetDate}: +${allResults.length - beforeDate} entries (total: ${allResults.length})`);
-
-          await page.waitForTimeout(500 + Math.random() * 1000);
+        if (movieResults.length > 0) {
+          try {
+            // Deduplicate before saving incrementally
+            const seen = new Set();
+            const deduped = movieResults.filter((entry) => {
+              const key = `${entry.cinema}-${entry.location}-${entry.movie}-${entry.price}-${entry.seat_category}-${entry.showtime}-${entry.date}`;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+            await savePrices(deduped);
+            locationTotalEntries += deduped.length;
+            console.log(`${logPrefix}   -> Saved ${deduped.length} entries for ${movie.title}.`);
+          } catch (err) {
+            console.error(`${logPrefix}   -> Failed to save for ${movie.title}:`, err.message);
+          }
         }
 
         await page.waitForTimeout(1000 + Math.random() * 2000);
       }
       
-      // Incremental save after each region
-      if (allResults.length > 0) {
-        try {
-          // Deduplicate before saving incrementally
-          const seen = new Set();
-          const deduped = allResults.filter((entry) => {
-            const key = `${entry.cinema}-${entry.location}-${entry.movie}-${entry.price}-${entry.seat_category}-${entry.showtime}-${entry.date}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          });
-          await savePrices(deduped);
-          console.log(`${logPrefix}   -> Incrementally saved ${deduped.length} entries so far.`);
-        } catch (err) {
-          console.error(`${logPrefix}   -> Failed to save incrementally:`, err.message);
-        }
-      }
     }
 
-    // Final deduplication
-    const seen = new Set();
-    const deduped = allResults.filter((entry) => {
-      const key = `${entry.cinema}-${entry.location}-${entry.movie}-${entry.price}-${entry.seat_category}-${entry.showtime}-${entry.date}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-
     console.log(`\n${logPrefix} ===== LOCATION SCRAPE COMPLETE =====`);
-    console.log(`${logPrefix} Final: ${deduped.length} entries from ${locationName}`);
+    console.log(`${logPrefix} Final: ${locationTotalEntries} entries from ${locationName}`);
 
     // Check for zero-movie cinemas using the running tally
     for (const [cinemaName, count] of Object.entries(cinemaEntryCounts)) {

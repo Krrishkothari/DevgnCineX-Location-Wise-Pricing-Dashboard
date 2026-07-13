@@ -35,6 +35,7 @@ app.get('/api/prices', (req, res) => {
     
     const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
     const parsedData = JSON.parse(rawData);
+    if (!parsedData.data) parsedData.data = [];
 
     // Optional date filtering
     const dateFilter = req.query.date;
@@ -68,6 +69,23 @@ app.get('/api/prices', (req, res) => {
   }
 });
 
+const PROGRESS_FILE = path.join(process.cwd(), 'data/progress.json');
+
+// Returns current scraper progress
+app.get('/api/progress', (req, res) => {
+  try {
+    if (!fs.existsSync(PROGRESS_FILE)) {
+      return res.status(200).json(null);
+    }
+    const rawData = fs.readFileSync(PROGRESS_FILE, 'utf-8');
+    const parsedData = JSON.parse(rawData);
+    res.status(200).json(parsedData);
+  } catch (error) {
+    console.error('[API] Error reading progress data:', error);
+    res.status(500).json({ error: 'Failed to load progress data.' });
+  }
+});
+
 // Returns price history for a specific movie + cinema + category + date + showtime
 app.get('/api/history', (req, res) => {
   try {
@@ -82,6 +100,7 @@ app.get('/api/history', (req, res) => {
 
     const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
     const parsedData = JSON.parse(rawData);
+    if (!parsedData.data) parsedData.data = [];
 
     const match = parsedData.data.find(entry => 
       entry.cinema === cinema &&
@@ -112,6 +131,7 @@ app.get('/api/movies', (req, res) => {
 
     const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
     const parsedData = JSON.parse(rawData);
+    if (!parsedData.data) parsedData.data = [];
     
     let entries = parsedData.data;
     if (req.query.date) {
@@ -200,7 +220,8 @@ if (fs.existsSync(frontendDistPath)) {
   app.use(express.static(frontendDistPath));
   
   // SPA fallback
-  app.get('*', (req, res) => {
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(frontendDistPath, 'index.html'));
   });
 } else {

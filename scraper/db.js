@@ -3,6 +3,7 @@ const path = require('path');
 
 const DATA_DIR = path.join(__dirname, '../backend/data');
 const DATA_FILE = path.join(DATA_DIR, 'prices.json');
+const PROGRESS_FILE = path.join(DATA_DIR, 'progress.json');
 
 // ---- Write mutex ----
 // Serializes concurrent savePrices() calls so parallel location scrapers
@@ -89,4 +90,17 @@ async function savePrices(newResults) {
   });
 }
 
-module.exports = { savePrices };
+function saveProgress(progressData) {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    const tempFile = `${PROGRESS_FILE}.tmp`;
+    fs.writeFileSync(tempFile, JSON.stringify(progressData, null, 2), 'utf-8');
+    fs.renameSync(tempFile, PROGRESS_FILE);
+  } catch (err) {
+    console.error('[DB] Failed to save progress:', err.message);
+  }
+}
+
+module.exports = { savePrices, saveProgress };

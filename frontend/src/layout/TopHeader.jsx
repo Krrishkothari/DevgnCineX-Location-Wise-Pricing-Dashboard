@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin, Search } from 'lucide-react';
+import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin, Volume2, Monitor } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useFilters } from './MainLayout';
 import { triggerScrape } from '../api';
@@ -17,6 +17,7 @@ const TARGET_LOCATIONS = [
   'Ghazipur', 'Gurugram', 'Guwahati', 'Hapur', 'Kanpur', 'Meerut', 
   'Mulund', 'Raebareli', 'Ratlam', 'Surendranagar', 'Thane'
 ];
+
 
 export function TopHeader() {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
@@ -37,15 +38,19 @@ export function TopHeader() {
     movies,
     dates,
     selectedMovie,
-    searchQuery,
     selectedLocation,
     selectedDate,
     selectedTimeSlot,
+    selectedLanguage,
+    selectedFormat,
+    availableLanguages,
+    availableFormats,
     setSelectedMovie,
-    setSearchQuery,
     setSelectedLocation,
     setSelectedDate,
     setSelectedTimeSlot,
+    setSelectedLanguage,
+    setSelectedFormat,
   } = useFilters();
 
   return (
@@ -71,17 +76,7 @@ export function TopHeader() {
           <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
         </div>
 
-        {/* Movie Search */}
-        <div className="relative group w-full sm:w-auto flex-1">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <input
-            type="text"
-            placeholder="Search movies..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 w-full appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-4 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[200px]"
-          />
-        </div>
+
 
         {/* Location Selector */}
         <div className="relative group w-full sm:w-auto">
@@ -129,6 +124,42 @@ export function TopHeader() {
             {TIME_SLOTS.map((slot) => (
               <option key={slot.value} value={slot.value}>
                 {slot.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
+        </div>
+
+        {/* Language Selector */}
+        <div className="relative group w-full sm:w-auto">
+          <Volume2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[150px]"
+          >
+            <option value="all">All Languages</option>
+            {availableLanguages.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
+        </div>
+
+        {/* Format Selector */}
+        <div className="relative group w-full sm:w-auto">
+          <Monitor size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
+          <select
+            value={selectedFormat}
+            onChange={(e) => setSelectedFormat(e.target.value)}
+            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[140px]"
+          >
+            <option value="all">All Formats</option>
+            {availableFormats.map((fmt) => (
+              <option key={fmt} value={fmt}>
+                {fmt}
               </option>
             ))}
           </select>

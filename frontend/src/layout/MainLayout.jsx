@@ -14,10 +14,14 @@ export function MainLayout() {
   const [movies, setMovies] = useState([]);
   const [dates, setDates] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('all');
+  const [selectedLanguage, setSelectedLanguage] = useState('all');
+  const [selectedFormat, setSelectedFormat] = useState('all');
+  
+  const [availableLanguages, setAvailableLanguages] = useState([]);
+  const [availableFormats, setAvailableFormats] = useState([]);
 
   // Fetch dates on mount
   useEffect(() => {
@@ -47,15 +51,21 @@ export function MainLayout() {
     movies,
     dates,
     selectedMovie,
-    searchQuery,
     selectedLocation,
     selectedDate,
     selectedTimeSlot,
+    selectedLanguage,
+    selectedFormat,
+    availableLanguages,
+    availableFormats,
     setSelectedMovie,
-    setSearchQuery,
     setSelectedLocation,
     setSelectedDate,
     setSelectedTimeSlot,
+    setSelectedLanguage,
+    setSelectedFormat,
+    setAvailableLanguages,
+    setAvailableFormats,
   };
 
   return (

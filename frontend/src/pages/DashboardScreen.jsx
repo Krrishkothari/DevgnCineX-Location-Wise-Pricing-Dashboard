@@ -166,7 +166,8 @@ function normalizeCategory(rawCat) {
   return 'TIER_1';
 }
 
-import { TrendChart } from '../components/TrendChart';
+
+import { ProgressBar } from '../components/ProgressBar';
 import * as XLSX from 'xlsx-js-style';
 
 export function DashboardScreen() {
@@ -177,10 +178,13 @@ export function DashboardScreen() {
 
   const {
     selectedMovie,
-    searchQuery,
     selectedLocation,
     selectedDate,
     selectedTimeSlot,
+    selectedLanguage,
+    selectedFormat,
+    setAvailableLanguages,
+    setAvailableFormats,
   } = useFilters();
 
   const loadData = async () => {
@@ -214,17 +218,36 @@ export function DashboardScreen() {
     return () => clearInterval(interval);
   }, [selectedDate]);
 
+  // Compute dynamic languages and formats based on selected movie
+  useEffect(() => {
+    let relevantData = rawData;
+    if (selectedMovie !== 'all') {
+      relevantData = rawData.filter(entry => entry.movie === selectedMovie);
+    }
+    
+    const langs = new Set();
+    const fmts = new Set();
+    
+    relevantData.forEach(entry => {
+      if (entry.language) langs.add(entry.language);
+      if (entry.format) fmts.add(entry.format);
+    });
+    
+    setAvailableLanguages(Array.from(langs).sort());
+    setAvailableFormats(Array.from(fmts).sort());
+    
+    // Auto-reset selection if current selection is no longer valid
+    if (selectedLanguage !== 'all' && langs.size > 0 && !langs.has(selectedLanguage)) {
+      // Handled by TopHeader automatically if we want, or we can just leave it as 'all' fallback
+    }
+  }, [rawData, selectedMovie, setAvailableLanguages, setAvailableFormats]);
+
   // Apply filters and group data
   const { cards: data, summary, isSelectedWeekend } = useMemo(() => {
-    // Step 1: Filter by selected movie & search query
+    // Step 1: Filter by selected movie
     let filtered = rawData;
     if (selectedMovie !== 'all') {
       filtered = filtered.filter((entry) => entry.movie === selectedMovie);
-    }
-    if (searchQuery && searchQuery.trim() !== '') {
-      filtered = filtered.filter((entry) => 
-        entry.movie.toLowerCase().includes(searchQuery.toLowerCase())
-      );
     }
 
     // Step 2: Filter by location and strictly allowed cinemas for that location
@@ -240,6 +263,14 @@ export function DashboardScreen() {
         if (!entry.showtime) return false;
         return isInTimeSlot(entry.showtime, selectedTimeSlot);
       });
+    }
+
+    // Step 3.5: Filter by Language and Format
+    if (selectedLanguage !== 'all') {
+      filtered = filtered.filter((entry) => entry.language === selectedLanguage);
+    }
+    if (selectedFormat !== 'all') {
+      filtered = filtered.filter((entry) => entry.format === selectedFormat);
     }
 
     // Step 4: Calculate Devgn Cinex baseline averages per bucket using historical baselineData filtered by Day Type
@@ -393,7 +424,7 @@ export function DashboardScreen() {
     if (summary.compPriceCount > 0) summary.competitorAvgPrice = Math.round(summary.compPriceSum / summary.compPriceCount);
 
     return { cards: result, summary, isSelectedWeekend };
-  }, [rawData, baselineData, selectedMovie, searchQuery, selectedLocation, selectedTimeSlot, selectedDate]);
+  }, [rawData, baselineData, selectedMovie, selectedLanguage, selectedFormat, selectedLocation, selectedTimeSlot, selectedDate]);
 
   const handleExport = () => {
     if (data.length === 0) return;
@@ -539,7 +570,10 @@ export function DashboardScreen() {
   if (data.length === 0) {
     return (
       <div className="flex flex-col gap-8">
-        {/* Header section with Manual Refresh button */}
+        {/* Progress Bar */}
+        <ProgressBar />
+
+        {/* Top Stats Bar */}
         <div className="flex justify-between items-center bg-op-card/50 p-6 rounded-[16px] border border-op-border">
           <div>
             <h2 className="text-2xl font-bold text-op-textMain">Pricing Dashboard</h2>
@@ -552,14 +586,14 @@ export function DashboardScreen() {
             <div className="text-5xl mb-4">🎬</div>
             <h3 className="text-xl font-semibold text-op-textMain mb-2">
               {data.length === 0 
-                ? searchQuery !== '' || selectedTimeSlot !== 'all' || selectedMovie !== 'all'
+                ? selectedTimeSlot !== 'all' || selectedMovie !== 'all' || selectedLanguage !== 'all' || selectedFormat !== 'all'
                   ? 'No Matches Found' : 'No Data Available'
                 : 'Market Overview'}
             </h3>
             <p>
               {selectedLocation
                 ? 'No movie listings available for the selected location.'
-                : searchQuery !== '' || selectedTimeSlot !== 'all' || selectedMovie !== 'all'
+                : selectedTimeSlot !== 'all' || selectedMovie !== 'all' || selectedLanguage !== 'all' || selectedFormat !== 'all'
                   ? 'Try adjusting your filters to see pricing data.'
                   : 'Run the scrapers via the Operations screen to populate the dashboard.'}
             </p>
@@ -571,6 +605,8 @@ export function DashboardScreen() {
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Progress Bar */}
+      <ProgressBar />
       {/* Header section with Manual Refresh button */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-op-card/50 p-4 sm:p-6 rounded-[16px] border border-op-border">
         <div>
@@ -583,9 +619,7 @@ export function DashboardScreen() {
             {selectedMovie !== 'all' && (
               <span className="ml-2 text-op-accent font-medium whitespace-nowrap">• Showing: {selectedMovie}</span>
             )}
-            {searchQuery !== '' && (
-              <span className="ml-2 text-op-accent font-medium whitespace-nowrap">• Search: "{searchQuery}"</span>
-            )}
+
             {selectedTimeSlot !== 'all' && (
               <span className="ml-2 text-op-accent font-medium whitespace-nowrap">• {selectedTimeSlot.charAt(0).toUpperCase() + selectedTimeSlot.slice(1)} shows</span>
             )}
@@ -636,7 +670,7 @@ export function DashboardScreen() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        key={`${searchQuery}-${selectedDate}-${selectedTimeSlot}-${mobileTab}`}
+        key={`${selectedLanguage}-${selectedFormat}-${selectedDate}-${selectedTimeSlot}-${mobileTab}`}
       >
         {data.filter(t => mobileTab === 'all' || (mobileTab === 'owned' && t.owned) || (mobileTab === 'comp' && !t.owned)).map((theatreData) => (
           <CinemaCard key={theatreData.id} theatreData={theatreData} />
@@ -728,7 +762,7 @@ function CinemaCard({ theatreData }) {
   const [selectedShowtime, setSelectedShowtime] = useState(
     theatreData.showtimes.length > 0 ? theatreData.showtimes[0] : null
   );
-  const [expandedCategory, setExpandedCategory] = useState(null);
+
 
   let hasScrapeTime = false;
   let formattedStaleTime = '';
@@ -843,13 +877,6 @@ function CinemaCard({ theatreData }) {
                       {tier.category}
                     </span>
                     <div className="flex items-center gap-3 shrink-0">
-                      <button 
-                        onClick={() => setExpandedCategory(expandedCategory === tier.category ? null : tier.category)}
-                        className="text-op-muted hover:text-op-accent text-xs p-1"
-                        title="View Price Trend"
-                      >
-                        📈
-                      </button>
                       {!theatreData.owned && tier.hasBaseline && tier.diff !== 0 && (
                         <span className={`text-xs font-semibold ${tier.diff > 0 ? 'text-op-danger' : 'text-op-success'}`}>
                           {tier.diff > 0 ? `↑${tier.diff}` : `↓${Math.abs(tier.diff)}`}
@@ -861,18 +888,6 @@ function CinemaCard({ theatreData }) {
                       <span className="text-sm font-mono font-medium text-op-textMain w-12 text-right">₹{tier.price}</span>
                     </div>
                   </div>
-                  {expandedCategory === tier.category && (
-                    <div className="mt-2 mb-2 p-2 bg-op-bg/30 rounded-lg border border-op-border/50">
-                      <TrendChart 
-                        cinema={theatreData.cinema}
-                        location={theatreData.location}
-                        movie={theatreData.subtitle}
-                        seat_category={tier.category}
-                        date={theatreData.date}
-                        showtime={selectedShowtime}
-                      />
-                    </div>
-                  )}
                 </div>
               ))
             ) : (
