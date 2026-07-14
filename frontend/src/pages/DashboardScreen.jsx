@@ -243,7 +243,7 @@ export function DashboardScreen() {
   }, [rawData, selectedMovie, setAvailableLanguages, setAvailableFormats]);
 
   // Apply filters and group data
-  const { cards: data, summary, isSelectedWeekend } = useMemo(() => {
+  const { cards: data, isSelectedWeekend } = useMemo(() => {
     // Step 1: Filter by selected movie
     let filtered = rawData;
     if (selectedMovie !== 'all') {
@@ -387,43 +387,7 @@ export function DashboardScreen() {
       return a.theatre.localeCompare(b.theatre);
     });
 
-    let summary = {
-      higherCount: 0,
-      lowerCount: 0,
-      equalCount: 0,
-      totalCount: 0,
-      ownedAvgPrice: 0,
-      competitorAvgPrice: 0,
-      ownedPriceSum: 0,
-      ownedPriceCount: 0,
-      compPriceSum: 0,
-      compPriceCount: 0
-    };
-
-    result.forEach(item => {
-      Object.values(item.pricingByShowtime).forEach(tiers => {
-        tiers.forEach(tier => {
-           if (item.owned) {
-             summary.ownedPriceSum += tier.price;
-             summary.ownedPriceCount++;
-           } else {
-             summary.compPriceSum += tier.price;
-             summary.compPriceCount++;
-             if (tier.hasBaseline) {
-               summary.totalCount++;
-               if (tier.diff > 0) summary.higherCount++;
-               else if (tier.diff < 0) summary.lowerCount++;
-               else summary.equalCount++;
-             }
-           }
-        });
-      });
-    });
-
-    if (summary.ownedPriceCount > 0) summary.ownedAvgPrice = Math.round(summary.ownedPriceSum / summary.ownedPriceCount);
-    if (summary.compPriceCount > 0) summary.competitorAvgPrice = Math.round(summary.compPriceSum / summary.compPriceCount);
-
-    return { cards: result, summary, isSelectedWeekend };
+    return { cards: result, isSelectedWeekend };
   }, [rawData, baselineData, selectedMovie, selectedLanguage, selectedFormat, selectedLocation, selectedTimeSlot, selectedDate]);
 
   const handleExport = () => {
@@ -637,10 +601,7 @@ export function DashboardScreen() {
         </div>
       </div>
 
-      {/* Aggregate Summary */}
-      {selectedLocation && summary && (summary.ownedPriceCount > 0 || summary.compPriceCount > 0) && (
-        <LocationSummaryCard summary={summary} isWeekend={isSelectedWeekend} />
-      )}
+      {/* Aggregate Summary removed */}
 
       {/* Mobile Toggle Tab */}
       <div className="flex sm:hidden w-full p-1 bg-op-card/50 rounded-lg border border-op-border mt-4 mb-2">
@@ -677,84 +638,6 @@ export function DashboardScreen() {
         ))}
       </motion.div>
     </div>
-  );
-}
-
-function LocationSummaryCard({ summary, isWeekend }) {
-  const higherPct = summary.totalCount > 0 ? Math.round((summary.higherCount / summary.totalCount) * 100) : 0;
-  const lowerPct = summary.totalCount > 0 ? Math.round((summary.lowerCount / summary.totalCount) * 100) : 0;
-  const equalPct = summary.totalCount > 0 ? Math.round((summary.equalCount / summary.totalCount) * 100) : 0;
-
-  let positionText = "No direct comparisons available";
-  let positionColor = "text-op-muted";
-  
-  if (summary.totalCount > 0) {
-    positionText = "At par with market";
-    if (higherPct > 50) {
-      positionText = "Competitors priced above us";
-      positionColor = "text-op-success";
-    } else if (lowerPct > 50) {
-      positionText = "Competitors priced below us";
-      positionColor = "text-op-danger";
-    }
-  }
-
-  return (
-    <Card className="w-full bg-op-card/40 border-op-border backdrop-blur-sm">
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-op-border/50">
-          
-          <div className="flex flex-col justify-center">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-op-muted mb-2">Overall Average</h4>
-            <div className="flex items-end gap-4">
-              <div>
-                <div className="text-sm text-op-muted">Devgn Cinex</div>
-                <div className="text-2xl font-bold text-op-textMain">
-                  {summary.ownedAvgPrice > 0 ? `₹${summary.ownedAvgPrice}` : 'N/A'}
-                </div>
-              </div>
-              <div className="pb-1 text-op-muted/50 text-xl font-light">vs</div>
-              <div>
-                <div className="text-sm text-op-muted">Competitors</div>
-                <div className="text-2xl font-bold text-op-textSecondary">
-                  {summary.competitorAvgPrice > 0 ? `₹${summary.competitorAvgPrice}` : 'N/A'}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center pt-4 md:pt-0 md:pl-6 opacity-100 transition-opacity">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-op-muted mb-2">Comparison Split</h4>
-            <div className={`flex gap-4 ${summary.totalCount === 0 ? 'opacity-30' : ''}`}>
-              <div className="text-center">
-                <div className="text-xl font-bold text-op-danger">{higherPct}%</div>
-                <div className="text-[10px] text-op-muted uppercase mt-1">Higher</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-op-muted">{equalPct}%</div>
-                <div className="text-[10px] text-op-muted uppercase mt-1">Equal</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-op-success">{lowerPct}%</div>
-                <div className="text-[10px] text-op-muted uppercase mt-1">Lower</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center pt-4 md:pt-0 md:pl-6">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-op-muted mb-2">Market Position</h4>
-            <div className={`text-xl font-bold ${positionColor}`}>
-              {positionText}
-            </div>
-            <div className="text-xs text-op-muted mt-1">Based on {summary.totalCount} direct showtime comparisons</div>
-            <div className="text-[10px] text-op-accent/80 uppercase font-bold mt-2">
-              {isWeekend ? "Weekend Baseline (Fri-Sun)" : "Weekday Baseline (Mon-Thu)"}
-            </div>
-          </div>
-
-        </div>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -878,7 +761,7 @@ function CinemaCard({ theatreData }) {
                     </span>
                     <div className="flex items-center gap-3 shrink-0">
                       {!theatreData.owned && tier.hasBaseline && tier.diff !== 0 && (
-                        <span className={`text-xs font-semibold ${tier.diff > 0 ? 'text-op-danger' : 'text-op-success'}`}>
+                        <span className={`text-xs font-semibold ${tier.diff > 0 ? 'text-op-success' : 'text-op-danger'}`}>
                           {tier.diff > 0 ? `↑${tier.diff}` : `↓${Math.abs(tier.diff)}`}
                         </span>
                       )}

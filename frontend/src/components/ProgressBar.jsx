@@ -82,9 +82,8 @@ export function ProgressBar() {
         </div>
       </div>
       
-      <div className="flex justify-between items-center text-xs text-op-textSecondary">
+      <div className="flex items-center text-xs text-op-textSecondary">
         <span>Processing: <strong className="text-op-textMain">{progress.movie}</strong> ({progress.current}/{progress.total})</span>
-        <span className="font-mono">ETA: {etaStr}</span>
       </div>
     </div>
   );

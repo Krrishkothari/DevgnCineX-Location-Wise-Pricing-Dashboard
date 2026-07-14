@@ -4,6 +4,11 @@
  * @param {String} source - The source cinema string.
  * @returns {Object} The normalized data object.
  */
+function cleanMovieName(name) {
+  if (!name) return 'N/A';
+  return name.replace(/(?:\s|-)*(?:3d|2d|4dx|imax|ice|hindi|tamil|telugu|english|malayalam|kannada|marathi|bengali|punjabi|gujarati|bhojpuri|odia|urdu)+$/gi, '').trim() || 'N/A';
+}
+
 function normalizePrice(raw, source) {
   // Default to today's date in YYYY-MM-DD format (IST)
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // en-CA gives YYYY-MM-DD
@@ -11,7 +16,7 @@ function normalizePrice(raw, source) {
   return {
     cinema: source || raw.cinema,
     location: raw.location,
-    movie: raw.movie || 'N/A',
+    movie: cleanMovieName(raw.movie),
     format: raw.format || '2D',
     language: raw.language || '',
     price: Math.round(Number(raw.price)),

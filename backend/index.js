@@ -149,11 +149,11 @@ app.get('/api/movies', (req, res) => {
   }
 });
 
-// Returns the next 7 days as selectable dates
+// Returns the next 4 days as selectable dates
 app.get('/api/dates', (req, res) => {
   try {
     const dates = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 4; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
       const yyyy = d.getFullYear();

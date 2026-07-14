@@ -263,8 +263,8 @@ async function scrapeLocation(locationConfig, regionLocks) {
       } catch (e) { }
     });
 
-    // ISSUE 3 FIX: We now request 5 days instead of 7 to avoid timeouts on unlisted dates
-    const datesToScrape = getNextDates(5);
+    // We now request 4 days to avoid timeouts on unlisted dates
+    const datesToScrape = getNextDates(4);
     console.log(`${logPrefix} Will scrape ${datesToScrape.length} dates (intentional platform limit): ${datesToScrape.join(', ')}`);
 
     let locationTotalEntries = 0;
