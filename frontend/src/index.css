@@ -1,40 +1,166 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
+  /*
+   * Theme tokens. Values are space-separated RGB channels so Tailwind's
+   * `<alpha-value>` opacity modifiers work against them.
+   */
+  :root,
+  :root[data-theme='dark'] {
     color-scheme: dark;
+
+    --c-canvas: 8 8 11;
+    --c-surface: 20 20 25;
+    --c-elevated: 28 28 35;
+    --c-line: 42 42 51;
+    --c-strong: 62 62 74;
+
+    --c-ink: 250 250 252;
+    --c-ink-soft: 170 170 184;
+    --c-ink-muted: 118 118 132;
+
+    --c-brand: 124 106 247;
+    --c-brand-soft: 158 145 250;
+    --c-above: 45 212 160;
+    --c-below: 251 113 133;
+    --c-warn: 250 189 71;
+    --c-info: 96 165 250;
+
+    --aurora-1: 124 106 247;
+    --aurora-2: 45 212 160;
   }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+
+    --c-canvas: 249 249 251;
+    --c-surface: 255 255 255;
+    --c-elevated: 244 244 248;
+    --c-line: 226 226 233;
+    --c-strong: 199 199 209;
+
+    --c-ink: 17 17 22;
+    --c-ink-soft: 82 82 96;
+    --c-ink-muted: 122 122 138;
+
+    --c-brand: 92 74 226;
+    --c-brand-soft: 124 106 247;
+    --c-above: 13 148 108;
+    --c-below: 214 58 88;
+    --c-warn: 181 121 12;
+    --c-info: 37 99 235;
+
+    --aurora-1: 124 106 247;
+    --aurora-2: 45 212 160;
+  }
+
+  * {
+    border-color: rgb(var(--c-line));
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
-    @apply bg-op-bg text-op-textMain font-sans antialiased;
+    @apply bg-canvas text-ink font-sans antialiased;
     margin: 0;
-    /* Premium subtle radial gradient background */
-    background-image: radial-gradient(circle at top center, rgba(109, 93, 246, 0.05) 0%, transparent 60%),
-                      radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
-    background-attachment: fixed;
+    min-height: 100vh;
   }
-  
-  /* Custom Scrollbar for a premium feel */
+
+  /* Numbers should never reflow as they tick. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand/70 ring-offset-2 ring-offset-canvas;
+  }
+
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-op-border rounded-full;
+    @apply rounded-pill bg-strong/60;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-op-muted;
+    @apply bg-strong;
+  }
+
+  /*
+   * Honour the OS reduced-motion setting. The previous build animated every
+   * card entrance and ran an infinite ping unconditionally.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-card border border-line bg-surface/80 backdrop-blur-xl;
+  }
+
+  .label-micro {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted;
+  }
+
+  /* Skeleton shimmer — the keyframes now actually exist. */
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-elevated;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--c-strong) / 0.35),
+      transparent
+    );
   }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-op-card/50 backdrop-blur-md border border-op-border;
+  /* Ambient background wash. Purely decorative, sits behind everything. */
+  .aurora::before,
+  .aurora::after {
+    content: '';
+    position: fixed;
+    inset: auto;
+    z-index: -1;
+    width: 46rem;
+    height: 46rem;
+    border-radius: 9999px;
+    filter: blur(120px);
+    pointer-events: none;
+  }
+  .aurora::before {
+    top: -18rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgb(var(--aurora-1) / 0.16);
+    @apply animate-drift;
+  }
+  .aurora::after {
+    bottom: -22rem;
+    right: -12rem;
+    background: rgb(var(--aurora-2) / 0.08);
+    @apply animate-drift;
+    animation-delay: -12s;
   }
 }

@@ -2,14 +2,14 @@ const locations = require('../../locations.config');
 const { scrapeLocation } = require('../core/scrapeLocation');
 const { savePrices } = require('../../db');
 
-async function run(sharedRegionLocks = null) {
+async function run(sharedRegionLocks = null, sharedBrowser = null) {
   const config = locations.find(l => l.locationName === 'Bahadurgarh');
   if (!config) {
     console.error('[Runner] Config not found for Bahadurgarh');
     return { success: false, entryCount: 0, entries: [], error: 'Config not found' };
   }
   
-  const result = await scrapeLocation(config, sharedRegionLocks);
+  const result = await scrapeLocation(config, sharedRegionLocks, sharedBrowser);
   
   // Call savePrices when run directly for solo debugging
   if (require.main === module && result.success && result.entries.length > 0) {

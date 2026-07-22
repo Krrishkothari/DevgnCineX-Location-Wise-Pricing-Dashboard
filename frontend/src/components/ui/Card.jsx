@@ -1,41 +1,41 @@
-import React from 'react';
 import { cn } from '../../utils/cn';
 
-export function Card({ className, children, ...props }) {
+/**
+ * Surface container. `interactive` opts into the hover lift — the previous
+ * version applied it to every card, so static content jittered on mouseover.
+ */
+export function Card({ className, interactive = false, accent = false, ...props }) {
   return (
     <div
       className={cn(
-        "rounded-[16px] border border-op-border bg-op-card shadow-sm",
-        "transition-transform duration-300 hover:-translate-y-1 hover:shadow-md",
+        'panel shadow-card transition-[transform,box-shadow,border-color] duration-200',
+        interactive && 'hover:-translate-y-0.5 hover:border-strong hover:shadow-lift',
+        accent && 'border-brand/50 shadow-glow',
         className
       )}
       {...props}
-    >
-      {children}
-    </div>
+    />
   );
 }
 
-export function CardHeader({ className, children, ...props }) {
+export function CardHeader({ className, ...props }) {
+  return <div className={cn('flex flex-col gap-1 p-5', className)} {...props} />;
+}
+
+export function CardTitle({ className, as: Tag = 'h3', ...props }) {
   return (
-    <div className={cn("flex flex-col space-y-1.5 p-6", className)} {...props}>
-      {children}
-    </div>
+    <Tag className={cn('text-base font-semibold leading-tight text-ink', className)} {...props} />
   );
 }
 
-export function CardTitle({ className, children, ...props }) {
-  return (
-    <h3 className={cn("font-semibold leading-none tracking-tight text-op-textMain", className)} {...props}>
-      {children}
-    </h3>
-  );
+export function CardDescription({ className, ...props }) {
+  return <p className={cn('text-sm text-ink-soft', className)} {...props} />;
 }
 
-export function CardContent({ className, children, ...props }) {
-  return (
-    <div className={cn("p-6 pt-0", className)} {...props}>
-      {children}
-    </div>
-  );
+export function CardContent({ className, ...props }) {
+  return <div className={cn('flex flex-col gap-4 px-5 pb-5', className)} {...props} />;
+}
+
+export function CardFooter({ className, ...props }) {
+  return <div className={cn('mt-auto border-t border-line px-5 py-3', className)} {...props} />;
 }

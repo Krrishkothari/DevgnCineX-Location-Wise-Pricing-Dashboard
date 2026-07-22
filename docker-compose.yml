@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -10,18 +8,37 @@ services:
       - PORT=3000
       - NODE_ENV=production
       - REDIS_URL=redis://redis:6379
-      - SCRAPER_CONCURRENCY=4
       - SCRAPER_CRON=0 * * * *
+      # Locations in parallel. Each drives up to 3 Chromium tabs, so this is
+      # roughly a third of the real tab count — on a small host, lower is
+      # faster. This was previously ignored: the scraper hardcoded 10.
+      - SCRAPER_CONCURRENCY=3
+      # Abandon a run after 45 minutes so it can never overlap the next hourly
+      # job. Overlapping runs were what made the scrape spiral.
+      - SCRAPER_JOB_TIMEOUT_MS=2700000
+      - SCRAPER_LOCK_DURATION_MS=3000000
+      - PRICE_RETENTION_DAYS=30
     volumes:
       - app_data:/app/backend/data
     depends_on:
       - redis
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
     restart: always
-    ports:
-      - "6379:6379"
+    # Deliberately NOT published to the host. An unauthenticated Redis exposed
+    # on a public interface is a well-known remote-code-execution vector, and
+    # only `app` needs to reach it. Uncomment for local debugging only.
+    # ports:
+    #   - "127.0.0.1:6379:6379"
+    expose:
+      - "6379"
     volumes:
       - redis_data:/data
 

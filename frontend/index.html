@@ -1,11 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DevgnCineX Pricing Dashboard</title>
-    <meta name="description" content="Dashboard for DevgnCineX pricing and analytics." />
+    <meta name="color-scheme" content="dark light" />
+    <title>Devgn CineX · Pricing Intelligence</title>
+    <meta name="description" content="Competitor ticket pricing intelligence for Devgn CineX cinemas." />
+
+    <!--
+      Fonts were previously pulled in with an @import at the top of index.css,
+      which blocks rendering until the stylesheet request resolves. Preconnect
+      plus a non-blocking link lets the app paint immediately.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+      />
+    </noscript>
+
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the wrong one.
+      (function () {
+        try {
+          var stored = localStorage.getItem('devgn-theme');
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

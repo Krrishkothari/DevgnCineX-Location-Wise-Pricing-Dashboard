@@ -1,64 +1,59 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api', 
-  timeout: 10000,
+// Note: every function here used to catch its own errors and return an empty
+// payload, which made "the backend is down" indistinguishable from "there is no
+// data" — the dashboard cheerfully rendered an empty state either way. Errors
+// now propagate so React Query can surface them.
+
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+  timeout: 20000,
 });
 
-export const fetchPrices = async (date, owned = false) => {
-  try {
-    const params = {};
-    if (date) params.date = date;
-    if (owned) params.owned = 'true';
-    const response = await api.get('/prices', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching prices from backend:', error);
-    return { data: [], total_entries: 0, last_updated: null };
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const detail = error.response?.data?.error;
+    if (error.code === 'ECONNABORTED') {
+      error.friendlyMessage = 'The server took too long to respond.';
+    } else if (!error.response) {
+      error.friendlyMessage = 'Cannot reach the server. Is the backend running?';
+    } else if (status === 429) {
+      const wait = error.response.data?.retry_after_seconds;
+      error.friendlyMessage = wait
+        ? `Too many requests — try again in ${wait}s.`
+        : 'Too many requests.';
+    } else if (status === 409) {
+      error.friendlyMessage = detail || 'A scrape is already running.';
+    } else {
+      error.friendlyMessage = detail || `Request failed (${status}).`;
+    }
+    return Promise.reject(error);
   }
-};
+);
 
-export const triggerScrape = async () => {
-  try {
-    const response = await api.post('/scrape/trigger');
-    return response.data;
-  } catch (error) {
-    console.error('Error triggering scrape:', error);
-    throw error;
-  }
-};
+const get = async (url, params) => (await api.get(url, { params })).data;
 
-export const fetchMovies = async (date, location) => {
-  try {
-    const params = {};
-    if (date) params.date = date;
-    if (location) params.location = location;
-    const response = await api.get('/movies', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching movies:', error);
-    return { movies: [] };
-  }
-};
+export const fetchPrices = (date, owned = false, location) =>
+  get('/prices', {
+    ...(date ? { date } : {}),
+    ...(owned ? { owned: 'true' } : {}),
+    ...(location ? { location } : {}),
+  });
 
-export const fetchDates = async () => {
-  try {
-    const response = await api.get('/dates');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching dates:', error);
-    return { dates: [] };
-  }
-};
+export const fetchMovies = (date, location) =>
+  get('/movies', { ...(date ? { date } : {}), ...(location ? { location } : {}) });
 
-export const fetchHistory = async (cinema, location, movie, seat_category, date, showtime) => {
-  try {
-    const response = await api.get('/history', {
-      params: { cinema, location, movie, seat_category, date, showtime }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching history:', error);
-    return { history: [] };
-  }
-};
+export const fetchDates = () => get('/dates');
+
+export const fetchConfig = () => get('/config');
+
+export const fetchProgress = () => get('/progress');
+
+export const fetchHealth = () => get('/health');
+
+export const fetchHistory = (cinema, location, movie, seat_category, date, showtime) =>
+  get('/history', { cinema, location, movie, seat_category, date, showtime });
+
+export const triggerScrape = async () => (await api.post('/scrape/trigger')).data;

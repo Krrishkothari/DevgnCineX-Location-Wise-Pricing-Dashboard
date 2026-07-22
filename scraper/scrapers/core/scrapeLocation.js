@@ -1,12 +1,6 @@
 // BookMyShow scraper — Parallel per-location architecture
 // Exports scrapeLocation(locationConfig) for use by the concurrency-limited runner.
-// Each location gets its own browser instance for full error isolation.
-//
-// Scraping approach (unchanged from original):
-// 1. Groups the location's cinemas by BMS region
-// 2. Visits each region's explore page to discover currently-playing movies
-// 3. Visits each movie's showtimes page to capture pricing via API interception
-// 4. Filters the API response to only keep data for this location's target cinemas
+// Each location gets its own browser context for full error isolation.
 
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -24,12 +18,72 @@ function getRandomUA() {
   return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
 }
 
+function envInt(name, fallback) {
+  const parsed = parseInt(process.env[name], 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+// Every wait in this file used to be an inline magic number. They're collected
+// here so a slow run can be tuned without editing logic.
+const NAV_TIMEOUT_MS = envInt('NAV_TIMEOUT_MS', 30000);
+const SELECTOR_TIMEOUT_MS = envInt('SELECTOR_TIMEOUT_MS', 15000);
+const RESPONSE_TIMEOUT_MS = envInt('RESPONSE_TIMEOUT_MS', 8000);
+const SETTLE_MS = envInt('SETTLE_MS', 1500);
+const MAX_DISCOVERY_SCROLLS = envInt('MAX_DISCOVERY_SCROLLS', 8);
+// Ceilings that stop one bad page from consuming the whole scrape window.
+const REGION_LOCK_TIMEOUT_MS = envInt('REGION_LOCK_TIMEOUT_MS', 120000);
+const MOVIE_TIMEOUT_MS = envInt('MOVIE_TIMEOUT_MS', 180000);
+const LOCATION_TIMEOUT_MS = envInt('LOCATION_TIMEOUT_MS', 900000);
+
+/**
+ * Reject if `promise` hasn't settled within `ms`. The underlying work is not
+ * cancelled, but the caller stops waiting on it.
+ */
+function withTimeout(promise, ms, label) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
+}
+
+/**
+ * Serialise access to a BMS region across locations that share it, so parallel
+ * requests to the same region don't trip Cloudflare.
+ *
+ * The lock is released in a `finally`, so a throw anywhere inside `fn` can no
+ * longer strand every other location waiting on that region — and waiting on a
+ * predecessor is itself bounded, so a leaked lock degrades to a warning rather
+ * than a permanent deadlock.
+ */
+async function withRegionLock(regionLocks, region, label, fn) {
+  if (!regionLocks) return fn();
+
+  const previous = regionLocks.get(region) || Promise.resolve();
+  let release;
+  const mine = new Promise((resolve) => { release = resolve; });
+  regionLocks.set(region, previous.then(() => mine, () => mine));
+
+  try {
+    await withTimeout(previous, REGION_LOCK_TIMEOUT_MS, `${label} waiting for region lock '${region}'`);
+  } catch (err) {
+    console.warn(`${label} ${err.message} — proceeding without it.`);
+  }
+
+  try {
+    return await fn();
+  } finally {
+    release();
+  }
+}
+
 /**
  * Generate next N days as YYYY-MM-DD strings (IST timezone).
- * ISSUE 3 FIX: Reduced from 7 to 5 days. BMS generally doesn't show pricing beyond 4-5 days 
- * and requires sliding arrows for further dates. Capping at 5 prevents 8-second timeout wastes.
+ * ISSUE 3 FIX: Reduced to 4 days.
  */
-function getNextDates(count = 5) {
+function getNextDates(count = 4) {
   const dates = [];
   for (let i = 0; i < count; i++) {
     const d = new Date();
@@ -40,71 +94,110 @@ function getNextDates(count = 5) {
   return dates;
 }
 
-function dateToBmsFormat(dateStr) {
-  return dateStr.replace(/-/g, '');
-}
-
-/**
- * Extract clean cinema name from venue string.
- */
 function extractCinemaName(venueName) {
   if (!venueName) return 'Unknown';
   return venueName.split(',')[0].trim();
 }
 
 // ============================================================
-// Lookup helpers — parameterized per-location (not global)
+// In-page element search
+//
+// Locating a date tab or format pill means scanning thousands of candidate
+// elements. Doing that with page.$$() + await el.textContent() costs one CDP
+// round trip *per element*, which was taking 10-20s per lookup — repeated for
+// every date, format and movie. These helpers run the whole scan inside the
+// page in a single call and tag the winner with an attribute so Playwright can
+// click it directly.
 // ============================================================
 
+const CLICK_TAG = 'data-scraper-target';
+const CLICK_SELECTOR = `[${CLICK_TAG}]`;
+
 /**
- * Build lookup maps from a cinema targets array.
- * Returns { codeToTarget, cinemaTargets } scoped to one location.
+ * Scan the page for the first visible element whose trimmed text satisfies the
+ * given criteria, and mark it for clicking. Returns true if one was found.
+ *
+ * @param {import('playwright').Page} page
+ * @param {Object} criteria
+ * @param {string[]} [criteria.includesAll] text must contain every one of these
+ * @param {string[][]} [criteria.includesAnyGroups] text must satisfy every
+ *        group, where a group is satisfied by any one of its members
+ * @param {number} [criteria.minLength] text length must be strictly greater
+ * @param {number} [criteria.maxLength] text length must be strictly less
+ * @param {string} [criteria.containerClassRegex] restrict search to the first
+ *        element whose className matches, falling back to the whole document
  */
+function markElementByText(page, criteria) {
+  return page.evaluate(({ attr, includesAll, includesAnyGroups, minLength, maxLength, containerClassRegex }) => {
+    document.querySelectorAll(`[${attr}]`).forEach((el) => el.removeAttribute(attr));
+
+    let container = null;
+    if (containerClassRegex) {
+      const regex = new RegExp(containerClassRegex, 'i');
+      for (const el of document.querySelectorAll('*')) {
+        if (typeof el.className === 'string' && regex.test(el.className)) { container = el; break; }
+      }
+    }
+
+    const search = (scope) => {
+      for (const el of scope.querySelectorAll('div, a, li, button, span')) {
+        const text = (el.textContent || '').trim().replace(/\s+/g, ' ');
+        if (minLength !== undefined && text.length <= minLength) continue;
+        if (maxLength !== undefined && text.length >= maxLength) continue;
+        const lower = text.toLowerCase();
+        if (includesAll && !includesAll.every((t) => lower.includes(t.toLowerCase()))) continue;
+        if (includesAnyGroups && !includesAnyGroups.every(
+          (group) => group.some((t) => lower.includes(t.toLowerCase()))
+        )) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.width <= 10 || rect.height <= 10) continue;
+        el.setAttribute(attr, '1');
+        return true;
+      }
+      return false;
+    };
+
+    // Prefer the scoped container, but fall back to the full document the way
+    // the original per-element scan did.
+    if (container && search(container)) return true;
+    return search(document);
+  }, { attr: CLICK_TAG, ...criteria });
+}
+
+/** Click the element previously marked by markElementByText. */
+async function clickMarkedElement(page, timeout = 5000) {
+  await page.click(CLICK_SELECTOR, { timeout });
+}
+
+// ============================================================
+// Lookup helpers — parameterized per-location
+// ============================================================
+
 function buildLookups(cinemaTargets) {
   const codeToTarget = {};
   cinemaTargets.forEach(t => { codeToTarget[t.bmsCode] = t; });
   return { codeToTarget, cinemaTargets };
 }
 
-/**
- * Check if a BMS venue belongs to one of the provided targets.
- * Returns the target object if matched, null otherwise.
- */
 function matchVenueToTarget(venueName, venueCode, lookups) {
   if (!venueName) return null;
-
-  // 1. Try matching by venue code (most reliable)
   if (venueCode) {
     const cleanCode = venueCode.trim().toUpperCase();
-    if (lookups.codeToTarget[cleanCode]) {
-      return lookups.codeToTarget[cleanCode];
-    }
+    if (lookups.codeToTarget[cleanCode]) return lookups.codeToTarget[cleanCode];
   }
-
-  // 2. Try matching by name / slug fragments
   const lowerVenue = venueName.toLowerCase().replace(/[^a-z0-9]/g, '');
   for (const target of lookups.cinemaTargets) {
     const targetNorm = target.cinemaName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (lowerVenue.includes(targetNorm) || targetNorm.includes(lowerVenue)) {
-      return target;
-    }
-    // Also check the BMS slug (minus hyphens)
+    if (lowerVenue.includes(targetNorm) || targetNorm.includes(lowerVenue)) return target;
     const slugNorm = target.bmsSlug.replace(/-/g, '');
-    if (lowerVenue.includes(slugNorm.substring(0, 15))) {
-      return target;
-    }
+    if (lowerVenue.includes(slugNorm.substring(0, 15))) return target;
   }
-
   return null;
 }
 
-/**
- * Parse BMS showtimes API data, keeping ONLY venues that match the provided targets.
- */
 function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix, cinemaEntryCounts, selectedFormat = null) {
   if (!dynamicData?.data?.showtimeWidgets) return;
 
-  // Extract actual selected date from the API response to avoid false positives
   const returnedDateCode = dynamicData.data?.additionalData?.dateCode;
   let effectiveDateStr = dateStr;
   if (returnedDateCode) {
@@ -119,9 +212,7 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
   let eventFormat = selectedFormat || '2D';
   let eventLanguage = '';
   if (staticData?.data?.eventData?.childEvents?.length > 0) {
-    if (!selectedFormat) {
-      eventFormat = staticData.data.eventData.childEvents[0].eventDimension || '2D';
-    }
+    if (!selectedFormat) eventFormat = staticData.data.eventData.childEvents[0].eventDimension || '2D';
     eventLanguage = staticData.data.eventData.childEvents[0].eventLanguage || '';
   }
 
@@ -137,15 +228,10 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
     for (const venue of venues) {
       const venueName = venue.additionalData?.venueName || '';
       const venueCode = venue.additionalData?.venueCode || '';
-      
       if (venueName) seenVenues.push(venueName);
 
-      // STRICT FILTER: only keep venues that match this location's targets
       const target = matchVenueToTarget(venueName, venueCode, lookups);
-      if (!target) {
-        // Venue is not in our target list, safely ignore it.
-        continue;
-      }
+      if (!target) continue;
       matchedCount++;
 
       const showtimes = venue.showtimes || [];
@@ -154,34 +240,17 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
       for (const showtime of showtimes) {
         const categories = showtime.additionalData?.categories || [];
         const showTime = showtime.additionalData?.showTime || showtime.title || '';
-
         for (const cat of categories) {
           const price = parseFloat(cat.curPrice) || 0;
           const seatCategory = cat.priceDesc || 'Standard';
           if (price > 0) {
             try {
-              const raw = {
-                cinema: target.cinemaName,
-                location: target.location,
-                movie: movieTitle,
-                format: eventFormat,
-                language: eventLanguage,
-                price: price,
-                seat_category: seatCategory,
-                showtime: showTime,
-                date: effectiveDateStr,
-              };
-
+              const raw = { cinema: target.cinemaName, location: target.location, movie: movieTitle, format: eventFormat, language: eventLanguage, price: price, seat_category: seatCategory, showtime: showTime, date: effectiveDateStr };
               const entry = normalizePrice(raw, target.cinemaName);
               validateSchema(entry);
               allResults.push(entry);
-              // FIX 4 — Track per-cinema entry counts incrementally
-              if (cinemaEntryCounts[target.cinemaName] !== undefined) {
-                cinemaEntryCounts[target.cinemaName]++;
-              }
-            } catch (err) {
-              // Skip invalid entries silently
-            }
+              if (cinemaEntryCounts[target.cinemaName] !== undefined) cinemaEntryCounts[target.cinemaName]++;
+            } catch (err) {}
           }
         }
       }
@@ -200,526 +269,481 @@ function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, 
 // scrapeLocation — Core function: scrapes one business location
 // ============================================================
 
-/**
- * Scrape a single location's cinemas from BookMyShow.
- * Launches its own browser for full error isolation.
- *
- * @param {Object} locationConfig — { locationName: string, cinemas: Array }
- * @param {Map}    [regionLocks]  — Optional shared Map used to serialize access
- *                                  to the same BMS region explore page across
- *                                  parallel location scrapers (prevents Cloudflare blocks).
- * @returns {Object} { locationName, success, entryCount, entries, error? }
- */
-async function scrapeLocation(locationConfig, regionLocks) {
+async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null, handle = null) {
   const { locationName, cinemas } = locationConfig;
   const logPrefix = `[BMS:${locationName}]`;
-  let browser = null;
+  let browser = sharedBrowser;
+  let context = null;
 
-  // Transform config cinemas into the internal target shape
   const cinemaTargets = cinemas.map(c => ({
-    location: locationName,
-    cinemaName: c.cinemaName,
-    bmsRegion: c.bmsRegion,
-    bmsSlug: c.bmsSlug,
-    bmsCode: c.bmsCode,
-    isOwned: c.isOwned,
+    location: locationName, cinemaName: c.cinemaName, bmsRegion: c.bmsRegion, bmsSlug: c.bmsSlug, bmsCode: c.bmsCode, isOwned: c.isOwned
   }));
-
   const lookups = buildLookups(cinemaTargets);
-  
-  // FIX 4 — Track per-cinema entry counts incrementally
-  const cinemaEntryCounts = {};
-  cinemaTargets.forEach(t => cinemaEntryCounts[t.cinemaName] = 0);
 
   try {
-    console.log(`${logPrefix} Launching browser...`);
-    console.log(`${logPrefix} Tracking ${cinemaTargets.length} cinema(s): ${cinemaTargets.map(t => t.cinemaName).join(', ')}`);
+    console.log(`${logPrefix} Tracking ${cinemaTargets.length} cinema(s)`);
 
-    browser = await chromium.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled'],
-    });
+    if (!browser) {
+      console.log(`${logPrefix} Launching dedicated browser...`);
+      browser = await chromium.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled'],
+      });
+    } else {
+      console.log(`${logPrefix} Using shared browser instance.`);
+    }
 
-    const context = await browser.newContext({
+    context = await browser.newContext({
       userAgent: getRandomUA(),
       viewport: { width: 1366, height: 768 },
       locale: 'en-IN',
       timezoneId: 'Asia/Kolkata',
     });
+    // Published so the timeout wrapper can tear this down. A timeout only stops
+    // the caller waiting — without this the abandoned location kept driving
+    // pages on the shared browser for the rest of the run.
+    if (handle) handle.context = context;
 
-    const page = await context.newPage();
-
-    // ---- Set up API response capture ----
-    let dynamicData = null;
-    let staticData = null;
-
-    page.on('response', async (response) => {
-      const url = response.url();
-      try {
-        // ISSUE 1 FIX: Removed primary-dynamic listener to prevent race condition
-        if (url.includes('showtimes-by-event/primary-static')) {
-          staticData = await response.json();
-        }
-      } catch (e) { }
-    });
-
-    // We now request 4 days to avoid timeouts on unlisted dates
     const datesToScrape = getNextDates(4);
-    console.log(`${logPrefix} Will scrape ${datesToScrape.length} dates (intentional platform limit): ${datesToScrape.join(', ')}`);
-
-    let locationTotalEntries = 0;
-
-    // Group this location's cinemas by unique BMS region
     const regionSet = [...new Set(cinemaTargets.map(t => t.bmsRegion))];
-    console.log(`${logPrefix} BMS regions: ${regionSet.join(', ')}`);
 
-    // ---- For each region, discover movies and scrape ----
-    for (const region of regionSet) {
+    const regionPromises = regionSet.map(async (region) => {
+      const regionLogPrefix = `${logPrefix}[${region}]`;
       const targetsInRegion = cinemaTargets.filter(t => t.bmsRegion === region);
-      console.log(`\n${logPrefix} ========================================`);
-      console.log(`${logPrefix} Region: ${region} (${targetsInRegion.map(t => t.cinemaName).join(', ')})`);
-      console.log(`${logPrefix} ========================================`);
+      const regionEntryCounts = {};
+      targetsInRegion.forEach(t => regionEntryCounts[t.cinemaName] = 0);
+      const regionEntries = [];
 
-      const exploreUrl = `https://in.bookmyshow.com/explore/movies-${region}`;
+      const page = await context.newPage();
+      const movieLinks = [];
+      const seenEventCodes = new Set();
 
-      // ---- Region lock: serialize access to the same explore page across parallel scrapers ----
-      // Without this, e.g. Gandhinagar and Ahmedabad both hitting movies-gandhinagar
-      // simultaneously causes Cloudflare to block one of them.
-      if (regionLocks) {
-        const existing = regionLocks.get(region) || Promise.resolve();
-        let releaseLock;
-        const myLock = new Promise(resolve => { releaseLock = resolve; });
-        regionLocks.set(region, existing.then(() => myLock));
-        await existing; // wait for any prior location using this region to finish navigating
-        console.log(`${logPrefix} Acquired region lock for '${region}', navigating to ${exploreUrl}...`);
+      const addMovie = (href, title, { requireCitySegment = false } = {}) => {
+        if (!href || href.includes('/explore/') || href.includes('/genre/')) return;
 
-        try {
-          await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-          try {
-            await page.waitForSelector('a[href*="/movies/"]', { timeout: 15000 });
-          } catch (e) {
-            console.log(`${logPrefix}   No movie cards appeared within 15s, page might be blocked or empty.`);
-          }
-          await page.waitForTimeout(2000);
-        } catch (err) {
-          console.log(`${logPrefix} Failed to load region ${region}: ${err.message}`);
-          releaseLock(); // release even on failure
-          continue;
+        // Every real movie URL carries an ET event code.
+        const eventCode = href.match(/\/(ET\d+)/)?.[1];
+        if (!eventCode) return;
+
+        // A cinema page mixes two kinds of link:
+        //   /movies/<city>/<slug>/ET…  → actually showing at this venue
+        //   /movies/<slug>/ET…         → a "recommended for you" carousel
+        // The old code queued both. At Devgn Cinex Bhuj that meant 3 real
+        // movies and 30 recommendations, each costing a full page load, format
+        // modal and four date clicks before yielding no matching venue.
+        if (requireCitySegment && !/^\/movies\/[^/]+\/[^/]+\/ET\d+/.test(href)) return;
+
+        // Dedupe on the event code: the same film can appear under several URL
+        // forms, while genuinely distinct versions (e.g. a Hindi dub) carry
+        // their own code and are correctly kept.
+        if (seenEventCodes.has(eventCode)) return;
+        seenEventCodes.add(eventCode);
+
+        if (!title) {
+          const parts = href.split('/').filter(Boolean);
+          const slug = parts[parts.length - 2] || parts[parts.length - 1] || '';
+          title = slug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
         }
-        releaseLock(); // release after page has loaded
-      } else {
-        // No lock (solo run) — navigate directly
-        console.log(`${logPrefix} Navigating to ${exploreUrl}...`);
-        try {
-          await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-          try {
-            await page.waitForSelector('a[href*="/movies/"]', { timeout: 15000 });
-          } catch (e) {
-            console.log(`${logPrefix}   No movie cards appeared within 15s, page might be blocked or empty.`);
-          }
-          await page.waitForTimeout(2000);
-        } catch (err) {
-          console.log(`${logPrefix} Failed to load region ${region}: ${err.message}`);
-          continue;
-        }
-      }
+        movieLinks.push({ title, href });
+      };
 
-      // Discover movies in this region
-      const discoverResult = await page.evaluate(async () => {
-        const getCards = () => Array.from(document.querySelectorAll('a[href*="/movies/"]'));
-        
-        let previousCount = 0;
-        let stableAttempts = 0;
-        const maxScrolls = 20; // Hard limit to avoid infinite loops
-        let finalScrollCount = 0;
-        
-        for (let i = 0; i < maxScrolls; i++) {
-          finalScrollCount = i + 1;
-          window.scrollBy(0, document.body.scrollHeight);
-          
-          // Wait for lazy loading
-          await new Promise(r => setTimeout(r, 2000));
-          
-          const currentCount = getCards().length;
-          
-          if (currentCount === previousCount) {
-            stableAttempts++;
-            if (stableAttempts >= 3) {
-              break; // Stabilized across 3 attempts
+      try {
+        // ---- Primary discovery: only the cinemas we actually track ----
+        // The region /explore/ page lists every film showing in the city, and
+        // the old code queued all of them. In a region like NCR that meant 60+
+        // movies, most playing at none of our venues — each still cost a page
+        // load, a format modal and four date clicks to yield nothing. Asking
+        // each tracked cinema what it is showing cuts the work several-fold and
+        // skips the slow infinite-scroll entirely.
+        for (const target of targetsInRegion) {
+          if (!target.bmsSlug || !target.bmsCode) continue;
+          const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}-${target.location.toLowerCase()}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/`;
+          try {
+            await page.goto(cinemaUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
+            await page.waitForTimeout(SETTLE_MS);
+            const cinemaMovies = await page.evaluate(() =>
+              Array.from(document.querySelectorAll('a[href*="/movies/"]')).map((a) => ({
+                href: a.getAttribute('href'),
+                title: a.querySelector('img')?.alt?.trim() || '',
+              }))
+            );
+            const before = movieLinks.length;
+            for (const m of cinemaMovies) {
+              addMovie(m.href, m.title && m.title.length < 80 ? m.title : '', { requireCitySegment: true });
             }
-          } else {
-            stableAttempts = 0; // Reset if we found new movies
-          }
-          previousCount = currentCount;
-        }
-
-        const cards = getCards();
-        const results = [];
-        const seen = new Set();
-        for (const card of cards) {
-          const href = card.getAttribute('href');
-          if (!href || href.includes('/explore/') || href.includes('/genre/')) continue;
-          if (seen.has(href)) continue;
-          seen.add(href);
-          const img = card.querySelector('img');
-          const title = img?.alt?.trim() || '';
-          if (title && title.length < 80) {
-            results.push({ title, href });
+            console.log(
+              `${regionLogPrefix} ${target.cinemaName}: ${movieLinks.length - before} showing ` +
+              `(from ${cinemaMovies.length} links on page)`
+            );
+          } catch (err) {
+            console.warn(`${regionLogPrefix} Cinema discovery failed for ${target.cinemaName}: ${err.message}`);
           }
         }
-        return { links: results, finalScrollCount, stableAttempts };
-      });
+        console.log(`${regionLogPrefix} Discovered ${movieLinks.length} movie(s) across ${targetsInRegion.length} tracked cinema(s).`);
 
-      console.log(`${logPrefix} Region explore scroll finished: ${discoverResult.finalScrollCount} scrolls, ${discoverResult.stableAttempts} stable attempts.`);
-      let movieLinks = discoverResult.links;
-      console.log(`${logPrefix} Found ${movieLinks.length} movies on region explore page.`);
+        // ---- Fallback: region-wide explore page ----
+        // Only used when no cinema page yielded anything, so the expensive
+        // scroll is off the normal path.
+        if (movieLinks.length === 0) {
+          console.log(`${regionLogPrefix} No movies from cinema pages; falling back to the region explore page.`);
+          const exploreUrl = `https://in.bookmyshow.com/explore/movies-${region}`;
+          const exploreLinks = await withRegionLock(regionLocks, region, regionLogPrefix, async () => {
+            await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
+            try {
+              await page.waitForSelector('a[href*="/movies/"]', { timeout: SELECTOR_TIMEOUT_MS });
+            } catch (err) {
+              console.warn(`${regionLogPrefix} Explore page never rendered movie cards: ${err.message}`);
+            }
+            await page.waitForTimeout(SETTLE_MS);
 
-      // ---- FALLBACK DISCOVERY: Check each cinema page directly ----
-      console.log(`${logPrefix} Starting fallback discovery on individual cinema pages...`);
-      for (const target of targetsInRegion) {
-        if (!target.bmsSlug || !target.bmsCode) continue;
-        const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}-${target.location.toLowerCase()}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/`;
-        console.log(`${logPrefix}   Checking ${target.cinemaName} at ${cinemaUrl}`);
-        
-        try {
-          await page.goto(cinemaUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-          await page.waitForTimeout(2000);
-          
-          const cinemaMovies = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('a[href*="/movies/"]'))
-              .map(a => a.getAttribute('href'))
-              .filter(h => h && !h.includes('/explore/') && !h.includes('/genre/'));
+            return page.evaluate(async (maxScrolls) => {
+              const getCards = () => Array.from(document.querySelectorAll('a[href*="/movies/"]'));
+              let previousCount = 0;
+              let stableAttempts = 0;
+              for (let i = 0; i < maxScrolls; i++) {
+                window.scrollBy(0, document.body.scrollHeight);
+                await new Promise((r) => setTimeout(r, 1200));
+                const currentCount = getCards().length;
+                if (currentCount === previousCount) {
+                  stableAttempts++;
+                  if (stableAttempts >= 2) break;
+                } else {
+                  stableAttempts = 0;
+                }
+                previousCount = currentCount;
+              }
+              return getCards().map((card) => ({
+                href: card.getAttribute('href'),
+                title: card.querySelector('img')?.alt?.trim() || '',
+              }));
+            }, MAX_DISCOVERY_SCROLLS);
+          }).catch((err) => {
+            console.error(`${regionLogPrefix} Explore fallback failed: ${err.message}`);
+            return [];
           });
-          
-          let added = 0;
-          for (const href of cinemaMovies) {
-            if (!movieLinks.some(m => m.href === href)) {
-              // Extract title from URL as fallback
-              const urlParts = href.split('/');
-              const slugTitle = urlParts[urlParts.length - 2] || urlParts[urlParts.length - 1];
-              const title = slugTitle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-              movieLinks.push({ title, href });
-              added++;
-            }
-          }
-          if (added > 0) console.log(`${logPrefix}   -> Added ${added} new movies from ${target.cinemaName} page.`);
-        } catch(err) {
-          console.log(`${logPrefix}   Failed to load cinema page for ${target.cinemaName}: ${err.message}`);
-        }
-      }
-      
-      console.log(`${logPrefix} Total unique movies to scrape after fallback: ${movieLinks.length}`);
-      if (movieLinks.length === 0) continue;
 
-      // Scrape all discovered movies
+          for (const m of exploreLinks) addMovie(m.href, m.title && m.title.length < 80 ? m.title : '');
+        }
+      } finally {
+        // Always release the discovery page, including on the error paths that
+        // previously leaked it.
+        await page.close().catch(() => {});
+      }
+
+      if (movieLinks.length === 0) {
+        console.error(`${regionLogPrefix} No movies discovered at all — skipping region.`);
+        return { entries: [], counts: regionEntryCounts };
+      }
+
       const moviesToScrape = movieLinks;
-      let firstMovieFirstDateChecked = false;
       const scrapeStartTime = Date.now();
 
-      for (let movieIdx = 0; movieIdx < moviesToScrape.length; movieIdx++) {
-        const movie = moviesToScrape[movieIdx];
+      // MOVIE-LEVEL CONCURRENCY: Chunk into batches of 3
+      const movieChunks = [];
+      const CHUNK_SIZE = 3;
+      for (let i = 0; i < moviesToScrape.length; i += CHUNK_SIZE) {
+        movieChunks.push(moviesToScrape.slice(i, i + CHUNK_SIZE));
+      }
+
+      const emptyCounts = () => {
+        const counts = {};
+        targetsInRegion.forEach((t) => { counts[t.cinemaName] = 0; });
+        return counts;
+      };
+
+      /**
+       * Build the dated showtimes URL for a movie.
+       * `/movies/<city>/<slug>/ET123` -> `/movies/<city>/<slug>/buytickets/ET123/YYYYMMDD`
+       */
+      function buildShowtimesUrl(href, dateStr) {
+        const match = href.match(/^(.*)\/(ET\d+)\/?$/);
+        if (!match) return null;
+        const path = match[1].startsWith('http') ? match[1] : `https://in.bookmyshow.com${match[1]}`;
+        return `${path}/buytickets/${match[2]}/${dateStr.replace(/-/g, '')}`;
+      }
+
+      /**
+       * Scrape one movie across every target date.
+       *
+       * BookMyShow server-renders the showtimes payload into
+       * window.__INITIAL_STATE__.showtimesByEvent for a dated URL — the exact
+       * shape parseBMSData already consumes. Reading it directly replaces the
+       * old flow of: load movie page, click "Book tickets", dismiss the age
+       * gate, pick a format from a modal, then hunt the DOM for each date tab
+       * and race an XHR. That dance was slow, and two of its steps were also
+       * unreliable — the date tabs were not clickable at all, so days 3 and 4
+       * silently returned nothing.
+       */
+      async function scrapeMovie(movie, movieIdx, localEntryCounts) {
         const movieResults = [];
+
         if (saveProgress) {
           saveProgress({
             current: movieIdx + 1,
             completed: movieIdx,
             total: moviesToScrape.length,
             movie: movie.title,
-            startTime: scrapeStartTime
+            startTime: scrapeStartTime,
           });
         }
-        
-        const movieUrl = movie.href.startsWith('http') ? movie.href : `https://in.bookmyshow.com${movie.href}`;
-        console.log(`\n${logPrefix} --- ${movie.title} (${region}) ---`);
 
-        
-        let formatsToScrape = [null]; // Default if no modal
-        let formatDiscoveryDone = false;
+        console.log(`${regionLogPrefix} --- ${movie.title} ---`);
 
-        // Visit movie page and wait dynamically for "Book tickets" with a single retry loop
-        for (let attempt = 1; attempt <= 2; attempt++) {
-          if (attempt === 2) console.log(`${logPrefix}   [RETRY] Attempt 2 for ${movie.title}. Reloading...`);
+        const mPage = await context.newPage();
+        try {
+          // Only the HTML carries the state we need.
+          await mPage.route('**/*', (route) =>
+            ['image', 'font', 'stylesheet', 'media'].includes(route.request().resourceType())
+              ? route.abort()
+              : route.continue()
+          );
 
-          try {
-            await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await page.waitForSelector('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible', { timeout: 15000 });
-          } catch (err) {
-            console.log(`${logPrefix}   Failed to load movie page or find book button: ${err.message}`);
-            if (attempt === 1) continue; else break;
-          }
-
-          const bookBtns = await page.$$('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible');
-          if (bookBtns.length === 0) {
-            console.log(`${logPrefix}   No "Book tickets" button, skipping.`);
-            if (attempt === 1) continue; else break;
-          }
-
-          console.log(`${logPrefix}   Clicking "Book tickets" (Format Discovery)...`);
-          await page.waitForTimeout(1500); 
-
-          try {
-            for (const btn of bookBtns) {
-              try { await btn.click({ delay: 50, timeout: 3000 }); break; } catch (e) {}
-            }
-            
-            // Wait for potential modal
-            try {
-              await page.waitForSelector('h5:has-text("Select language and format"), h4:has-text("Select language and format"), [role="dialog"], section:has-text("Select language")', { timeout: 3000, state: 'visible' });
-              
-              // Extract all formats
-              const formatLocators = await page.$$('ul li section div[role="button"] span');
-              if (formatLocators.length > 0) {
-                const detectedFormats = [];
-                for (const loc of formatLocators) {
-                  const text = await loc.innerText();
-                  if (text && text.trim().length > 0) detectedFormats.push(text.trim());
-                }
-                const uniqueFormats = [...new Set(detectedFormats)];
-                if (uniqueFormats.length > 0) {
-                  formatsToScrape = uniqueFormats;
-                  console.log(`${logPrefix}   Found ${formatsToScrape.length} formats for ${movie.title}: [${formatsToScrape.join(', ')}]`);
-                }
-              }
-            } catch (modalErr) {
-              // No modal found
-            }
-            
-            formatDiscoveryDone = true;
-            break;
-          } catch (e) {
-            console.log(`${logPrefix}   ${movie.title} Error during format discovery: ${e.message}`);
-          }
-        }
-
-        if (!formatDiscoveryDone) {
-          console.log(`${logPrefix}   Giving up on ${movie.title} after 2 attempts.`);
-          continue; 
-        }
-
-        // Now iterate through all discovered formats
-        for (let formatIdx = 0; formatIdx < formatsToScrape.length; formatIdx++) {
-          const currentFormat = formatsToScrape[formatIdx];
-          
-          if (formatsToScrape.length > 1) {
-            console.log(`\n${logPrefix}   --- Scraping format: ${currentFormat} ---`);
-          }
-
-          // If it's not the first format, we need to reload the movie page and re-click "Book tickets" to bring up the modal again
-          if (formatIdx > 0) {
-            try {
-              await page.goto(movieUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-              await page.waitForSelector('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible', { timeout: 15000 });
-              const bookBtns = await page.$$('button:has-text("Book tickets"):visible, a:has-text("Book tickets"):visible');
-              if (bookBtns.length > 0) {
-                await page.waitForTimeout(1500);
-                for (const btn of bookBtns) {
-                  try { await btn.click({ delay: 50, timeout: 3000 }); break; } catch (e) {}
-                }
-              }
-            } catch (e) {
-              console.log(`${logPrefix}   Failed to reload for format ${currentFormat}: ${e.message}`);
-              continue;
-            }
-          }
-
-          dynamicData = null;
-          staticData = null;
-
-          try {
-            const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 15000 });
-            
-            // Age verification modal handling
-            try {
-              const continueBtn = await page.waitForSelector('button:has-text("Accept"), button:has-text("Continue"), [role="button"]:has-text("Accept"), [role="button"]:has-text("Continue"), [aria-label="Continue"]', { timeout: 2000, state: 'visible' });
-              if (continueBtn) {
-                console.log(`${logPrefix}   Age verification modal detected. Clicking Continue...`);
-                await continueBtn.click();
-              }
-            } catch (ageErr) {}
-
-            // Click the specific format pill if one is defined
-            if (currentFormat) {
-              try {
-                // Find exact format pill
-                const formatBtn = await page.waitForSelector(`ul li section div[role="button"]:has(span:text-is("${currentFormat}")), span:text-is("${currentFormat}"), div:text-is("${currentFormat}")`, { timeout: 3000, state: 'visible' });
-                if (formatBtn) {
-                  await formatBtn.click();
-                }
-              } catch (modalErr) {
-                console.log(`${logPrefix}   Could not find/click format pill for ${currentFormat}`);
-              }
-            } else {
-              // Fallback logic for single format (just click the first available if a modal happens to exist)
-              try {
-                const allFormats = await page.$$('span:text-is("2D"), div:text-is("2D"), span:text-is("3D"), div:text-is("3D")');
-                for (const el of allFormats) {
-                  if (await el.isVisible()) {
-                    await el.click();
-                    break;
-                  }
-                }
-              } catch (e) {}
-            }
-
-            const dynResponse = await responsePromise;
-            dynamicData = await dynResponse.json();
-          } catch (e) {
-            console.log(`${logPrefix}   ${movie.title} [${currentFormat || 'Default'}] No dynamic data response within 15s (error: ${e.message})`);
-            continue; // Move on to next format
-          }
-
-          if (!dynamicData) continue;
-
-          // Parse today's data (first date)
-          const scrapedDates = new Set();
-          const beforeToday = movieResults.length;
-          const effectiveDate = parseBMSData(dynamicData, staticData, movie.title, datesToScrape[0], movieResults, lookups, logPrefix, cinemaEntryCounts, currentFormat);
-          if (effectiveDate) scrapedDates.add(effectiveDate);
-          console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${datesToScrape[0]}: +${movieResults.length - beforeToday} entries`);
-
-          // ---- Click through remaining date tabs ----
-          for (let dateIdx = 1; dateIdx < datesToScrape.length; dateIdx++) {
+          for (let dateIdx = 0; dateIdx < datesToScrape.length; dateIdx++) {
             const targetDate = datesToScrape[dateIdx];
+            const isFirstDate = dateIdx === 0;
 
-            if (scrapedDates.has(targetDate)) {
-              console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${targetDate}: already scraped via redirect, skipping.`);
-              continue;
+            const url = buildShowtimesUrl(movie.href, targetDate);
+            if (!url) {
+              console.warn(`${regionLogPrefix}   Could not build URL for ${movie.title} (${movie.href})`);
+              break;
             }
 
-            dynamicData = null;
-            staticData = null;
+            const wantCode = targetDate.replace(/-/g, '');
+            let state = null;
 
-            await page.waitForTimeout(1000);
-            let dateClicked = false;
-            try {
-              const targetDateObj = new Date(targetDate + 'T00:00:00+05:30');
-              const dayNum = String(targetDateObj.getDate()).padStart(2, '0');
-              const dayNumNoZero = String(targetDateObj.getDate());
-              const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-              const month = monthNames[targetDateObj.getMonth()];
-              const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-              const dayName = dayNames[targetDateObj.getDay()];
+            // Only the first date is worth a retry. A cinema page lists titles
+            // open for advance booking that have no showtimes in our window at
+            // all; retrying every one of those on every date was costing eight
+            // page loads per non-showing film.
+            const maxAttempts = isFirstDate ? 2 : 1;
 
-              let possibleTabs = [];
-              
-              const containerHandle = await page.evaluateHandle(() => {
-                const regex = /(^|[\s_-])date([\s_-]|[A-Z]|$)/i;
-                const elements = document.querySelectorAll('*');
-                for (const el of elements) {
-                  if (typeof el.className === 'string' && regex.test(el.className)) {
-                    return el;
-                  }
+            for (let attempt = 1; attempt <= maxAttempts && !state; attempt++) {
+              try {
+                // Reusing one page across dates can leave a stale
+                // __INITIAL_STATE__ behind, so on a retry clear the document
+                // first to force a genuine load.
+                if (attempt === 2) {
+                  await mPage.goto('about:blank', { timeout: NAV_TIMEOUT_MS });
                 }
-                return null;
-              });
-              const container = containerHandle.asElement();
-              
-              if (container) {
-                possibleTabs = await container.$$('div, a, li, button, span');
-                if (possibleTabs.length === 0) {
-                  possibleTabs = await page.$$('div, a, li, button, span');
+                await mPage.goto(url, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
+
+                // Key by the date we asked for rather than whatever the page
+                // considers current — otherwise a stale document silently
+                // returns today's prices labelled as a future date.
+                state = await mPage.evaluate((code) => {
+                  const sbe = window.__INITIAL_STATE__ && window.__INITIAL_STATE__.showtimesByEvent;
+                  if (!sbe || !sbe.showDates) return null;
+                  const node = sbe.showDates[code];
+                  if (!node || !node.dynamic) return null;
+                  return {
+                    dynamic: node.dynamic,
+                    primaryStatic: node.primaryStatic || sbe.static || null,
+                  };
+                }, wantCode);
+
+                if (!state && attempt < maxAttempts) await mPage.waitForTimeout(SETTLE_MS);
+              } catch (err) {
+                if (attempt === maxAttempts) {
+                  console.warn(`${regionLogPrefix}   ${movie.title} ${targetDate}: ${err.message}`);
                 }
-              } else {
-                possibleTabs = await page.$$('div, a, li, button, span');
               }
-
-              for (const tab of possibleTabs) {
-                try {
-                  const text = await tab.textContent();
-                  const cleanText = text.trim().replace(/\s+/g, ' ').toLowerCase();
-                  if (cleanText.length > 3 && cleanText.length < 25) {
-                    if (cleanText.includes(dayNum) || cleanText.includes(dayNumNoZero)) {
-                      if (cleanText.includes(month.toLowerCase()) || cleanText.includes(dayName.toLowerCase())) {
-                        const box = await tab.boundingBox();
-                        if (box && box.width > 10 && box.height > 10) {
-                          const responsePromise = page.waitForResponse(response => response.url().includes('primary-dynamic'), { timeout: 8000 });
-                          await tab.click();
-                          try {
-                            const dynResponse = await responsePromise;
-                            dynamicData = await dynResponse.json();
-                          } catch(e) {
-                            console.log(`${logPrefix}   ${movie.title} [${currentFormat || 'Default'}] No dynamic data response within 8s`);
-                          }
-                          dateClicked = true;
-                          break;
-                        }
-                      }
-                    }
-                  }
-                } catch (e) { }
-              }
-            } catch (err) { }
-
-            if (!dateClicked) {
-              console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${targetDate}: could not find date tab, skipping.`);
-              continue;
             }
 
-            const beforeDate = movieResults.length;
-            const effectiveDateLoop = parseBMSData(dynamicData, staticData, movie.title, targetDate, movieResults, lookups, logPrefix, cinemaEntryCounts, currentFormat);
-            if (effectiveDateLoop) scrapedDates.add(effectiveDateLoop);
-            console.log(`${logPrefix}   [${currentFormat || 'Default'}] ${targetDate}: +${movieResults.length - beforeDate} entries`);
+            if (!state) {
+              // Dates ascend, and a title with nothing on its opening date in
+              // our window has nothing on the later ones either. Stop instead
+              // of paying for a page load per remaining day.
+              console.log(
+                `${regionLogPrefix}   ${movie.title}: no showtimes from ${targetDate} — skipping remaining dates.`
+              );
+              break;
+            }
 
-            await page.waitForTimeout(500 + Math.random() * 1000);
+            const before = movieResults.length;
+            const effectiveDate = parseBMSData(
+              state.dynamic,
+              state.primaryStatic,
+              movie.title,
+              targetDate,
+              movieResults,
+              lookups,
+              regionLogPrefix,
+              localEntryCounts,
+              null
+            );
+            console.log(`${regionLogPrefix}   ${movie.title} ${targetDate}: +${movieResults.length - before} entries`);
+
+            // When a date isn't on sale yet BMS serves the nearest available
+            // one instead. parseBMSData labels those rows with the date they
+            // really belong to, so nothing incorrect is stored — but since the
+            // dates ascend, every later date would return the same fallback.
+            // Stop rather than spend a request per remaining day.
+            if (effectiveDate && effectiveDate !== targetDate) {
+              console.log(`${regionLogPrefix}   ${movie.title}: ${targetDate} not on sale yet — stopping here.`);
+              break;
+            }
+
+            // Small pause between requests to stay polite to BMS.
+            await mPage.waitForTimeout(300 + Math.random() * 400);
           }
-        } // End format loop
 
-        if (movieResults.length > 0) {
-          try {
-            // Deduplicate before saving incrementally
+          let deduped = [];
+          if (movieResults.length > 0) {
             const seen = new Set();
-            const deduped = movieResults.filter((entry) => {
+            deduped = movieResults.filter((entry) => {
               const key = `${entry.cinema}-${entry.location}-${entry.movie}-${entry.price}-${entry.seat_category}-${entry.showtime}-${entry.date}`;
               if (seen.has(key)) return false;
               seen.add(key);
               return true;
             });
-            await savePrices(deduped);
-            locationTotalEntries += deduped.length;
-            console.log(`${logPrefix}   -> Saved ${deduped.length} entries for ${movie.title}.`);
-          } catch (err) {
-            console.error(`${logPrefix}   -> Failed to save for ${movie.title}:`, err.message);
+            try {
+              // Merges in memory and schedules a batched flush; this no longer
+              // re-serialises the whole dataset on every movie.
+              await savePrices(deduped);
+              console.log(`${regionLogPrefix}   -> Merged ${deduped.length} entries for ${movie.title}.`);
+            } catch (err) {
+              // Previously swallowed, so a failing write looked like a success.
+              console.error(`${regionLogPrefix}   Failed to store entries for ${movie.title}: ${err.message}`);
+            }
+          }
+
+          return { entries: deduped, counts: localEntryCounts };
+        } finally {
+          await mPage.close().catch(() => {});
+        }
+      }
+
+      let globalMovieIdx = 0;
+      for (const chunk of movieChunks) {
+        const chunkPromises = chunk.map((movie, localIdx) => {
+          // A single movie can no longer consume the entire scrape window: if it
+          // overruns we abandon it and move on, rather than letting one hung
+          // page hold up the location (and, with the hourly cron, the next run).
+          return withTimeout(
+            scrapeMovie(movie, globalMovieIdx + localIdx, emptyCounts()),
+            MOVIE_TIMEOUT_MS,
+            `${regionLogPrefix} ${movie.title}`
+          ).catch((err) => {
+            console.error(`${regionLogPrefix} Abandoning ${movie.title}: ${err.message}`);
+            return { entries: [], counts: emptyCounts() };
+          });
+        });
+
+        // Wait for batch to finish
+        const chunkResults = await Promise.allSettled(chunkPromises);
+        for (const res of chunkResults) {
+          if (res.status === 'fulfilled') {
+            regionEntries.push(...res.value.entries);
+            for (const [cName, cCount] of Object.entries(res.value.counts)) {
+              regionEntryCounts[cName] += cCount;
+            }
           }
         }
-
-        await page.waitForTimeout(1000 + Math.random() * 2000);
+        globalMovieIdx += chunk.length;
       }
-      
+      return { entries: regionEntries, counts: regionEntryCounts };
+    });
+
+    const allRegionResults = await Promise.allSettled(regionPromises);
+
+    let locationTotalEntries = 0;
+    const allLocationEntries = [];
+    const failedRegions = [];
+    const cinemaEntryCounts = {};
+    cinemaTargets.forEach(t => cinemaEntryCounts[t.cinemaName] = 0);
+
+    for (let i = 0; i < allRegionResults.length; i++) {
+      const result = allRegionResults[i];
+      if (result.status === 'fulfilled') {
+        const { entries, counts } = result.value;
+        allLocationEntries.push(...entries);
+        locationTotalEntries += entries.length;
+        for (const [cinemaName, count] of Object.entries(counts)) {
+          if (cinemaEntryCounts[cinemaName] !== undefined) cinemaEntryCounts[cinemaName] += count;
+        }
+      } else {
+        // A rejected region used to be dropped silently and the location still
+        // reported success, so a region-wide outage looked like "0 entries".
+        const region = regionSet[i];
+        failedRegions.push(region);
+        console.error(`${logPrefix} Region '${region}' failed: ${result.reason?.message || result.reason}`);
+      }
     }
 
     console.log(`\n${logPrefix} ===== LOCATION SCRAPE COMPLETE =====`);
     console.log(`${logPrefix} Final: ${locationTotalEntries} entries from ${locationName}`);
-
-    // Check for zero-movie cinemas using the running tally
     for (const [cinemaName, count] of Object.entries(cinemaEntryCounts)) {
       console.log(`${logPrefix}   -> ${cinemaName}: ${count} prices scraped`);
-      if (count === 0) {
-        console.error(`${logPrefix} [ALERT] ZERO MOVIES scraped for cinema: ${cinemaName}`);
-      }
+      if (count === 0) console.error(`${logPrefix} [ALERT] ZERO MOVIES scraped for cinema: ${cinemaName}`);
     }
+
+    // A location that scraped nothing is a failure, not a success. Reporting
+    // it as OK hid real outages: a Cloudflare block looks exactly like a quiet
+    // day in the summary otherwise.
+    const scrapedNothing = allLocationEntries.length === 0;
+    const regionsAllFailed = failedRegions.length >= regionSet.length;
+
+    let error;
+    if (failedRegions.length) error = `Regions failed: ${failedRegions.join(', ')}`;
+    else if (scrapedNothing) error = 'No entries scraped (site block or no listings)';
 
     return {
       locationName,
-      success: true,
-      entryCount: deduped.length,
-      entries: deduped,
+      success: !regionsAllFailed && !scrapedNothing,
+      entryCount: allLocationEntries.length,
+      entries: allLocationEntries,
+      failedRegions,
+      error,
     };
 
   } catch (err) {
     console.error(`${logPrefix} Scraper error:`, err);
-    return {
-      locationName,
-      success: false,
-      entryCount: 0,
-      entries: [],
-      error: err.message,
-    };
+    return { locationName, success: false, entryCount: 0, entries: [], error: err.message };
   } finally {
-    if (browser) {
-      await browser.close();
-      console.log(`${logPrefix} Browser closed.`);
+    // Explicitly close the context safely for this location
+    if (context) {
+      try {
+        await context.close();
+        console.log(`${logPrefix} Context closed.`);
+      } catch(e) {
+        console.error(`${logPrefix} Error closing context:`, e.message);
+      }
+    }
+    // Only close browser if we launched it ourselves (i.e. not shared)
+    if (browser && !sharedBrowser) {
+      try {
+        await browser.close();
+        console.log(`${logPrefix} Browser closed.`);
+      } catch(e) {}
     }
   }
 }
 
-module.exports = { scrapeLocation };
+/**
+ * Public entry point. Bounds the whole location so that a pathological run
+ * can't outlive the hourly scrape window and collide with the next one.
+ */
+async function scrapeLocationWithTimeout(locationConfig, regionLocks, sharedBrowser = null) {
+  const { locationName } = locationConfig;
+  const handle = { context: null };
+
+  try {
+    return await withTimeout(
+      scrapeLocation(locationConfig, regionLocks, sharedBrowser, handle),
+      LOCATION_TIMEOUT_MS,
+      `[BMS:${locationName}] location scrape`
+    );
+  } catch (err) {
+    console.error(`[BMS:${locationName}] ${err.message}`);
+    // Actually cancel the abandoned work. Closing the context fails every
+    // in-flight page operation, so the orphaned location stops competing for
+    // the shared browser instead of running on until the process exits.
+    if (handle.context) {
+      await handle.context.close().catch(() => {});
+      console.error(`[BMS:${locationName}] Context force-closed after timeout.`);
+    }
+    return { locationName, success: false, entryCount: 0, entries: [], error: err.message };
+  }
+}
+
+module.exports = { scrapeLocation: scrapeLocationWithTimeout, scrapeLocationUnbounded: scrapeLocation };

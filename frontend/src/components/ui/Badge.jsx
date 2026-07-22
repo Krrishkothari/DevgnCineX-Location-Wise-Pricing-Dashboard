@@ -1,25 +1,54 @@
-import React from 'react';
 import { cn } from '../../utils/cn';
 
-export function Badge({ className, variant = 'default', children, ...props }) {
-  const variants = {
-    default: "bg-op-border text-op-textSecondary",
-    success: "bg-[#00D26A]/20 text-[#00D26A]", // Glowy green
-    danger: "bg-[#FF4D67]/20 text-[#FF4D67]", // Glowy red
-    accent: "bg-op-accent/20 text-op-accent", // Glowy purple
-    owned: "bg-op-accent text-white border-op-accent", // Solid purple for OWNED
-  };
+// Variants now reference theme tokens rather than re-typing the palette as
+// arbitrary hex values (`bg-[#00D26A]/20`), so they follow the active theme.
+const VARIANTS = {
+  default: 'bg-elevated text-ink-soft border-line',
+  outline: 'bg-transparent text-ink-soft border-line',
+  above: 'bg-above/15 text-above border-above/25',
+  below: 'bg-below/15 text-below border-below/25',
+  brand: 'bg-brand/15 text-brand-soft border-brand/30',
+  warn: 'bg-warn/15 text-warn border-warn/25',
+  solid: 'bg-brand text-white border-brand',
+};
 
+/**
+ * Non-interactive status pill. For anything clickable use a real <button>
+ * (see Chip) — the old code attached onClick to this div, producing controls
+ * that keyboard users could not reach.
+ */
+export function Badge({ className, variant = 'default', ...props }) {
   return (
-    <div
+    <span
       className={cn(
-        "inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-op-accent focus:ring-offset-2",
-        variants[variant],
+        'inline-flex items-center gap-1 rounded-pill border px-2 py-0.5',
+        'text-[11px] font-semibold leading-tight',
+        VARIANTS[variant] ?? VARIANTS.default,
         className
       )}
       {...props}
-    >
-      {children}
-    </div>
+    />
+  );
+}
+
+/**
+ * Selectable pill. A real button: focusable, keyboard-operable, and exposing
+ * its selected state via aria-pressed.
+ */
+export function Chip({ className, selected = false, ...props }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      className={cn(
+        'inline-flex items-center gap-1 rounded-pill border px-2.5 py-1',
+        'text-xs font-semibold leading-tight transition-colors',
+        selected
+          ? 'border-brand bg-brand text-white'
+          : 'border-line bg-elevated text-ink-soft hover:border-strong hover:text-ink',
+        className
+      )}
+      {...props}
+    />
   );
 }

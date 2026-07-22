@@ -1,30 +1,35 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-export const Button = React.forwardRef(({ className, variant = 'primary', size = 'default', children, ...props }, ref) => {
-  const baseStyles = "inline-flex items-center justify-center whitespace-nowrap rounded-[12px] text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-op-accent disabled:pointer-events-none disabled:opacity-50";
-  
-  const variants = {
-    primary: "bg-op-accent text-white hover:bg-op-accent/90",
-    secondary: "bg-op-border text-op-textMain hover:bg-op-border/80",
-    ghost: "hover:bg-op-border/50 text-op-textSecondary hover:text-op-textMain",
-  };
-  
-  const sizes = {
-    default: "h-9 px-4 py-2",
-    sm: "h-8 rounded-[10px] px-3 text-xs",
-    lg: "h-10 rounded-[14px] px-8",
-    icon: "h-9 w-9",
-  };
+const VARIANTS = {
+  primary: 'bg-brand text-white hover:bg-brand-soft shadow-sm',
+  secondary: 'bg-elevated text-ink hover:bg-strong/60 border border-line',
+  ghost: 'text-ink-soft hover:bg-elevated hover:text-ink',
+  danger: 'bg-below/15 text-below hover:bg-below/25 border border-below/30',
+};
 
+const SIZES = {
+  default: 'h-9 gap-2 rounded-control px-4 text-sm',
+  sm: 'h-8 gap-1.5 rounded-control px-3 text-xs',
+  lg: 'h-11 gap-2 rounded-control px-6 text-sm',
+  icon: 'h-9 w-9 rounded-control',
+};
+
+export const Button = React.forwardRef(function Button(
+  { className, variant = 'primary', size = 'default', ...props },
+  ref
+) {
   return (
     <button
       ref={ref}
-      className={cn(baseStyles, variants[variant], sizes[size], className)}
+      className={cn(
+        'inline-flex select-none items-center justify-center whitespace-nowrap font-medium',
+        'transition-colors disabled:pointer-events-none disabled:opacity-50',
+        VARIANTS[variant] ?? VARIANTS.primary,
+        SIZES[size] ?? SIZES.default,
+        className
+      )}
       {...props}
-    >
-      {children}
-    </button>
+    />
   );
 });
-Button.displayName = "Button";

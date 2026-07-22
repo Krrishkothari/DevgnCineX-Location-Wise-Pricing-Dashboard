@@ -1,186 +1,91 @@
-import React from 'react';
-import { Calendar, Clock, Film, ChevronDown, RefreshCw, MapPin, Volume2, Monitor } from 'lucide-react';
+import { Moon, RefreshCw, Sun } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { useFilters } from './MainLayout';
-import { triggerScrape } from '../api';
-
-const TIME_SLOTS = [
-  { value: 'all', label: 'All Slots' },
-  { value: 'morning', label: '🌅  Morning' },
-  { value: 'afternoon', label: '☀️  Afternoon' },
-  { value: 'evening', label: '🌇  Evening' },
-  { value: 'night', label: '🌙  Night' },
-];
-
-const TARGET_LOCATIONS = [
-  'Ahmedabad', 'Anand', 'Bahadurgarh', 'Bhuj', 'Gandhinagar', 'Ghaziabad', 
-  'Ghazipur', 'Gurugram', 'Guwahati', 'Hapur', 'Kanpur', 'Meerut', 
-  'Mulund', 'Raebareli', 'Ratlam', 'Surendranagar', 'Thane'
-];
-
+import { useToast } from '../components/ui/Toast';
+import { usePrices, useTriggerScrape } from '../api/hooks';
+import { useFilters } from '../lib/filters';
+import { useTheme } from '../lib/theme';
+import { formatTimestamp, timeAgo } from '../lib/format';
+import { cn } from '../utils/cn';
 
 export function TopHeader() {
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const { theme, toggle } = useTheme();
+  const { toast } = useToast();
+  const trigger = useTriggerScrape();
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await triggerScrape();
-      alert('Scrape triggered successfully! The data is updating in the background and will refresh automatically.');
-    } catch (err) {
-      alert('Failed to trigger scrape. Please ensure the backend is running.');
-    } finally {
-      setIsRefreshing(false);
-    }
+  // Subscribes to the same cache entry the dashboard uses (React Query dedupes
+  // by key), so freshness re-renders when the data actually changes. Reading
+  // the cache imperatively here meant it never updated after first paint.
+  const { date, location } = useFilters();
+  const pricesQuery = usePrices(date, location);
+  const lastUpdated = pricesQuery.data?.last_updated;
+  const isFetching = pricesQuery.isFetching;
+
+  const handleRefresh = () => {
+    trigger.mutate(undefined, {
+      // Feedback now goes through toasts; this used to be a blocking
+      // window.alert() for both the success and failure paths.
+      onSuccess: () =>
+        toast({
+          variant: 'success',
+          title: 'Scrape queued',
+          description: 'Prices will update here as each location completes.',
+        }),
+      onError: (error) =>
+        toast({
+          variant: 'error',
+          title: 'Could not start a scrape',
+          description: error?.friendlyMessage ?? 'Please try again.',
+        }),
+    });
   };
 
-  const {
-    movies,
-    dates,
-    selectedMovie,
-    selectedLocation,
-    selectedDate,
-    selectedTimeSlot,
-    selectedLanguage,
-    selectedFormat,
-    availableLanguages,
-    availableFormats,
-    setSelectedMovie,
-    setSelectedLocation,
-    setSelectedDate,
-    setSelectedTimeSlot,
-    setSelectedLanguage,
-    setSelectedFormat,
-  } = useFilters();
+  const updatedAgo = timeAgo(lastUpdated);
 
   return (
-    <header className="sticky top-0 z-30 flex min-h-[4rem] flex-col md:flex-row items-start md:items-center justify-between border-b border-op-border bg-op-bg/80 px-4 md:px-6 py-3 md:py-0 backdrop-blur-md gap-4">
-      
-      {/* Filter Controls */}
-      <div className="flex items-center gap-3 flex-wrap w-full md:w-auto">
-        {/* Movie Selector Dropdown */}
-        <div className="relative group w-full sm:w-auto">
-          <Film size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <select
-            value={selectedMovie}
-            onChange={(e) => setSelectedMovie(e.target.value)}
-            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+    <header className="sticky top-0 z-30 border-b border-line bg-canvas/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 w-full max-w-[1700px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-3">
+          <div
+            aria-hidden="true"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-brand text-sm font-bold text-white"
           >
-            <option value="all">All Movies</option>
-            {movies.map((movie) => (
-              <option key={movie} value={movie}>
-                {movie}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
+            DC
+          </div>
+          <div className="min-w-0">
+            <h1 className="truncate text-sm font-semibold leading-tight text-ink">
+              Devgn CineX · Pricing Intelligence
+            </h1>
+            <p className="truncate text-xs text-ink-muted" title={formatTimestamp(lastUpdated)}>
+              {isFetching ? 'Refreshing…' : updatedAgo ? `Updated ${updatedAgo}` : 'Awaiting first scrape'}
+            </p>
+          </div>
         </div>
 
-
-
-        {/* Location Selector */}
-        <div className="relative group w-full sm:w-auto">
-          <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <select
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
-            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggle}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           >
-            <option value="">All Locations</option>
-            {TARGET_LOCATIONS.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
-        </div>
+            {theme === 'dark' ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+          </Button>
 
-        {/* Date Selector */}
-        <div className="relative group w-full sm:w-auto">
-          <Calendar size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <select
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[180px]"
+          <Button
+            variant="secondary"
+            onClick={handleRefresh}
+            disabled={trigger.isPending}
+            aria-label="Trigger a new scrape"
           >
-            {dates.map((date) => (
-              <option key={date.value} value={date.value}>
-                {date.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
-        </div>
-
-        {/* Time Slot Selector */}
-        <div className="relative group w-full sm:w-auto">
-          <Clock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <select
-            value={selectedTimeSlot}
-            onChange={(e) => setSelectedTimeSlot(e.target.value)}
-            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[170px]"
-          >
-            {TIME_SLOTS.map((slot) => (
-              <option key={slot.value} value={slot.value}>
-                {slot.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
-        </div>
-
-        {/* Language Selector */}
-        <div className="relative group w-full sm:w-auto">
-          <Volume2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <select
-            value={selectedLanguage}
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[150px]"
-          >
-            <option value="all">All Languages</option>
-            {availableLanguages.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
-        </div>
-
-        {/* Format Selector */}
-        <div className="relative group w-full sm:w-auto">
-          <Monitor size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none group-hover:text-op-accent transition-colors" />
-          <select
-            value={selectedFormat}
-            onChange={(e) => setSelectedFormat(e.target.value)}
-            className="h-10 w-full sm:w-auto cursor-pointer appearance-none rounded-[12px] border border-op-border bg-op-card pl-10 pr-10 text-sm font-medium text-op-textMain outline-none transition-all hover:border-op-accent/50 focus:border-op-accent focus:ring-1 focus:ring-op-accent/30 min-w-[140px]"
-          >
-            <option value="all">All Formats</option>
-            {availableFormats.map((fmt) => (
-              <option key={fmt} value={fmt}>
-                {fmt}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-op-muted pointer-events-none" />
+            <RefreshCw
+              size={15}
+              aria-hidden="true"
+              className={cn(trigger.isPending && 'motion-safe:animate-spin')}
+            />
+            <span className="hidden sm:inline">{trigger.isPending ? 'Starting…' : 'Scrape now'}</span>
+          </Button>
         </div>
       </div>
-
-      {/* Status & Actions */}
-      <div className="flex items-center gap-4 w-full md:w-auto justify-end">
-        {/* Refresh Button */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className={`group rounded-full border border-op-border ${isRefreshing ? 'bg-op-border text-op-muted' : 'bg-op-card hover:bg-op-border'}`}
-        >
-          <RefreshCw size={16} className={`text-op-textMain transition-transform duration-500 ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180'}`} />
-        </Button>
-      </div>
-
     </header>
   );
 }
