@@ -28,7 +28,7 @@ function envInt(name, fallback) {
 const NAV_TIMEOUT_MS = envInt('NAV_TIMEOUT_MS', 30000);
 const SELECTOR_TIMEOUT_MS = envInt('SELECTOR_TIMEOUT_MS', 15000);
 const RESPONSE_TIMEOUT_MS = envInt('RESPONSE_TIMEOUT_MS', 8000);
-const SETTLE_MS = envInt('SETTLE_MS', 1500);
+const SETTLE_MS = envInt('SETTLE_MS', 3000);
 const MAX_DISCOVERY_SCROLLS = envInt('MAX_DISCOVERY_SCROLLS', 8);
 // Ceilings that stop one bad page from consuming the whole scrape window.
 const REGION_LOCK_TIMEOUT_MS = envInt('REGION_LOCK_TIMEOUT_MS', 120000);
@@ -195,75 +195,7 @@ function matchVenueToTarget(venueName, venueCode, lookups) {
   return null;
 }
 
-function parseBMSData(dynamicData, staticData, movieTitle, dateStr, allResults, lookups, logPrefix, cinemaEntryCounts, selectedFormat = null) {
-  if (!dynamicData?.data?.showtimeWidgets) return;
 
-  const returnedDateCode = dynamicData.data?.additionalData?.dateCode;
-  let effectiveDateStr = dateStr;
-  if (returnedDateCode) {
-    const code = String(returnedDateCode);
-    const parsedDate = `${code.substring(0,4)}-${code.substring(4,6)}-${code.substring(6,8)}`;
-    if (parsedDate !== dateStr) {
-      console.log(`${logPrefix}   BMS returned date ${parsedDate} instead of ${dateStr}. Using actual date.`);
-      effectiveDateStr = parsedDate;
-    }
-  }
-
-  let eventFormat = selectedFormat || '2D';
-  let eventLanguage = '';
-  if (staticData?.data?.eventData?.childEvents?.length > 0) {
-    if (!selectedFormat) eventFormat = staticData.data.eventData.childEvents[0].eventDimension || '2D';
-    eventLanguage = staticData.data.eventData.childEvents[0].eventLanguage || '';
-  }
-
-  const groupList = dynamicData.data.showtimeWidgets.find(w => w.type === 'groupList');
-  if (!groupList?.data) return;
-
-  let matchedCount = 0;
-  const seenVenues = [];
-
-  for (const group of groupList.data) {
-    if (group.type !== 'venue' && group.type !== 'venueGroup') continue;
-    const venues = group.data || [];
-    for (const venue of venues) {
-      const venueName = venue.additionalData?.venueName || '';
-      const venueCode = venue.additionalData?.venueCode || '';
-      if (venueName) seenVenues.push(venueName);
-
-      const target = matchVenueToTarget(venueName, venueCode, lookups);
-      if (!target) continue;
-      matchedCount++;
-
-      const showtimes = venue.showtimes || [];
-      if (showtimes.length === 0) continue;
-
-      for (const showtime of showtimes) {
-        const categories = showtime.additionalData?.categories || [];
-        const showTime = showtime.additionalData?.showTime || showtime.title || '';
-        for (const cat of categories) {
-          const price = parseFloat(cat.curPrice) || 0;
-          const seatCategory = cat.priceDesc || 'Standard';
-          if (price > 0) {
-            try {
-              const raw = { cinema: target.cinemaName, location: target.location, movie: movieTitle, format: eventFormat, language: eventLanguage, price: price, seat_category: seatCategory, showtime: showTime, date: effectiveDateStr };
-              const entry = normalizePrice(raw, target.cinemaName);
-              validateSchema(entry);
-              allResults.push(entry);
-              if (cinemaEntryCounts[target.cinemaName] !== undefined) cinemaEntryCounts[target.cinemaName]++;
-            } catch (err) {}
-          }
-        }
-      }
-    }
-  }
-
-  if (matchedCount > 0) {
-    console.log(`${logPrefix}   Matched ${matchedCount} venues for ${movieTitle} on ${effectiveDateStr}.`);
-  } else if (seenVenues.length > 0) {
-    console.log(`${logPrefix}   [API DEBUG] ${movieTitle} returned ${seenVenues.length} venues, but none matched our targets. Sample: ${seenVenues.slice(0, 3).join(', ')}`);
-  }
-  return effectiveDateStr;
-}
 
 // ============================================================
 // scrapeLocation — Core function: scrapes one business location
@@ -357,7 +289,7 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
         // skips the slow infinite-scroll entirely.
         for (const target of targetsInRegion) {
           if (!target.bmsSlug || !target.bmsCode) continue;
-          const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}-${target.location.toLowerCase()}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/`;
+          const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/`;
           try {
             await page.goto(cinemaUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
             await page.waitForTimeout(SETTLE_MS);
@@ -509,39 +441,38 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
             }
 
             const wantCode = targetDate.replace(/-/g, '');
-            let state = null;
+            let apiResults = null;
 
-            // Only the first date is worth a retry. A cinema page lists titles
-            // open for advance booking that have no showtimes in our window at
-            // all; retrying every one of those on every date was costing eight
-            // page loads per non-showing film.
             const maxAttempts = isFirstDate ? 2 : 1;
 
-            for (let attempt = 1; attempt <= maxAttempts && !state; attempt++) {
+            for (let attempt = 1; attempt <= maxAttempts && !apiResults; attempt++) {
               try {
-                // Reusing one page across dates can leave a stale
-                // __INITIAL_STATE__ behind, so on a retry clear the document
-                // first to force a genuine load.
                 if (attempt === 2) {
                   await mPage.goto('about:blank', { timeout: NAV_TIMEOUT_MS });
                 }
                 await mPage.goto(url, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
 
-                // Key by the date we asked for rather than whatever the page
-                // considers current — otherwise a stale document silently
-                // returns today's prices labelled as a future date.
-                state = await mPage.evaluate((code) => {
-                  const sbe = window.__INITIAL_STATE__ && window.__INITIAL_STATE__.showtimesByEvent;
-                  if (!sbe || !sbe.showDates) return null;
-                  const node = sbe.showDates[code];
-                  if (!node || !node.dynamic) return null;
-                  return {
-                    dynamic: node.dynamic,
-                    primaryStatic: node.primaryStatic || sbe.static || null,
-                  };
-                }, wantCode);
+                const eventCode = url.match(/\/buytickets\/(ET\d+)\//)?.[1] || movie.href.match(/\/(ET\d+)\/?$/)?.[1];
+                if (!eventCode) throw new Error("Could not extract eventCode");
 
-                if (!state && attempt < maxAttempts) await mPage.waitForTimeout(SETTLE_MS);
+                apiResults = await mPage.evaluate(async ({ eventCode, dateCode, cinemas }) => {
+                  const results = [];
+                  for (const cinema of cinemas) {
+                    const apiUrl = `/api/movies-data/seatlayout/v1/primary?eventCode=${eventCode}&dateCode=${dateCode}&venueCode=${cinema.bmsCode}`;
+                    try {
+                      const resp = await fetch(apiUrl);
+                      if (resp.ok) {
+                        const data = await resp.json();
+                        if (data && data.data && data.data.showTimes && data.data.showTimes.length > 0) {
+                          results.push({ target: cinema, data: data.data });
+                        }
+                      }
+                    } catch (e) {}
+                  }
+                  return results.length > 0 ? results : null;
+                }, { eventCode, dateCode: wantCode, cinemas: targetsInRegion });
+
+                if (!apiResults && attempt < maxAttempts) await mPage.waitForTimeout(SETTLE_MS);
               } catch (err) {
                 if (attempt === maxAttempts) {
                   console.warn(`${regionLogPrefix}   ${movie.title} ${targetDate}: ${err.message}`);
@@ -549,10 +480,7 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
               }
             }
 
-            if (!state) {
-              // Dates ascend, and a title with nothing on its opening date in
-              // our window has nothing on the later ones either. Stop instead
-              // of paying for a page load per remaining day.
+            if (!apiResults) {
               console.log(
                 `${regionLogPrefix}   ${movie.title}: no showtimes from ${targetDate} — skipping remaining dates.`
               );
@@ -560,31 +488,34 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
             }
 
             const before = movieResults.length;
-            const effectiveDate = parseBMSData(
-              state.dynamic,
-              state.primaryStatic,
-              movie.title,
-              targetDate,
-              movieResults,
-              lookups,
-              regionLogPrefix,
-              localEntryCounts,
-              null
-            );
+            
+            for (const { target, data } of apiResults) {
+               const eventFormat = data.eventData?.eventDimension || '2D';
+               const eventLanguage = data.eventData?.eventLang || '';
+               
+               for (const st of data.showTimes) {
+                  const showTime = st.showTime || st.title || '';
+                  const categories = st.categories || [];
+                  for (const cat of categories) {
+                    const price = parseFloat(cat.curPrice) || 0;
+                    const seatCategory = cat.priceDesc || 'Standard';
+                    if (price > 0) {
+                      try {
+                        const raw = { cinema: target.cinemaName, location: target.location, movie: movie.title, format: eventFormat, language: eventLanguage, price: price, seat_category: seatCategory, showtime: showTime, date: targetDate };
+                        const entry = normalizePrice(raw, target.cinemaName);
+                        validateSchema(entry);
+                        movieResults.push(entry);
+                        if (localEntryCounts[target.cinemaName] !== undefined) localEntryCounts[target.cinemaName]++;
+                      } catch (err) {}
+                    }
+                  }
+               }
+            }
+            
             console.log(`${regionLogPrefix}   ${movie.title} ${targetDate}: +${movieResults.length - before} entries`);
 
-            // When a date isn't on sale yet BMS serves the nearest available
-            // one instead. parseBMSData labels those rows with the date they
-            // really belong to, so nothing incorrect is stored — but since the
-            // dates ascend, every later date would return the same fallback.
-            // Stop rather than spend a request per remaining day.
-            if (effectiveDate && effectiveDate !== targetDate) {
-              console.log(`${regionLogPrefix}   ${movie.title}: ${targetDate} not on sale yet — stopping here.`);
-              break;
-            }
-
             // Small pause between requests to stay polite to BMS.
-            await mPage.waitForTimeout(300 + Math.random() * 400);
+            await mPage.waitForTimeout(800 + Math.random() * 1200);
           }
 
           let deduped = [];

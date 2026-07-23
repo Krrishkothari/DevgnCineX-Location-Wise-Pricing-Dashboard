@@ -21,9 +21,9 @@ function envInt(name, fallback) {
 
 // Honours SCRAPER_CONCURRENCY from .env / docker-compose, which the previous
 // hardcoded `10` silently ignored.
-const CONCURRENCY = envInt('SCRAPER_CONCURRENCY', 3);
-const MIN_DELAY_MS = envInt('SCRAPER_MIN_DELAY_MS', 1000);
-const MAX_DELAY_MS = envInt('SCRAPER_MAX_DELAY_MS', 3000);
+const CONCURRENCY = envInt('SCRAPER_CONCURRENCY', 1);
+const MIN_DELAY_MS = envInt('SCRAPER_MIN_DELAY_MS', 3000);
+const MAX_DELAY_MS = envInt('SCRAPER_MAX_DELAY_MS', 6000);
 // Locations that come back empty are retried once, serially. Running in
 // parallel occasionally trips BookMyShow's bot protection and a location
 // returns nothing; a full run now takes minutes rather than the best part of an

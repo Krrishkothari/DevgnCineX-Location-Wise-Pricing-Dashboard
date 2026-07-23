@@ -8,12 +8,12 @@ module.exports = [
   {
     locationName: 'Gurugram',
     cinemas: [
-      { cinemaName: 'Devgn Cinex Elan Epic', bmsCode: 'NYCG', bmsRegion: 'national-capital-region-ncr', bmsSlug: 'devgn-cinex-elan-epic-gurugram', isOwned: true },
-      { cinemaName: 'INOX World Mark', bmsCode: 'INWM', bmsRegion: 'national-capital-region-ncr', bmsSlug: 'inox-world-mark-gurugram', isOwned: false },
-      { cinemaName: 'INOX AIPL', bmsCode: 'IAJS', bmsRegion: 'national-capital-region-ncr', bmsSlug: 'inox-aipl-joy-street-gurgaon', isOwned: false },
-      { cinemaName: 'Cinepolis Airia Mall', bmsCode: 'CRGM', bmsRegion: 'national-capital-region-ncr', bmsSlug: 'cinepolis-airia-mall-sohna-road-gurgaon', isOwned: false },
-      { cinemaName: 'Wave Urbana Premium', bmsCode: 'WUPG', bmsRegion: 'gurugram-gurgaon', bmsSlug: 'wave-urbana-premium-sector-67-gurugram', isOwned: false },
-      { cinemaName: 'PVR Elan Town Centre', bmsCode: 'PETA', bmsRegion: 'gurugram-gurgaon', bmsSlug: 'pvr-elan-town-centre-sec-67-gurugram', isOwned: false },
+      { cinemaName: 'Devgn Cinex Elan Epic', bmsCode: 'NYCG', bmsRegion: 'ncr', bmsSlug: 'devgn-cinex-elan-epic-gurugram', isOwned: true },
+      { cinemaName: 'INOX World Mark', bmsCode: 'INWM', bmsRegion: 'ncr', bmsSlug: 'inox-world-mark-gurugram', isOwned: false },
+      { cinemaName: 'INOX AIPL', bmsCode: 'IAJS', bmsRegion: 'ncr', bmsSlug: 'inox-aipl-joy-street-gurgaon', isOwned: false },
+      { cinemaName: 'Cinepolis Airia Mall', bmsCode: 'CRGM', bmsRegion: 'ncr', bmsSlug: 'cinepolis-airia-mall-sohna-road-gurgaon', isOwned: false },
+      { cinemaName: 'Wave Urbana Premium', bmsCode: 'WUPG', bmsRegion: 'gurgaon', bmsSlug: 'wave-urbana-premium-sector-67-gurugram', isOwned: false },
+      { cinemaName: 'PVR Elan Town Centre', bmsCode: 'PETA', bmsRegion: 'gurgaon', bmsSlug: 'pvr-elan-town-centre-sec-67-gurugram', isOwned: false },
     ],
   },
 
