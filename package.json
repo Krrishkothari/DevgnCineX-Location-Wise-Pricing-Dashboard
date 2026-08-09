@@ -5,7 +5,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "build": "npm --prefix frontend ci && npm --prefix frontend run build",
+    "build": "npm --prefix frontend ci --include=dev && npm --prefix frontend run build",
     "postinstall": "npm --prefix backend ci --omit=dev && npm --prefix scraper ci --omit=dev && cd scraper && npx playwright install chromium",
     "start": "node backend/index.js",
     "scrape:all": "npm --prefix scraper run scrape:all"
