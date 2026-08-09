@@ -1,33 +1,26 @@
-# Use the official Playwright image which has all required system libraries pre-installed
+# Use the official Playwright image — all system libraries for Chromium are pre-installed
 FROM mcr.microsoft.com/playwright:v1.61.1-noble
 
-# Set working directory
 WORKDIR /app
 
-# Copy root package files
+# Copy all package files first (for Docker layer caching)
 COPY package.json package-lock.json ./
-
-# Copy sub-project package files
 COPY backend/package.json backend/package-lock.json ./backend/
 COPY scraper/package.json scraper/package-lock.json ./scraper/
 COPY frontend/package.json frontend/package-lock.json ./frontend/
 
-# Install all dependencies
+# Install root + backend + scraper deps (triggered via postinstall)
+# and install frontend deps with devDependencies for the build step
 RUN npm ci --include=dev && \
-    npm --prefix backend ci --omit=dev && \
-    npm --prefix scraper ci --omit=dev && \
-    npm --prefix frontend ci
+    npm --prefix frontend ci --include=dev
 
-# Install Chromium browser for Playwright (system deps already in base image)
-RUN cd scraper && npx playwright install chromium
-
-# Copy the rest of the project
+# Copy the rest of the project source code
 COPY . .
 
-# Build frontend
+# Build the frontend (Vite production bundle)
 RUN npm --prefix frontend run build
 
-# Expose port
+# Expose the port
 ENV PORT=3000
 EXPOSE 3000
 
