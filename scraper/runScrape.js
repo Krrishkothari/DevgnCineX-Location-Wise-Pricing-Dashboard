@@ -19,7 +19,7 @@ function envInt(name, fallback) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-// Honours SCRAPER_CONCURRENCY from .env / docker-compose, which the previous
+// Honours SCRAPER_CONCURRENCY from .env, which the previous
 // hardcoded `10` silently ignored.
 const CONCURRENCY = envInt('SCRAPER_CONCURRENCY', 1);
 const MIN_DELAY_MS = envInt('SCRAPER_MIN_DELAY_MS', 3000);

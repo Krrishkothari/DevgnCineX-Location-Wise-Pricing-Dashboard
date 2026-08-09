@@ -64,24 +64,10 @@ const asyncRoute = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next
 
 app.get('/api/health', asyncRoute(async (req, res) => {
   const status = await priceStore.getStatus();
-  const scrapeQueue = getScraperQueue();
 
-  let redis = 'disabled';
-  if (scrapeQueue) {
-    try {
-      await scrapeQueue.client.then((c) => c.ping());
-      redis = 'ok';
-    } catch (err) {
-      redis = `error: ${err.message}`;
-    }
-  }
-
-  // Report degraded rather than a flat "ok" so an orchestrator can actually
-  // tell that the data has gone stale or the queue is unreachable.
-  const healthy = redis !== 'disabled' ? redis === 'ok' : true;
-  res.status(healthy ? 200 : 503).json({
-    status: healthy ? 'ok' : 'degraded',
-    redis,
+  res.status(200).json({
+    status: 'ok',
+    scraper: scraperModule ? (scraperModule.isScrapeRunning() ? 'running' : 'idle') : 'disabled',
     last_updated: status.last_updated,
     total_entries: status.total_entries,
     timestamp: new Date().toISOString(),
@@ -106,7 +92,12 @@ app.get('/api/prices', asyncRoute(async (req, res) => {
 // Progress is written by the scraper next to the price data. Resolved from
 // __dirname rather than process.cwd(), which previously made this endpoint
 // return null whenever the server was started from anywhere but backend/.
-const PROGRESS_FILE = path.join(__dirname, 'data/progress.json');
+// Must match scraper/db.js so an optional DATA_DIR volume is shared by both
+// the dashboard API and the scraper worker.
+const DATA_DIR = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(__dirname, 'data');
+const PROGRESS_FILE = path.join(DATA_DIR, 'progress.json');
 
 // Any progress file left behind by a killed run is stale by definition.
 try {
@@ -219,9 +210,8 @@ app.post('/api/scrape/trigger', asyncRoute(async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized.' });
   }
 
-  const queue = getScraperQueue();
-  if (!queue) {
-    return res.status(503).json({ error: 'Scraper queue is not available.' });
+  if (!scraperModule) {
+    return res.status(503).json({ error: 'Scraper is not available.' });
   }
 
   const now = Date.now();
@@ -233,49 +223,28 @@ app.post('/api/scrape/trigger', asyncRoute(async (req, res) => {
     });
   }
 
-  try {
-    if (scraperModule && await scraperModule.isScrapeInFlight()) {
-      return res.status(409).json({ error: 'A scrape is already running.' });
-    }
-  } catch (err) {
-    console.warn('[API] Could not check queue state:', err.message);
+  if (scraperModule.isScrapeRunning()) {
+    return res.status(409).json({ error: 'A scrape is already running.' });
   }
 
   lastTriggerAt = now;
   console.log('[API] Manual scrape triggered');
-  await queue.add('scrape-bms', {});
-  res.status(202).json({ message: 'Scrape job queued.' });
+  const result = await scraperModule.triggerScrape();
+  res.status(202).json({ message: result.triggered ? 'Scrape job started.' : result.reason });
 }));
 
-// --- SCRAPER WORKER ---
-// The worker owns the queue (including its retry/backoff defaults). The backend
-// previously built a second Queue instance with no defaultJobOptions, so the
-// configured retries never applied to anything it enqueued.
+// --- SCRAPER (IN-PROCESS CRON) ---
 let scraperModule = null;
-
-function getScraperQueue() {
-  return scraperModule ? scraperModule.scraperQueue : null;
-}
 
 if (process.env.DISABLE_SCRAPER === 'true') {
   console.log('[Backend] DISABLE_SCRAPER=true — running as API only.');
 } else {
   try {
-    scraperModule = require('../scraper/queue.js');
-    console.log('[API] Scraper worker initialized within the backend process.');
-
-    const scraperCron = process.env.SCRAPER_CRON || '0 * * * *';
-    scraperModule.scraperQueue
-      .add('scrape-bms-hourly', {}, {
-        repeat: { pattern: scraperCron },
-        // A stable id keeps repeated restarts from registering duplicate
-        // schedules, which would run several scrapes per hour.
-        jobId: 'scrape-bms-hourly',
-      })
-      .then(() => console.log(`[API] Scraper scheduled with pattern: ${scraperCron}`))
-      .catch((err) => console.error('[API] Failed to schedule repeatable job:', err.message));
+    scraperModule = require('../scraper/inProcessScraper.js');
+    scraperModule.start();
+    console.log('[API] In-process scraper initialized.');
   } catch (err) {
-    console.error('[Backend] Scraper worker failed to initialize:', err.message);
+    console.error('[Backend] Scraper failed to initialize:', err.message);
   }
 }
 
@@ -338,8 +307,7 @@ async function gracefulShutdown() {
     console.log('[Backend] HTTP server closed.');
     try {
       if (scraperModule) {
-        await scraperModule.worker.close();
-        await scraperModule.scraperQueue.close();
+        await scraperModule.stop();
       }
       console.log('[Backend] Scraper shut down cleanly.');
     } catch (err) {

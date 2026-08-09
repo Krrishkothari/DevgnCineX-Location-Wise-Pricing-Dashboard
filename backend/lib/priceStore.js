@@ -12,9 +12,14 @@
 const fsp = require('fs/promises');
 const path = require('path');
 
+// Keep API reads in the same configurable directory as scraper writes. Set
+// DATA_DIR to a Railway volume mount to retain prices and history across deploys.
+const DATA_DIR = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(__dirname, '../data');
 const DATA_FILE = process.env.PRICES_FILE
   ? path.resolve(process.env.PRICES_FILE)
-  : path.join(__dirname, '../data/prices.json');
+  : path.join(DATA_DIR, 'prices.json');
 
 const EMPTY = Object.freeze({
   last_updated: null,

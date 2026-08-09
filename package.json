@@ -1,4 +1,15 @@
 {
+  "name": "devgn-cinex-pricing",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "scripts": {
+    "build": "npm --prefix frontend ci && npm --prefix frontend run build",
+    "postinstall": "npm --prefix backend ci --omit=dev && npm --prefix scraper ci --omit=dev && cd scraper && npx playwright install --with-deps chromium",
+    "start": "node backend/index.js",
+    "scrape:all": "npm --prefix scraper run scrape:all"
+  },
   "dependencies": {
     "cheerio": "^1.2.0"
   }
