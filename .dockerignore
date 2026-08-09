@@ -1,0 +1,15 @@
+node_modules/
+backend/node_modules/
+scraper/node_modules/
+frontend/node_modules/
+frontend/dist/
+.git/
+.DS_Store
+__MACOSX/
+*.db
+backend/data/prices.json
+backend/data/progress.json
+backend/data/*.tmp
+backend/data/*.corrupt-*
+.env
+.env.local
