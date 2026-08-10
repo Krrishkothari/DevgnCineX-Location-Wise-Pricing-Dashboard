@@ -219,7 +219,15 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
       console.log(`${logPrefix} Launching dedicated browser...`);
       browser = await chromium.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled'],
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-blink-features=AutomationControlled',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--no-zygote',
+          '--single-process',
+        ],
       });
     } else {
       console.log(`${logPrefix} Using shared browser instance.`);

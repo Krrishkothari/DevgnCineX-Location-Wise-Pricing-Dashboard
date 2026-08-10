@@ -65,12 +65,12 @@ function start() {
   }
 
   if (process.env.DISABLE_STARTUP_SCRAPE !== 'true') {
-    console.log('[InProcessScraper] Initial background scrape scheduled in 5s...');
+    console.log('[InProcessScraper] Initial background scrape scheduled in 20s (allowing server to settle)...');
     setTimeout(() => {
       doScrape('startup').catch((err) =>
         console.error('[InProcessScraper] Startup scrape error:', err.message)
       );
-    }, 5000);
+    }, 20000);
   }
 }
 
