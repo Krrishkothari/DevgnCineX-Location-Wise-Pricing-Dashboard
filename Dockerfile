@@ -22,6 +22,7 @@ RUN npm --prefix frontend run build
 
 # Expose the port
 ENV PORT=3000
+ENV PLAYWRIGHT_BROWSERS_PATH=0
 EXPOSE 3000
 
 # Start the backend server
