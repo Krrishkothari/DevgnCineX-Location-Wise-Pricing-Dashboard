@@ -51,8 +51,6 @@ async function runScrape({ log = console.log } = {}) {
       '--disable-blink-features=AutomationControlled',
       '--disable-dev-shm-usage',
       '--disable-gpu',
-      '--no-zygote',
-      '--single-process',
     ],
   });
 

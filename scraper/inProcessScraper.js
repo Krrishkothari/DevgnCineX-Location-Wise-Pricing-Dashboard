@@ -64,15 +64,13 @@ function start() {
     console.log('[InProcessScraper] Initialized in MANUAL mode (auto-cron disabled).');
   }
 
-  if (process.env.AUTO_STARTUP_SCRAPE === 'true') {
-    console.log('[InProcessScraper] Initial background scrape scheduled in 30s...');
+  if (process.env.DISABLE_STARTUP_SCRAPE !== 'true') {
+    console.log('[InProcessScraper] Initial background scrape scheduled in 10s...');
     setTimeout(() => {
       doScrape('startup').catch((err) =>
         console.error('[InProcessScraper] Startup scrape error:', err.message)
       );
-    }, 30000);
-  } else {
-    console.log('[InProcessScraper] Automatic startup scrape disabled to preserve RAM.');
+    }, 10000);
   }
 }
 

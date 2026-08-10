@@ -225,8 +225,6 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
           '--disable-blink-features=AutomationControlled',
           '--disable-dev-shm-usage',
           '--disable-gpu',
-          '--no-zygote',
-          '--single-process',
         ],
       });
     } else {
