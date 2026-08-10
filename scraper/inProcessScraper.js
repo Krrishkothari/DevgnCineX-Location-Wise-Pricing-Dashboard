@@ -47,10 +47,31 @@ async function doScrape(source = 'cron') {
 }
 
 /**
- * Start the scraper module (manual mode only — no auto-cron schedule).
+ * Start the scraper module — schedules hourly cron and triggers an initial
+ * background scrape on server startup so pricing data is immediately populated.
  */
 function start() {
-  console.log('[InProcessScraper] Initialized in MANUAL mode (auto-cron disabled).');
+  const autoCron = process.env.ENABLE_AUTO_CRON !== 'false';
+  if (autoCron) {
+    if (!cronTask) {
+      cronTask = cron.schedule(SCRAPER_CRON, () => {
+        console.log(`[InProcessScraper] Cron schedule triggered (${SCRAPER_CRON}).`);
+        doScrape('cron');
+      });
+      console.log(`[InProcessScraper] Initialized with cron schedule: '${SCRAPER_CRON}'.`);
+    }
+  } else {
+    console.log('[InProcessScraper] Initialized in MANUAL mode (auto-cron disabled).');
+  }
+
+  if (process.env.DISABLE_STARTUP_SCRAPE !== 'true') {
+    console.log('[InProcessScraper] Initial background scrape scheduled in 5s...');
+    setTimeout(() => {
+      doScrape('startup').catch((err) =>
+        console.error('[InProcessScraper] Startup scrape error:', err.message)
+      );
+    }, 5000);
+  }
 }
 
 /**
