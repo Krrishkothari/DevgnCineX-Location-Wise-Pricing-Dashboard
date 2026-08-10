@@ -20,7 +20,7 @@ services:
       - key: VITE_API_URL
         value: /api
       - key: SCRAPER_CONCURRENCY
-        value: "2"
+        value: "1"
       - key: FORECAST_DAYS
         value: "4"
       - key: PRICE_RETENTION_DAYS
