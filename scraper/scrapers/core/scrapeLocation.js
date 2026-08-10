@@ -265,331 +265,100 @@ async function scrapeLocation(locationConfig, regionLocks, sharedBrowser = null,
       const regionEntries = [];
 
       const page = await context.newPage();
-      const movieLinks = [];
-      const seenEventCodes = new Set();
-
-      const addMovie = (href, title, { requireCitySegment = false } = {}) => {
-        if (!href || href.includes('/explore/') || href.includes('/genre/')) return;
-
-        // Every real movie URL carries an ET event code.
-        const eventCode = href.match(/\/(ET\d+)/)?.[1];
-        if (!eventCode) return;
-
-        // A cinema page mixes two kinds of link:
-        //   /movies/<city>/<slug>/ET…  → actually showing at this venue
-        //   /movies/<slug>/ET…         → a "recommended for you" carousel
-        // The old code queued both. At Devgn Cinex Bhuj that meant 3 real
-        // movies and 30 recommendations, each costing a full page load, format
-        // modal and four date clicks before yielding no matching venue.
-        if (requireCitySegment && !/^\/movies\/[^/]+\/[^/]+\/ET\d+/.test(href)) return;
-
-        // Dedupe on the event code: the same film can appear under several URL
-        // forms, while genuinely distinct versions (e.g. a Hindi dub) carry
-        // their own code and are correctly kept.
-        if (seenEventCodes.has(eventCode)) return;
-        seenEventCodes.add(eventCode);
-
-        if (!title) {
-          const parts = href.split('/').filter(Boolean);
-          const slug = parts[parts.length - 2] || parts[parts.length - 1] || '';
-          title = slug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-        }
-        movieLinks.push({ title, href });
-      };
-
       try {
-        // ---- Primary discovery: only the cinemas we actually track ----
-        // The region /explore/ page lists every film showing in the city, and
-        // the old code queued all of them. In a region like NCR that meant 60+
-        // movies, most playing at none of our venues — each still cost a page
-        // load, a format modal and four date clicks to yield nothing. Asking
-        // each tracked cinema what it is showing cuts the work several-fold and
-        // skips the slow infinite-scroll entirely.
+        await page.route('**/*', (route) =>
+          ['image', 'font', 'stylesheet', 'media'].includes(route.request().resourceType())
+            ? route.abort()
+            : route.continue()
+        );
+
         for (const target of targetsInRegion) {
           if (!target.bmsSlug || !target.bmsCode) continue;
-          const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/`;
-          try {
-            await page.goto(cinemaUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
-            await page.waitForTimeout(SETTLE_MS);
-            const cinemaMovies = await page.evaluate(() =>
-              Array.from(document.querySelectorAll('a[href*="/movies/"]')).map((a) => ({
-                href: a.getAttribute('href'),
-                title: a.querySelector('img')?.alt?.trim() || '',
-              }))
-            );
-            const before = movieLinks.length;
-            for (const m of cinemaMovies) {
-              addMovie(m.href, m.title && m.title.length < 80 ? m.title : '', { requireCitySegment: true });
-            }
-            console.log(
-              `${regionLogPrefix} ${target.cinemaName}: ${movieLinks.length - before} showing ` +
-              `(from ${cinemaMovies.length} links on page)`
-            );
-          } catch (err) {
-            console.warn(`${regionLogPrefix} Cinema discovery failed for ${target.cinemaName}: ${err.message}`);
-          }
-        }
-        console.log(`${regionLogPrefix} Discovered ${movieLinks.length} movie(s) across ${targetsInRegion.length} tracked cinema(s).`);
-
-        // ---- Fallback: region-wide explore page ----
-        // Only used when no cinema page yielded anything, so the expensive
-        // scroll is off the normal path.
-        if (movieLinks.length === 0) {
-          console.log(`${regionLogPrefix} No movies from cinema pages; falling back to the region explore page.`);
-          const exploreUrl = `https://in.bookmyshow.com/explore/movies-${region}`;
-          const exploreLinks = await withRegionLock(regionLocks, region, regionLogPrefix, async () => {
-            await page.goto(exploreUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
-            try {
-              await page.waitForSelector('a[href*="/movies/"]', { timeout: SELECTOR_TIMEOUT_MS });
-            } catch (err) {
-              console.warn(`${regionLogPrefix} Explore page never rendered movie cards: ${err.message}`);
-            }
-            await page.waitForTimeout(SETTLE_MS);
-
-            return page.evaluate(async (maxScrolls) => {
-              const getCards = () => Array.from(document.querySelectorAll('a[href*="/movies/"]'));
-              let previousCount = 0;
-              let stableAttempts = 0;
-              for (let i = 0; i < maxScrolls; i++) {
-                window.scrollBy(0, document.body.scrollHeight);
-                await new Promise((r) => setTimeout(r, 1200));
-                const currentCount = getCards().length;
-                if (currentCount === previousCount) {
-                  stableAttempts++;
-                  if (stableAttempts >= 2) break;
-                } else {
-                  stableAttempts = 0;
-                }
-                previousCount = currentCount;
-              }
-              return getCards().map((card) => ({
-                href: card.getAttribute('href'),
-                title: card.querySelector('img')?.alt?.trim() || '',
-              }));
-            }, MAX_DISCOVERY_SCROLLS);
-          }).catch((err) => {
-            console.error(`${regionLogPrefix} Explore fallback failed: ${err.message}`);
-            return [];
-          });
-
-          for (const m of exploreLinks) addMovie(m.href, m.title && m.title.length < 80 ? m.title : '');
-        }
-      } finally {
-        // Always release the discovery page, including on the error paths that
-        // previously leaked it.
-        await page.close().catch(() => {});
-      }
-
-      if (movieLinks.length === 0) {
-        console.error(`${regionLogPrefix} No movies discovered at all — skipping region.`);
-        return { entries: [], counts: regionEntryCounts };
-      }
-
-      const moviesToScrape = movieLinks;
-      const scrapeStartTime = Date.now();
-
-      // MOVIE-LEVEL CONCURRENCY: Chunk into batches of 3
-      const movieChunks = [];
-      const CHUNK_SIZE = 3;
-      for (let i = 0; i < moviesToScrape.length; i += CHUNK_SIZE) {
-        movieChunks.push(moviesToScrape.slice(i, i + CHUNK_SIZE));
-      }
-
-      const emptyCounts = () => {
-        const counts = {};
-        targetsInRegion.forEach((t) => { counts[t.cinemaName] = 0; });
-        return counts;
-      };
-
-      /**
-       * Build the dated showtimes URL for a movie.
-       * `/movies/<city>/<slug>/ET123` -> `/movies/<city>/<slug>/buytickets/ET123/YYYYMMDD`
-       */
-      function buildShowtimesUrl(href, dateStr) {
-        const match = href.match(/^(.*)\/(ET\d+)\/?$/);
-        if (!match) return null;
-        const path = match[1].startsWith('http') ? match[1] : `https://in.bookmyshow.com${match[1]}`;
-        return `${path}/buytickets/${match[2]}/${dateStr.replace(/-/g, '')}`;
-      }
-
-      /**
-       * Scrape one movie across every target date.
-       *
-       * BookMyShow server-renders the showtimes payload into
-       * window.__INITIAL_STATE__.showtimesByEvent for a dated URL — the exact
-       * shape parseBMSData already consumes. Reading it directly replaces the
-       * old flow of: load movie page, click "Book tickets", dismiss the age
-       * gate, pick a format from a modal, then hunt the DOM for each date tab
-       * and race an XHR. That dance was slow, and two of its steps were also
-       * unreliable — the date tabs were not clickable at all, so days 3 and 4
-       * silently returned nothing.
-       */
-      async function scrapeMovie(movie, movieIdx, localEntryCounts) {
-        const movieResults = [];
-
-        if (saveProgress) {
-          saveProgress({
-            current: movieIdx + 1,
-            completed: movieIdx,
-            total: moviesToScrape.length,
-            movie: movie.title,
-            startTime: scrapeStartTime,
-          });
-        }
-
-        console.log(`${regionLogPrefix} --- ${movie.title} ---`);
-
-        const mPage = await context.newPage();
-        try {
-          // Only the HTML carries the state we need.
-          await mPage.route('**/*', (route) =>
-            ['image', 'font', 'stylesheet', 'media'].includes(route.request().resourceType())
-              ? route.abort()
-              : route.continue()
-          );
 
           for (let dateIdx = 0; dateIdx < datesToScrape.length; dateIdx++) {
             const targetDate = datesToScrape[dateIdx];
-            const isFirstDate = dateIdx === 0;
+            const wantCode = targetDate.replace(/-/g, '');
+            const cinemaUrl = `https://in.bookmyshow.com/buytickets/${target.bmsSlug}/cinema-${target.bmsRegion}-${target.bmsCode}-MT/${wantCode}`;
 
-            const url = buildShowtimesUrl(movie.href, targetDate);
-            if (!url) {
-              console.warn(`${regionLogPrefix}   Could not build URL for ${movie.title} (${movie.href})`);
-              break;
+            if (saveProgress) {
+              saveProgress({
+                current: dateIdx + 1,
+                completed: dateIdx,
+                total: datesToScrape.length,
+                movie: target.cinemaName,
+                startTime: Date.now(),
+              });
             }
 
-            const wantCode = targetDate.replace(/-/g, '');
-            let apiResults = null;
+            try {
+              await page.goto(cinemaUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
+              await page.waitForTimeout(1500);
 
-            const maxAttempts = isFirstDate ? 2 : 1;
+              const pageRows = await page.evaluate(({ cinemaName, locationName, targetDate }) => {
+                const api = window.__INITIAL_STATE__?.venueShowtimesFunctionalApi?.queries;
+                if (!api) return [];
+                const key = Object.keys(api).find((k) => k.startsWith('getShowtimesByVenue'));
+                const events = api[key]?.data?.showDetailsTransformed?.Event || [];
+                const rows = [];
 
-            for (let attempt = 1; attempt <= maxAttempts && !apiResults; attempt++) {
-              try {
-                if (attempt === 2) {
-                  await mPage.goto('about:blank', { timeout: NAV_TIMEOUT_MS });
-                }
-                await mPage.goto(url, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT_MS });
-
-                const eventCode = url.match(/\/buytickets\/(ET\d+)\//)?.[1] || movie.href.match(/\/(ET\d+)\/?$/)?.[1];
-                if (!eventCode) throw new Error("Could not extract eventCode");
-
-                apiResults = await mPage.evaluate(async ({ eventCode, dateCode, cinemas }) => {
-                  const results = [];
-                  for (const cinema of cinemas) {
-                    const apiUrl = `/api/movies-data/seatlayout/v1/primary?eventCode=${eventCode}&dateCode=${dateCode}&venueCode=${cinema.bmsCode}`;
-                    try {
-                      const resp = await fetch(apiUrl);
-                      if (resp.ok) {
-                        const data = await resp.json();
-                        if (data && data.data && data.data.showTimes && data.data.showTimes.length > 0) {
-                          results.push({ target: cinema, data: data.data });
+                for (const ev of events) {
+                  const movieTitle = ev.EventTitle || '';
+                  for (const child of ev.ChildEvents || []) {
+                    const format = child.EventDimension || '2D';
+                    const language = child.EventLanguage || '';
+                    for (const st of child.ShowTimes || []) {
+                      const showtime = st.ShowTime || '';
+                      for (const cat of st.Categories || []) {
+                        const price = parseFloat(cat.CurPrice) || 0;
+                        const seatCategory = cat.PriceDesc || 'Standard';
+                        if (price > 0 && movieTitle) {
+                          rows.push({
+                            cinema: cinemaName,
+                            location: locationName,
+                            movie: movieTitle,
+                            format,
+                            language,
+                            price,
+                            seat_category: seatCategory,
+                            showtime,
+                            date: targetDate,
+                          });
                         }
                       }
-                    } catch (e) {}
-                  }
-                  return results.length > 0 ? results : null;
-                }, { eventCode, dateCode: wantCode, cinemas: targetsInRegion });
-
-                if (!apiResults && attempt < maxAttempts) await mPage.waitForTimeout(SETTLE_MS);
-              } catch (err) {
-                if (attempt === maxAttempts) {
-                  console.warn(`${regionLogPrefix}   ${movie.title} ${targetDate}: ${err.message}`);
-                }
-              }
-            }
-
-            if (!apiResults) {
-              console.log(
-                `${regionLogPrefix}   ${movie.title}: no showtimes from ${targetDate} — skipping remaining dates.`
-              );
-              break;
-            }
-
-            const before = movieResults.length;
-            
-            for (const { target, data } of apiResults) {
-               const eventFormat = data.eventData?.eventDimension || '2D';
-               const eventLanguage = data.eventData?.eventLang || '';
-               
-               for (const st of data.showTimes) {
-                  const showTime = st.showTime || st.title || '';
-                  const categories = st.categories || [];
-                  for (const cat of categories) {
-                    const price = parseFloat(cat.curPrice) || 0;
-                    const seatCategory = cat.priceDesc || 'Standard';
-                    if (price > 0) {
-                      try {
-                        const raw = { cinema: target.cinemaName, location: target.location, movie: movie.title, format: eventFormat, language: eventLanguage, price: price, seat_category: seatCategory, showtime: showTime, date: targetDate };
-                        const entry = normalizePrice(raw, target.cinemaName);
-                        validateSchema(entry);
-                        movieResults.push(entry);
-                        if (localEntryCounts[target.cinemaName] !== undefined) localEntryCounts[target.cinemaName]++;
-                      } catch (err) {}
                     }
                   }
-               }
-            }
-            
-            console.log(`${regionLogPrefix}   ${movie.title} ${targetDate}: +${movieResults.length - before} entries`);
+                }
+                return rows;
+              }, { cinemaName: target.cinemaName, locationName: target.location, targetDate });
 
-            // Small pause between requests to stay polite to BMS.
-            await mPage.waitForTimeout(800 + Math.random() * 1200);
-          }
+              const normalized = [];
+              for (const raw of pageRows) {
+                try {
+                  const entry = normalizePrice(raw, target.cinemaName);
+                  validateSchema(entry);
+                  normalized.push(entry);
+                  regionEntryCounts[target.cinemaName]++;
+                } catch (e) {}
+              }
 
-          let deduped = [];
-          if (movieResults.length > 0) {
-            const seen = new Set();
-            deduped = movieResults.filter((entry) => {
-              const key = `${entry.cinema}-${entry.location}-${entry.movie}-${entry.price}-${entry.seat_category}-${entry.showtime}-${entry.date}`;
-              if (seen.has(key)) return false;
-              seen.add(key);
-              return true;
-            });
-            try {
-              // Merges in memory and schedules a batched flush; this no longer
-              // re-serialises the whole dataset on every movie.
-              await savePrices(deduped);
-              console.log(`${regionLogPrefix}   -> Merged ${deduped.length} entries for ${movie.title}.`);
+              if (normalized.length > 0) {
+                regionEntries.push(...normalized);
+                await savePrices(normalized);
+                console.log(
+                  `${regionLogPrefix} ${target.cinemaName} (${targetDate}): +${normalized.length} entries`
+                );
+              } else {
+                console.log(`${regionLogPrefix} ${target.cinemaName} (${targetDate}): 0 entries`);
+              }
             } catch (err) {
-              // Previously swallowed, so a failing write looked like a success.
-              console.error(`${regionLogPrefix}   Failed to store entries for ${movie.title}: ${err.message}`);
-            }
-          }
-
-          return { entries: deduped, counts: localEntryCounts };
-        } finally {
-          await mPage.close().catch(() => {});
-        }
-      }
-
-      let globalMovieIdx = 0;
-      for (const chunk of movieChunks) {
-        const chunkPromises = chunk.map((movie, localIdx) => {
-          // A single movie can no longer consume the entire scrape window: if it
-          // overruns we abandon it and move on, rather than letting one hung
-          // page hold up the location (and, with the hourly cron, the next run).
-          return withTimeout(
-            scrapeMovie(movie, globalMovieIdx + localIdx, emptyCounts()),
-            MOVIE_TIMEOUT_MS,
-            `${regionLogPrefix} ${movie.title}`
-          ).catch((err) => {
-            console.error(`${regionLogPrefix} Abandoning ${movie.title}: ${err.message}`);
-            return { entries: [], counts: emptyCounts() };
-          });
-        });
-
-        // Wait for batch to finish
-        const chunkResults = await Promise.allSettled(chunkPromises);
-        for (const res of chunkResults) {
-          if (res.status === 'fulfilled') {
-            regionEntries.push(...res.value.entries);
-            for (const [cName, cCount] of Object.entries(res.value.counts)) {
-              regionEntryCounts[cName] += cCount;
+              console.warn(`${regionLogPrefix} ${target.cinemaName} (${targetDate}) failed: ${err.message}`);
             }
           }
         }
-        globalMovieIdx += chunk.length;
+      } finally {
+        await page.close().catch(() => {});
       }
+
       return { entries: regionEntries, counts: regionEntryCounts };
     });
 
