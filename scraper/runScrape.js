@@ -21,7 +21,7 @@ function envInt(name, fallback) {
 
 // Honours SCRAPER_CONCURRENCY from .env, which the previous
 // hardcoded `10` silently ignored.
-const CONCURRENCY = envInt('SCRAPER_CONCURRENCY', 1);
+const CONCURRENCY = envInt('SCRAPER_CONCURRENCY', 3);
 const MIN_DELAY_MS = envInt('SCRAPER_MIN_DELAY_MS', 3000);
 const MAX_DELAY_MS = envInt('SCRAPER_MAX_DELAY_MS', 6000);
 // Locations that come back empty are retried once, serially. Running in

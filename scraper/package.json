@@ -1,10 +1,9 @@
 {
   "name": "scraper",
   "version": "1.0.0",
-  "main": "alertChecker.js",
+  "main": "run-all-scrapers.js",
   "scripts": {
-    "start": "node scheduler.js",
-    "dev": "nodemon scheduler.js",
+    "start": "node run-all-scrapers.js",
     "scrape:all": "node run-all-scrapers.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

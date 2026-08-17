@@ -3,7 +3,17 @@ node_modules/
 .env.local
 dist/
 .DS_Store
+*/.DS_Store
 __MACOSX/
+
+# Logs and Debug Artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.dump
+*_dump.json
+*.html.tmp
 
 # Data and DB
 backend/data/prices.json
@@ -14,4 +24,3 @@ backend/data/progress.json
 backend/data/progress.json.tmp
 backend/data.db
 *.db
-backend/prisma/*.db
