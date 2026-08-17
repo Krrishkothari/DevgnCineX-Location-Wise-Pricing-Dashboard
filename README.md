@@ -53,7 +53,7 @@ A real-time competitive pricing intelligence dashboard for **Devgn Cinex** cinem
 | **Scraper** | Playwright (headless Chromium), playwright-extra + stealth plugin |
 | **Scheduling** | node-cron (in-process hourly cron) |
 | **Storage** | JSON file-based (prices.json with buffered writes) |
-| **Deployment** | Docker (Playwright base image), Render.com |
+| **Deployment** | Docker (Playwright base image) |
 
 ---
 
@@ -84,7 +84,6 @@ A real-time competitive pricing intelligence dashboard for **Devgn Cinex** cinem
 │   ├── alertChecker.js                 # Post-scrape alert checks
 │   └── package.json
 ├── Dockerfile                          # Production Docker image (Playwright base)
-├── render.yaml                         # Render.com deployment blueprint
 ├── railway.json                        # Railway deployment config
 ├── package.json                        # Root orchestration scripts
 └── .env.example                        # Environment variable reference
@@ -201,18 +200,6 @@ docker run -p 3000:3000 devgn-cinex-pricing
 ```
 
 The Docker image uses the official Playwright base image (`mcr.microsoft.com/playwright:v1.61.1-noble`) which includes all Chromium system dependencies.
-
----
-
-## Render Deployment
-
-The project includes a `render.yaml` blueprint for one-click deployment to [Render.com](https://render.com):
-
-- **Runtime**: Docker
-- **Region**: Singapore (closest to India)
-- **Plan**: Starter
-- **Persistent Disk**: 1 GB mounted at `/data` for price data
-- **Auto-deploy**: Pushes to `main` trigger automatic deploys
 
 ---
 
